@@ -162,28 +162,26 @@ function loadRound(){
     currentCourse=courses.find(c=>c.id===data.courseId) || courses[0];
   });
 
-  db.collection("rounds")
-    .doc(currentRound)
-    .collection("players")
-    .onSnapshot(snap=>{
+  db.collection("rounds").doc(currentRound).collection("players")
+  .onSnapshot(snap=>{
 
-      const newPlayers=[];
+    const newPlayers=[];
 
-      snap.forEach(d=>{
-        const data={id:d.id,...d.data()};
+    snap.forEach(d=>{
+      const data={id:d.id,...d.data()};
 
-        const existing=players.find(p=>p.id===d.id);
+      // 🔥 bilde fix
+      const existing=players.find(p=>p.id===d.id);
+      if(existing && existing.image && !data.image){
+        data.image=existing.image;
+      }
 
-        if(existing && existing.image && !data.image){
-          data.image=existing.image;
-        }
-
-        newPlayers.push(data);
-      });
-
-      players=newPlayers;
-      render();
+      newPlayers.push(data);
     });
+
+    players=newPlayers;
+    render();
+  });
 }
 
 // DELETE ROUND
@@ -245,7 +243,7 @@ document.getElementById("fileInput").addEventListener("change",function(e){
   reader.readAsDataURL(file);
 });
 
-// HCP PER HULL
+// HCP
 function hcpPerHole(p){
   const base=Math.floor((p.hcp||0)/18);
   const extra=(p.hcp||0)%18;
