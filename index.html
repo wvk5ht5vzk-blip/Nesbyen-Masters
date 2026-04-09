@@ -96,7 +96,7 @@ db.collection("courses").onSnapshot(snap=>{
   }
 });
 
-// CHANGE COURSE FIX 🔥
+// CHANGE COURSE
 document.getElementById("courseSelect").onchange=function(){
   const id=this.value;
   currentCourse=courses.find(c=>c.id===id);
@@ -180,13 +180,16 @@ async function deleteRound(){
   await db.collection("rounds").doc(currentRound).delete();
 }
 
-// PLAYER
+// ADD PLAYER WITH HCP 🔥
 function addPlayer(){
   const name=document.getElementById("name").value;
   if(!name) return;
 
+  const hcp = parseInt(prompt("Handicap?")) || 0;
+
   db.collection("rounds").doc(currentRound).collection("players").add({
     name,
+    hcp,
     image:"",
     scores:Array(18).fill(0)
   });
@@ -194,13 +197,13 @@ function addPlayer(){
   document.getElementById("name").value="";
 }
 
-// DELETE PLAYER ✅
+// DELETE PLAYER
 function deletePlayer(id){
   db.collection("rounds").doc(currentRound)
   .collection("players").doc(id).delete();
 }
 
-// IMAGE FIX 🔥
+// IMAGE
 function uploadImage(id){
   selectedPlayer=id;
   document.getElementById("fileInput").value="";
@@ -214,19 +217,28 @@ document.getElementById("fileInput").addEventListener("change", async function(e
   const reader = new FileReader();
 
   reader.onload = async function(){
-    const base64 = reader.result;
-
     await db.collection("rounds")
       .doc(currentRound)
       .collection("players")
       .doc(selectedPlayer)
-      .update({ image: base64 });
+      .update({ image: reader.result });
 
     document.getElementById("fileInput").value="";
   };
 
   reader.readAsDataURL(file);
 });
+
+// HCP PER HULL
+function hcpPerHole(p){
+  const base = Math.floor((p.hcp||0)/18);
+  const extra = (p.hcp||0)%18;
+
+  let arr = Array(18).fill(base);
+  for(let i=0;i<extra;i++) arr[i]++;
+
+  return arr;
+}
 
 // SCORE
 function updateScore(id,hole,val){
@@ -245,6 +257,16 @@ function totalToPar(p){
   return p.scores.reduce((sum,s,i)=>sum+(s-getPars()[i]),0);
 }
 
+// NETTO
+function netScore(p){
+  const h=hcpPerHole(p);
+  return p.scores.reduce((sum,s,i)=>sum+(s-h[i]),0);
+}
+
+function netToPar(p){
+  return netScore(p) - getPars().reduce((a,b)=>a+b,0);
+}
+
 // RENDER
 function render(){
   let sorted=[...players].sort((a,b)=>totalToPar(a)-totalToPar(b));
@@ -258,8 +280,15 @@ function render(){
       <td onclick="uploadImage('${p.id}')">
         ${p.image ? `<img src="${p.image}" class="avatar">` : `<div class="avatar"></div>`}
       </td>
-      <td>${p.name}</td>
-      <td>${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})</td>
+      <td>
+        ${p.name}
+        <br><small>hcp ${p.hcp||0}</small>
+      </td>
+      <td>
+        ${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})
+        <br>
+        <small>Netto: ${netScore(p)} (${netToPar(p)>0?'+':''}${netToPar(p)})</small>
+      </td>
       <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
     </tr>`;
   });
