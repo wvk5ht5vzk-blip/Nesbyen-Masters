@@ -48,94 +48,88 @@ td, th { border:1px solid #555; padding:5px; }
 <h2>Scorekort</h2>
 <table id="scoreTable"></table>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
+<script>
 const firebaseConfig = {
   apiKey: "AIzaSyDDrqLTUtImklgFF1W59aWaNolyg7GBmj0",
   authDomain: "nesbyen-masters-v2.firebaseapp.com",
-  projectId: "nesbyen-masters-v2",
+  projectId: "nesbyen-masters-v2"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
 let currentRound = null;
 let players = [];
 let selectedPlayer = null;
 
-// 🔥 NY RUNDE
-async function newRound(){
-  await addDoc(collection(db,"rounds"),{
+// NY RUNDE
+function newRound(){
+  db.collection("rounds").add({
     created: Date.now()
   });
 }
 
-// 🔄 RUNDER (SORTERT RIKTIG)
-onSnapshot(collection(db,"rounds"), snap=>{
+// RUNDER
+db.collection("rounds").onSnapshot(snap=>{
   const sel = document.getElementById("roundSelect");
 
-  let rounds = snap.docs
-    .map(d => ({ id:d.id, ...d.data() }))
-    .sort((a,b)=>a.created - b.created);
+  let rounds=[];
+  snap.forEach(d=>rounds.push({id:d.id,...d.data()}));
+  rounds.sort((a,b)=>a.created-b.created);
 
   sel.innerHTML="";
 
   rounds.forEach((r,i)=>{
-    const o = document.createElement("option");
-    o.value = r.id;
-    o.text = "Runde " + (i+1);
+    const o=document.createElement("option");
+    o.value=r.id;
+    o.text="Runde "+(i+1);
     sel.appendChild(o);
   });
 
   if(!currentRound && rounds.length){
-    currentRound = rounds[0].id;
-    sel.value = currentRound;
+    currentRound=rounds[0].id;
+    sel.value=currentRound;
     loadRound();
   }
 });
 
-// 📂 LAST RUNDE
+// LAST RUNDE
 function loadRound(){
-  currentRound = document.getElementById("roundSelect").value;
+  currentRound=document.getElementById("roundSelect").value;
 
-  onSnapshot(collection(db,"rounds",currentRound,"players"), snap=>{
-    players = snap.docs.map(d=>({id:d.id,...d.data()}));
+  db.collection("rounds").doc(currentRound).collection("players")
+  .onSnapshot(snap=>{
+    players=[];
+    snap.forEach(d=>players.push({id:d.id,...d.data()}));
     render();
   });
 }
 
-// 🧨 SLETT RUNDE (FIXA)
+// SLETT RUNDE
 async function deleteRound(){
-  if(!currentRound){
-    alert("Velg en runde først");
-    return;
+  if(!currentRound) return;
+  if(!confirm("Slette runde?")) return;
+
+  const snap = await db.collection("rounds").doc(currentRound).collection("players").get();
+
+  for(const docu of snap.docs){
+    await docu.ref.delete();
   }
 
-  if(!confirm("Slette hele runden?")) return;
+  await db.collection("rounds").doc(currentRound).delete();
 
-  const snap = await getDocs(
-    collection(db,"rounds",currentRound,"players")
-  );
-
-  for(const p of snap.docs){
-    await deleteDoc(doc(db,"rounds",currentRound,"players",p.id));
-  }
-
-  await deleteDoc(doc(db,"rounds",currentRound));
-
-  currentRound = null;
-
-  alert("Runde slettet ✅");
+  currentRound=null;
 }
 
-// ➕ SPILLER
-async function addPlayer(){
-  const name = document.getElementById("name").value;
+// LEGG TIL SPILLER
+function addPlayer(){
+  const name=document.getElementById("name").value;
   if(!name) return;
 
-  await addDoc(collection(db,"rounds",currentRound,"players"),{
+  db.collection("rounds").doc(currentRound).collection("players").add({
     name,
     image:"",
     scores:Array(18).fill(0)
@@ -144,52 +138,50 @@ async function addPlayer(){
   document.getElementById("name").value="";
 }
 
-// 📸 BILDE
+// BILDE
 function uploadImage(id){
-  selectedPlayer = id;
-  document.getElementById("fileInput").value="";
+  selectedPlayer=id;
   document.getElementById("fileInput").click();
 }
 
-document.getElementById("fileInput").addEventListener("change", function(e){
-  const file = e.target.files[0];
-  if(!file || !selectedPlayer) return;
+document.getElementById("fileInput").addEventListener("change",function(e){
+  const file=e.target.files[0];
+  if(!file) return;
 
-  const reader = new FileReader();
+  const reader=new FileReader();
 
-  reader.onload = async function(){
-    await updateDoc(
-      doc(db,"rounds",currentRound,"players",selectedPlayer),
-      { image: reader.result }
-    );
+  reader.onload=async function(){
+    await db.collection("rounds").doc(currentRound)
+    .collection("players").doc(selectedPlayer)
+    .update({image:reader.result});
   };
 
   reader.readAsDataURL(file);
 });
 
-// ❌ SLETT SPILLER
-async function deletePlayer(id){
-  await deleteDoc(doc(db,"rounds",currentRound,"players",id));
+// SLETT SPILLER
+function deletePlayer(id){
+  db.collection("rounds").doc(currentRound)
+  .collection("players").doc(id).delete();
 }
 
-// ➕➖ SCORE
-async function updateScore(id,hole,val){
-  const p = players.find(x=>x.id===id);
+// SCORE
+function updateScore(id,hole,val){
+  const p=players.find(x=>x.id===id);
   p.scores[hole]+=val;
   if(p.scores[hole]<0) p.scores[hole]=0;
 
-  await updateDoc(doc(db,"rounds",currentRound,"players",id),{
-    scores:p.scores
-  });
+  db.collection("rounds").doc(currentRound)
+  .collection("players").doc(id)
+  .update({scores:p.scores});
 }
 
 function total(p){
   return p.scores.reduce((a,b)=>a+b,0);
 }
 
-// 🎨 RENDER
+// RENDER
 function render(){
-
   let sorted=[...players].sort((a,b)=>total(a)-total(b));
 
   let lb="<tr><th>#</th><th></th><th>Navn</th><th>Score</th><th></th></tr>";
@@ -200,10 +192,8 @@ function render(){
     lb+=`
     <tr class="${cls}">
       <td>${i+1}</td>
-      <td>
-        <button onclick="uploadImage('${p.id}')" style="background:none;">
-          ${p.image ? `<img src="${p.image}" class="avatar">` : `<div class="avatar"></div>`}
-        </button>
+      <td onclick="uploadImage('${p.id}')">
+        ${p.image ? `<img src="${p.image}" class="avatar">` : `<div class="avatar"></div>`}
       </td>
       <td>${p.name}</td>
       <td>${total(p)}</td>
@@ -234,16 +224,6 @@ function render(){
 
   document.getElementById("scoreTable").innerHTML=sc;
 }
-
-// 🔥 GLOBAL (DETTE REDDER KNAPPER)
-window.newRound=newRound;
-window.loadRound=loadRound;
-window.deleteRound=deleteRound;
-window.addPlayer=addPlayer;
-window.deletePlayer=deletePlayer;
-window.uploadImage=uploadImage;
-window.updateScore=updateScore;
-
 </script>
 
 </body>
