@@ -8,6 +8,7 @@
 body { font-family: Arial; background:#0f172a; color:white; text-align:center; }
 
 button { padding:8px; margin:3px; border:none; border-radius:8px; background:#22c55e; color:white; }
+
 input { padding:8px; border-radius:6px; }
 
 table { width:100%; margin-top:10px; border-collapse: collapse; }
@@ -23,6 +24,8 @@ td, th { border:1px solid #555; padding:5px; }
 .gold { background:gold; color:black; }
 .silver { background:silver; color:black; }
 .bronze { background:#cd7f32; }
+
+.topbar { margin-bottom:10px; }
 </style>
 </head>
 
@@ -30,10 +33,11 @@ td, th { border:1px solid #555; padding:5px; }
 
 <h1>🏌️ Nesbyen Masters LIVE</h1>
 
+<div class="topbar">
 <button onclick="newRound()">➕ Ny runde</button>
 <select id="roundSelect" onchange="loadRound()"></select>
-
-<br><br>
+<button onclick="deleteRound()">🧨 Slett runde</button>
+</div>
 
 <input id="name" placeholder="Spiller">
 <button onclick="addPlayer()">Legg til</button>
@@ -76,7 +80,7 @@ async function newRound(){
   currentRound = r.id;
 }
 
-// 🔄 RUNDER (FIX undefined)
+// 🔄 RUNDER
 onSnapshot(collection(db,"rounds"), snap=>{
   const sel = document.getElementById("roundSelect");
   sel.innerHTML="";
@@ -98,7 +102,7 @@ onSnapshot(collection(db,"rounds"), snap=>{
   }
 });
 
-// 📂 LAST
+// 📂 LAST RUNDE
 function loadRound(){
   currentRound = document.getElementById("roundSelect").value;
 
@@ -108,7 +112,23 @@ function loadRound(){
   });
 }
 
-// ➕ LEGG TIL
+// ❌ SLETT RUNDE
+async function deleteRound(){
+  if(!currentRound) return;
+
+  if(!confirm("Slette denne runden?")) return;
+
+  const playersSnap = await getDocs(collection(db,"rounds",currentRound,"players"));
+
+  for(const p of playersSnap.docs){
+    await deleteDoc(doc(db,"rounds",currentRound,"players",p.id));
+  }
+
+  await deleteDoc(doc(db,"rounds",currentRound));
+  currentRound = null;
+}
+
+// ➕ LEGG TIL SPILLER
 async function addPlayer(){
   const name = document.getElementById("name").value;
   if(!name) return;
@@ -122,28 +142,33 @@ async function addPlayer(){
   document.getElementById("name").value="";
 }
 
-// 📸 BILDE (BASE64 – GRATIS)
+// 📸 BILDE (FIXA!)
 function uploadImage(id){
   selectedPlayer = id;
+  document.getElementById("fileInput").value="";
   document.getElementById("fileInput").click();
 }
 
 document.getElementById("fileInput").addEventListener("change", function(e){
   const file = e.target.files[0];
-  if(!file) return;
+  if(!file || !selectedPlayer){
+    alert("Feil med bildevalg");
+    return;
+  }
 
   const reader = new FileReader();
 
   reader.onload = async function(){
-    await updateDoc(doc(db,"rounds",currentRound,"players",selectedPlayer),{
-      image: reader.result
-    });
+    await updateDoc(
+      doc(db,"rounds",currentRound,"players",selectedPlayer),
+      { image: reader.result }
+    );
   };
 
   reader.readAsDataURL(file);
 });
 
-// ❌ SLETT
+// ❌ SLETT SPILLER
 async function deletePlayer(id){
   await deleteDoc(doc(db,"rounds",currentRound,"players",id));
 }
@@ -189,7 +214,6 @@ function render(){
 
   document.getElementById("leaderboard").innerHTML=lb;
 
-  // SCOREKORT
   let sc="<tr><th>Spiller</th>";
   for(let i=1;i<=18;i++) sc+=`<th>${i}</th>`;
   sc+="</tr>";
@@ -215,6 +239,7 @@ function render(){
 // GLOBAL
 window.newRound=newRound;
 window.loadRound=loadRound;
+window.deleteRound=deleteRound;
 window.addPlayer=addPlayer;
 window.deletePlayer=deletePlayer;
 window.uploadImage=uploadImage;
