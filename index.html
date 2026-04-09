@@ -15,8 +15,8 @@ table { width:100%; margin-top:10px; border-collapse: collapse; }
 td, th { border:1px solid #555; padding:5px; }
 
 .avatar {
-  width:50px;
-  height:50px;
+  width:55px;
+  height:55px;
   border-radius:50%;
   background:#333;
 }
@@ -24,8 +24,6 @@ td, th { border:1px solid #555; padding:5px; }
 .gold { background:gold; color:black; }
 .silver { background:silver; color:black; }
 .bronze { background:#cd7f32; }
-
-.topbar { margin-bottom:10px; }
 </style>
 </head>
 
@@ -33,11 +31,11 @@ td, th { border:1px solid #555; padding:5px; }
 
 <h1>🏌️ Nesbyen Masters LIVE</h1>
 
-<div class="topbar">
 <button onclick="newRound()">➕ Ny runde</button>
 <select id="roundSelect" onchange="loadRound()"></select>
 <button onclick="deleteRound()">🧨 Slett runde</button>
-</div>
+
+<br><br>
 
 <input id="name" placeholder="Spiller">
 <button onclick="addPlayer()">Legg til</button>
@@ -69,60 +67,30 @@ let selectedPlayer = null;
 
 // 🔥 NY RUNDE
 async function newRound(){
-  const r = await addDoc(collection(db,"rounds"),{
-  created: Date.now()
-});
-
-  const r = await addDoc(collection(db,"rounds"),{
-    name:"Runde "+nr,
-    created:Date.now()
+  await addDoc(collection(db,"rounds"),{
+    created: Date.now()
   });
-
-  currentRound = r.id;
 }
 
-// 🔄 RUNDER
-  onSnapshot(collection(db,"rounds"), snap=>{
+// 🔄 RUNDER (SORTERT RIKTIG)
+onSnapshot(collection(db,"rounds"), snap=>{
   const sel = document.getElementById("roundSelect");
 
-  // 🔥 sorter på created
   let rounds = snap.docs
     .map(d => ({ id:d.id, ...d.data() }))
-    .sort((a,b) => a.created - b.created);
+    .sort((a,b)=>a.created - b.created);
 
   sel.innerHTML="";
 
   rounds.forEach((r,i)=>{
     const o = document.createElement("option");
-
-    // 🔥 ALLTID riktig navn
     o.value = r.id;
     o.text = "Runde " + (i+1);
-
     sel.appendChild(o);
   });
 
   if(!currentRound && rounds.length){
     currentRound = rounds[0].id;
-    sel.value = currentRound;
-    loadRound();
-  }
-});
-  const sel = document.getElementById("roundSelect");
-  sel.innerHTML="";
-
-  snap.docs.forEach((d,i)=>{
-    const data = d.data();
-    const name = data.name || "Runde " + (i+1);
-
-    const o = document.createElement("option");
-    o.value = d.id;
-    o.text = name;
-    sel.appendChild(o);
-  });
-
-  if(!currentRound && snap.docs.length){
-    currentRound = snap.docs[0].id;
     sel.value = currentRound;
     loadRound();
   }
@@ -138,35 +106,31 @@ function loadRound(){
   });
 }
 
+// 🧨 SLETT RUNDE (FIXA)
 async function deleteRound(){
   if(!currentRound){
-    alert("Ingen runde valgt");
+    alert("Velg en runde først");
     return;
   }
 
-  const ok = confirm("Slette hele runden?");
-  if(!ok) return;
+  if(!confirm("Slette hele runden?")) return;
 
   const snap = await getDocs(
     collection(db,"rounds",currentRound,"players")
   );
 
   for(const p of snap.docs){
-    await deleteDoc(
-      doc(db,"rounds",currentRound,"players",p.id)
-    );
+    await deleteDoc(doc(db,"rounds",currentRound,"players",p.id));
   }
 
-  await deleteDoc(
-    doc(db,"rounds",currentRound)
-  );
+  await deleteDoc(doc(db,"rounds",currentRound));
 
   currentRound = null;
 
   alert("Runde slettet ✅");
 }
 
-// ➕ LEGG TIL SPILLER
+// ➕ SPILLER
 async function addPlayer(){
   const name = document.getElementById("name").value;
   if(!name) return;
@@ -180,7 +144,7 @@ async function addPlayer(){
   document.getElementById("name").value="";
 }
 
-// 📸 BILDE (FIXA!)
+// 📸 BILDE
 function uploadImage(id){
   selectedPlayer = id;
   document.getElementById("fileInput").value="";
@@ -189,10 +153,7 @@ function uploadImage(id){
 
 document.getElementById("fileInput").addEventListener("change", function(e){
   const file = e.target.files[0];
-  if(!file || !selectedPlayer){
-    alert("Feil med bildevalg");
-    return;
-  }
+  if(!file || !selectedPlayer) return;
 
   const reader = new FileReader();
 
@@ -214,8 +175,8 @@ async function deletePlayer(id){
 // ➕➖ SCORE
 async function updateScore(id,hole,val){
   const p = players.find(x=>x.id===id);
-  p.scores[hole] += val;
-  if(p.scores[hole] < 0) p.scores[hole]=0;
+  p.scores[hole]+=val;
+  if(p.scores[hole]<0) p.scores[hole]=0;
 
   await updateDoc(doc(db,"rounds",currentRound,"players",id),{
     scores:p.scores
@@ -274,7 +235,7 @@ function render(){
   document.getElementById("scoreTable").innerHTML=sc;
 }
 
-// GLOBAL
+// 🔥 GLOBAL (DETTE REDDER KNAPPER)
 window.newRound=newRound;
 window.loadRound=loadRound;
 window.deleteRound=deleteRound;
