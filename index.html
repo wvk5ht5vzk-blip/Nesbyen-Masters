@@ -128,85 +128,9 @@ input {
 <br>
 <input id="name" placeholder="Spiller">
 <button onclick="addPlayer()">Legg til</button>
-
 <script>
 // 🔑 LIM INN DIN FIREBASE CONFIG HER
-const firebaseConfig = {
-  apiKey: "XXXX",
-  authDomain: "XXXX",
-  projectId: "XXXX"
-};
 
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-const holes = 18;
-const par = [4,4,3,5,4,4,3,4,5,4,4,3,5,4,4,3,4,5];
-
-let players = [];
-
-db.collection("players").onSnapshot(snapshot => {
-  players = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-  render();
-});
-
-function addPlayer() {
-  const name = document.getElementById("name").value;
-  if (!name) return;
-
-  db.collection("players").add({
-    name,
-    scores: Array(holes).fill(0)
-  });
-
-  document.getElementById("name").value = "";
-}
-
-function updateScore(id, index, value) {
-  const player = players.find(p => p.id === id);
-  player.scores[index] = parseInt(value) || 0;
-
-  db.collection("players").doc(id).update({
-    scores: player.scores
-  });
-}
-
-function sum(arr){ return arr.reduce((a,b)=>a+b,0); }
-
-function total(p){ return sum(p.scores); }
-
-function render() {
-  let sorted = [...players].sort((a,b)=>total(a)-total(b));
-
-  let lb = "<tr><th>#</th><th>Navn</th><th>Score</th></tr>";
-
-  sorted.forEach((p,i)=>{
-    lb += `<tr class="${i===0?'leader':''}">
-      <td>${i+1}</td>
-      <td>${p.name}</td>
-      <td>${total(p)}</td>
-    </tr>`;
-  });
-
-  document.getElementById("leaderboard").innerHTML = lb;
-
-  let sc = "<tr><th>Spiller</th>";
-  for(let i=1;i<=holes;i++) sc += `<th>${i}</th>`;
-  sc += "<th>Tot</th></tr>";
-
-  players.forEach(p=>{
-    sc += `<tr><td>${p.name}</td>`;
-    p.scores.forEach((s,i)=>{
-      sc += `<td>
-        <input type="number" value="${s}"
-        onchange="updateScore('${p.id}',${i},this.value)">
-      </td>`;
-    });
-    sc += `<td>${total(p)}</td></tr>`;
-  });
-
-  document.getElementById("scoreTable").innerHTML = sc;
-}
 </script>
 
 </body>
