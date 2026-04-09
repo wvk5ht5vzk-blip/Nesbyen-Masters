@@ -158,18 +158,26 @@ db.collection("rounds").onSnapshot(snap=>{
 function loadRound(){
   currentRound=document.getElementById("roundSelect").value;
 
-  db.collection("rounds").doc(currentRound).get().then(doc=>{
-    const data=doc.data();
-    currentCourse=courses.find(c=>c.id===data.courseId) || courses[0];
+  db.collection("rounds").doc(currentRound).collection("players")
+.onSnapshot(snap=>{
+
+  const newPlayers = [];
+
+  snap.forEach(d=>{
+    const data = {id:d.id,...d.data()};
+
+    const existing = players.find(p=>p.id===d.id);
+
+    if(existing && existing.image && !data.image){
+      data.image = existing.image;
+    }
+
+    newPlayers.push(data);
   });
 
-  db.collection("rounds").doc(currentRound).collection("players")
-  .onSnapshot(snap=>{
-    players=[];
-    snap.forEach(d=>players.push({id:d.id,...d.data()}));
-    render();
-  });
-}
+  players = newPlayers;
+  render();
+});
 
 // DELETE ROUND
 async function deleteRound(){
