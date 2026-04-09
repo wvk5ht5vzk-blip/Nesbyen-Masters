@@ -7,9 +7,84 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Nesbyen Masters">  
 <meta name="apple-mobile-web-app-capable" content="yes">
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"></script>
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+  const firebaseConfig = {
+    apiKey: "AIzaSyAbU6RL1oIdtjGNF-min5swSbB77iM31LA",
+    authDomain: "nesbyen-masters.firebaseapp.com",
+    projectId: "nesbyen-masters",
+    storageBucket: "nesbyen-masters.firebasestorage.app",
+    messagingSenderId: "346674418458",
+    appId: "1:346674418458:web:ff94275dee562e0ca492a3"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  const holes = 18;
+  let players = [];
+
+  const playersRef = collection(db, "players");
+
+  onSnapshot(playersRef, (snapshot) => {
+    players = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    render();
+  });
+
+  function addPlayer() {
+    const name = document.getElementById("name").value;
+    if (!name) return;
+
+    addDoc(playersRef, {
+      name,
+      scores: Array(holes).fill(0)
+    });
+
+    document.getElementById("name").value = "";
+  }
+
+  function updateScore(id, index, value) {
+    const player = players.find(p => p.id === id);
+    player.scores[index] = parseInt(value) || 0;
+
+    updateDoc(doc(db, "players", id), {
+      scores: player.scores
+    });
+  }
+
+  function sum(arr){ return arr.reduce((a,b)=>a+b,0); }
+  function total(p){ return sum(p.scores); }
+
+  function render() {
+    let sorted = [...players].sort((a,b)=>total(a)-total(b));
+
+    let lb = "<tr><th>#</th><th>Navn</th><th>Score</th></tr>";
+    sorted.forEach((p,i)=>{
+      lb += `<tr><td>${i+1}</td><td>${p.name}</td><td>${total(p)}</td></tr>`;
+    });
+    document.getElementById("leaderboard").innerHTML = lb;
+
+    let sc = "<tr><th>Spiller</th>";
+    for(let i=1;i<=holes;i++) sc += `<th>${i}</th>`;
+    sc += "<th>Tot</th></tr>";
+
+    players.forEach(p=>{
+      sc += `<tr><td>${p.name}</td>`;
+      p.scores.forEach((s,i)=>{
+        sc += `<td><input type="number" value="${s}"
+        onchange="updateScore('${p.id}',${i},this.value)"></td>`;
+      });
+      sc += `<td>${total(p)}</td></tr>`;
+    });
+
+    document.getElementById("scoreTable").innerHTML = sc;
+  }
+
+  window.addPlayer = addPlayer;
+  window.updateScore = updateScore;
+</script>
 <style>
 body {
   font-family: Arial;
