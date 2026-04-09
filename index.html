@@ -2,36 +2,17 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
 <title>Nesbyen Masters</title>
 
 <style>
-body { font-family: Arial; background: linear-gradient(135deg,#020617,#0f172a); color:white; text-align:center; }
+body { font-family: Arial; background:#020617; color:white; text-align:center; }
+button { padding:10px; margin:4px; border:none; border-radius:10px; background:#22c55e; color:white; }
+input, select { padding:10px; border-radius:8px; }
 
-button { padding:10px; margin:4px; border:none; border-radius:12px; background:linear-gradient(45deg,#22c55e,#16a34a); color:white; font-weight:bold; touch-action: manipulation; }
+.avatar { width:60px; height:60px; border-radius:50%; border:2px solid white; }
 
-input, select { padding:10px; border-radius:10px; border:none; }
-
-table { width:95%; margin:auto; border-collapse: collapse; background:rgba(255,255,255,0.06); }
-
-td, th { padding:8px; }
-
-.avatar { width:70px; height:70px; border-radius:50%; border:2px solid white; }
-
-.gold { background:linear-gradient(45deg,gold,#facc15); color:black; }
-
-.score-minus { color:#22c55e; font-weight:bold; }
-.score-plus { color:#ef4444; font-weight:bold; }
-.score-zero { color:white; }
-
-.scroll {
-  overflow-x: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-#scoreTable {
-  min-width: 900px;
-}
+.scroll { overflow-x:auto; }
+#scoreTable { min-width:900px; }
 </style>
 </head>
 
@@ -39,19 +20,23 @@ td, th { padding:8px; }
 
 <h1>🏌️ Nesbyen Masters</h1>
 
-<select id="courseSelect"></select>
-<button onclick="addCourse()">➕ Ny bane</button>
+<div id="loginBox">
+  <input id="playerName" placeholder="Ditt navn">
+  <button onclick="login()">Start</button>
+</div>
 
-<br>
+<div id="app" style="display:none;">
 
-<button onclick="newRound()">➕ Ny runde</button>
-<button onclick="finishRound()">🏁 Ferdig runde</button>
+<p id="welcome"></p>
+
+<button onclick="newTournament()">➕ Ny turnering</button>
+
 <select id="roundSelect" onchange="loadRound()"></select>
-<button onclick="deleteRound()">🧨</button>
+<button onclick="newRound()">➕ Ny runde</button>
 
 <br><br>
 
-<input id="name" placeholder="Spiller / Lag">
+<input id="name" placeholder="Spiller">
 <button onclick="addPlayer()">Legg til</button>
 
 <input type="file" id="fileInput" style="display:none">
@@ -60,9 +45,10 @@ td, th { padding:8px; }
 <table id="leaderboard"></table>
 
 <h2>Scorekort</h2>
-
 <div class="scroll">
-  <table id="scoreTable"></table>
+<table id="scoreTable"></table>
+</div>
+
 </div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
@@ -78,104 +64,104 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
+let user=null;
+let tournamentId=null;
 let currentRound=null;
 let players=[];
-let selectedPlayer=null;
-let courses=[];
-let currentCourse=null;
 
-// COURSES
-db.collection("courses").onSnapshot(snap=>{
-  const sel=document.getElementById("courseSelect");
-  courses=[];
-  sel.innerHTML="";
+// LOGIN
+function login(){
+  user=document.getElementById("playerName").value;
+  if(!user) return;
 
-  snap.forEach(d=>{
-    const c={id:d.id,...d.data()};
-    courses.push(c);
+  localStorage.setItem("user",user);
 
-    const o=document.createElement("option");
-    o.value=d.id;
-    o.text=c.name;
-    sel.appendChild(o);
-  });
+  document.getElementById("loginBox").style.display="none";
+  document.getElementById("app").style.display="block";
+  document.getElementById("welcome").innerText="Hei "+user;
 
-  if(courses.length && !currentCourse){
-    currentCourse=courses[0];
-  }
-});
-
-// CHANGE COURSE
-document.getElementById("courseSelect").onchange=function(){
-  currentCourse=courses.find(c=>c.id===this.value);
-  render();
-};
-
-// ADD COURSE
-function addCourse(){
-  const name=prompt("Navn på bane?");
-  if(!name) return;
-
-  const pars=prompt("18 hull par (4,4,3...)").split(",").map(x=>parseInt(x));
-  db.collection("courses").add({name, pars});
+  init();
 }
 
-// GET PAR
-function getPars(){
-  return currentCourse?.pars || Array(18).fill(4);
+// AUTO LOGIN
+window.onload=function(){
+  const saved=localStorage.getItem("user");
+  if(saved){
+    document.getElementById("playerName").value=saved;
+    login();
+  }
+}
+
+// INIT
+function init(){
+  const url=new URL(window.location.href);
+  tournamentId=url.searchParams.get("tid");
+
+  if(!tournamentId){
+    newTournament();
+  }else{
+    loadRounds();
+  }
+}
+
+// NEW TOURNAMENT
+function newTournament(){
+  db.collection("tournaments").add({
+    created:Date.now()
+  }).then(doc=>{
+    window.location="?tid="+doc.id;
+  });
+}
+
+// LOAD ROUNDS
+function loadRounds(){
+  db.collection("tournaments").doc(tournamentId)
+  .collection("rounds")
+  .onSnapshot(snap=>{
+    const sel=document.getElementById("roundSelect");
+
+    let rounds=[];
+    snap.forEach(d=>rounds.push({id:d.id,...d.data()}));
+    rounds.sort((a,b)=>a.created-b.created);
+
+    sel.innerHTML="";
+
+    rounds.forEach((r,i)=>{
+      const o=document.createElement("option");
+      o.value=r.id;
+      o.text="Runde "+(i+1);
+      sel.appendChild(o);
+    });
+
+    if(rounds.length){
+      currentRound=rounds[0].id;
+      sel.value=currentRound;
+      loadRound();
+    }
+  });
 }
 
 // NEW ROUND
 function newRound(){
-  const courseId=document.getElementById("courseSelect").value;
-  db.collection("rounds").add({created:Date.now(),courseId});
+  db.collection("tournaments").doc(tournamentId)
+  .collection("rounds")
+  .add({created:Date.now()});
 }
-
-// ROUNDS
-db.collection("rounds").onSnapshot(snap=>{
-  const sel=document.getElementById("roundSelect");
-  let rounds=[];
-  snap.forEach(d=>rounds.push({id:d.id,...d.data()}));
-  rounds.sort((a,b)=>a.created-b.created);
-
-  sel.innerHTML="";
-
-  rounds.forEach((r,i)=>{
-    const o=document.createElement("option");
-    o.value=r.id;
-    o.text="Runde "+(i+1);
-    sel.appendChild(o);
-  });
-
-  if(!currentRound && rounds.length){
-    currentRound=rounds[0].id;
-    sel.value=currentRound;
-    loadRound();
-  }
-});
 
 // LOAD ROUND
 function loadRound(){
   currentRound=document.getElementById("roundSelect").value;
 
-  db.collection("rounds").doc(currentRound).get().then(doc=>{
-    const data=doc.data();
-    currentCourse=courses.find(c=>c.id===data.courseId)||courses[0];
-  });
-
-  db.collection("rounds").doc(currentRound).collection("players")
+  db.collection("tournaments").doc(tournamentId)
+  .collection("rounds").doc(currentRound)
+  .collection("players")
   .onSnapshot(snap=>{
     players=[];
     snap.forEach(d=>{
       let data={id:d.id,...d.data()};
-
-      if(!data.scores || data.scores.length!==18){
-        data.scores=Array(18).fill(0);
-      }
-
+      if(!data.scores) data.scores=Array(18).fill(0);
       players.push(data);
     });
-
     render();
   });
 }
@@ -185,13 +171,16 @@ function addPlayer(){
   const name=document.getElementById("name").value;
   if(!name) return;
 
-  const hcp=parseInt(prompt("Handicap?"))||0;
+  const hcp=parseInt(prompt("HCP?"))||0;
 
-  db.collection("rounds").doc(currentRound).collection("players").add({
+  db.collection("tournaments").doc(tournamentId)
+  .collection("rounds").doc(currentRound)
+  .collection("players")
+  .add({
     name,
     hcp,
-    image:"",
     scores:Array(18).fill(0),
+    image:"",
     longest:0,
     closest:0
   });
@@ -199,121 +188,70 @@ function addPlayer(){
   document.getElementById("name").value="";
 }
 
-// EXTRA
-function updateExtra(id,field){
-  let val=prompt(field==="longest"?"Meter?":"CM?");
-  val=parseFloat(val)||0;
-
-  db.collection("rounds").doc(currentRound)
-  .collection("players").doc(id)
-  .update({[field]:val});
-}
-
-// DELETE PLAYER
-function deletePlayer(id){
-  db.collection("rounds").doc(currentRound)
-  .collection("players").doc(id).delete();
-}
-
 // IMAGE
 function uploadImage(id){
-  selectedPlayer=id;
+  document.getElementById("fileInput").onchange=e=>{
+    const file=e.target.files[0];
+    const reader=new FileReader();
+
+    reader.onload=()=>{
+      db.collection("tournaments").doc(tournamentId)
+      .collection("rounds").doc(currentRound)
+      .collection("players").doc(id)
+      .update({image:reader.result});
+    };
+
+    reader.readAsDataURL(file);
+  };
+
   document.getElementById("fileInput").click();
 }
-
-document.getElementById("fileInput").addEventListener("change", e=>{
-  const file=e.target.files[0];
-  if(!file) return;
-
-  const reader=new FileReader();
-  reader.onload=()=>{
-    db.collection("rounds").doc(currentRound)
-    .collection("players").doc(selectedPlayer)
-    .update({image:reader.result});
-  };
-  reader.readAsDataURL(file);
-});
 
 // SCORE
 function updateScore(id,hole,val){
   const p=players.find(x=>x.id===id);
   p.scores[hole]+=val;
-  if(p.scores[hole]<0) p.scores[hole]=0;
+  if(p.scores[hole]<0)p.scores[hole]=0;
 
-  db.collection("rounds").doc(currentRound)
+  db.collection("tournaments").doc(tournamentId)
+  .collection("rounds").doc(currentRound)
   .collection("players").doc(id)
   .update({scores:p.scores});
 }
 
-// SCORING
-function total(p){ return p.scores.reduce((a,b)=>a+b,0); }
+// CALC
+function total(p){return p.scores.reduce((a,b)=>a+b,0);}
+function totalToPar(p){return total(p)-72;}
 
-function totalToPar(p){
-  return p.scores.reduce((sum,s,i)=>sum+(s-getPars()[i]),0);
-}
-
-function hcpPerHole(p){
-  const base=Math.floor((p.hcp||0)/18);
-  const extra=(p.hcp||0)%18;
-  let arr=Array(18).fill(base);
-  for(let i=0;i<extra;i++) arr[i]++;
-  return arr;
-}
-
-function netScore(p){
-  const h=hcpPerHole(p);
-  return p.scores.reduce((sum,s,i)=>sum+(s-h[i]),0);
-}
-
-function netToPar(p){
-  return netScore(p)-getPars().reduce((a,b)=>a+b,0);
-}
-
-// FINISH
-function finishRound(){
-  let winner=[...players].sort((a,b)=>totalToPar(a)-totalToPar(b))[0];
-  alert("🏆 "+winner.name);
-}
-
-// RENDER
 function render(){
   let sorted=[...players].sort((a,b)=>totalToPar(a)-totalToPar(b));
 
-  let lb="<tr><th>#</th><th></th><th>Navn</th><th>Score</th><th>Drive</th><th>Pin</th><th></th></tr>";
+  let lb="<tr><th>#</th><th></th><th>Navn</th><th>Score</th></tr>";
 
   sorted.forEach((p,i)=>{
     lb+=`
-    <tr class="${i===0?'gold':''}">
+    <tr>
       <td>${i+1}</td>
       <td onclick="uploadImage('${p.id}')">
-        ${p.image ? `<img src="${p.image}" class="avatar">` : `<div class="avatar"></div>`}
+        ${p.image?`<img src="${p.image}" class="avatar">`:`<div class="avatar"></div>`}
       </td>
-      <td>${p.name}<br><small>hcp ${p.hcp}</small></td>
-      <td>
-        ${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})
-        <br>
-        <small>Netto: ${netScore(p)} (${netToPar(p)>0?'+':''}${netToPar(p)})</small>
-      </td>
-      <td onclick="updateExtra('${p.id}','longest')">${p.longest||0} m</td>
-      <td onclick="updateExtra('${p.id}','closest')">${p.closest||0} cm</td>
-      <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
+      <td>${p.name}</td>
+      <td>${total(p)}</td>
     </tr>`;
   });
 
   document.getElementById("leaderboard").innerHTML=lb;
 
   let sc="<tr><th>Spiller</th>";
-  for(let i=1;i<=18;i++) sc+=`<th>${i}<br>${getPars()[i-1]}</th>`;
+  for(let i=1;i<=18;i++) sc+=`<th>${i}</th>`;
   sc+="</tr>";
 
   players.forEach(p=>{
     sc+=`<tr><td>${p.name}</td>`;
     p.scores.forEach((s,i)=>{
-      const diff=s-getPars()[i];
-      sc+=`
-      <td>
+      sc+=`<td>
         <button onclick="updateScore('${p.id}',${i},-1)">-</button>
-        <span class="${diff<0?'score-minus':diff>0?'score-plus':'score-zero'}">${s}</span>
+        ${s}
         <button onclick="updateScore('${p.id}',${i},1)">+</button>
       </td>`;
     });
