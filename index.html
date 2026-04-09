@@ -81,7 +81,32 @@ async function newRound(){
 }
 
 // 🔄 RUNDER
-onSnapshot(collection(db,"rounds"), snap=>{
+  onSnapshot(collection(db,"rounds"), snap=>{
+  const sel = document.getElementById("roundSelect");
+
+  // 🔥 sorter på created
+  let rounds = snap.docs
+    .map(d => ({ id:d.id, ...d.data() }))
+    .sort((a,b) => a.created - b.created);
+
+  sel.innerHTML="";
+
+  rounds.forEach((r,i)=>{
+    const o = document.createElement("option");
+
+    // 🔥 ALLTID riktig navn
+    o.value = r.id;
+    o.text = "Runde " + (i+1);
+
+    sel.appendChild(o);
+  });
+
+  if(!currentRound && rounds.length){
+    currentRound = rounds[0].id;
+    sel.value = currentRound;
+    loadRound();
+  }
+});
   const sel = document.getElementById("roundSelect");
   sel.innerHTML="";
 
