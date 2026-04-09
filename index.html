@@ -2,20 +2,28 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Nesbyen Masters LIVE</title>
+<title>Nesbyen Masters</title>
 
 <style>
 body { font-family: Arial; background:#0f172a; color:white; text-align:center; }
 button { padding:10px; margin:5px; border:none; border-radius:8px; background:#22c55e; color:white; }
-input { padding:5px; margin:5px; }
+input { padding:8px; margin:5px; border-radius:6px; }
 table { width:100%; margin-top:10px; border-collapse: collapse; }
 td, th { border:1px solid #555; padding:5px; }
-img { border-radius:50%; vertical-align:middle; margin-right:5px; }
+
+.avatar {
+  width:35px;
+  height:35px;
+  border-radius:50%;
+  background:#333;
+  display:inline-block;
+  cursor:pointer;
+}
+
 .gold { background:gold; color:black; }
 .silver { background:silver; color:black; }
 .bronze { background:#cd7f32; }
 </style>
-
 </head>
 
 <body>
@@ -28,14 +36,12 @@ img { border-radius:50%; vertical-align:middle; margin-right:5px; }
 <br>
 
 <input id="name" placeholder="Spiller">
-<input type="file" id="imageInput">
 <button onclick="addPlayer()">Legg til</button>
+
+<input type="file" id="hiddenFile" style="display:none">
 
 <h2>Leaderboard</h2>
 <table id="leaderboard"></table>
-
-<h2>Scorekort</h2>
-<table id="scoreTable"></table>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
@@ -57,140 +63,113 @@ const storage = getStorage(app);
 
 let currentRound = null;
 let players = [];
+let selectedPlayer = null;
 
-const holes = 18;
-
-// 🆕 NY RUNDE
+// 🔥 NY RUNDE
 async function newRound() {
-  const docRef = await addDoc(collection(db, "rounds"), {
-    created: Date.now()
-  });
-  currentRound = docRef.id;
-  loadRounds();
+  const r = await addDoc(collection(db, "rounds"), { created: Date.now() });
+  currentRound = r.id;
 }
 
-// 📂 HENT RUNDER
-function loadRounds() {
-  onSnapshot(collection(db, "rounds"), snap => {
-    const select = document.getElementById("roundSelect");
-    select.innerHTML = "";
-    snap.docs.forEach(d => {
-      const opt = document.createElement("option");
-      opt.value = d.id;
-      opt.text = d.id;
-      select.appendChild(opt);
-    });
-    if (!currentRound && snap.docs.length > 0) {
-      currentRound = snap.docs[0].id;
-      select.value = currentRound;
-      loadRound();
-    }
+// 🔄 RUNDER
+onSnapshot(collection(db, "rounds"), snap => {
+  const sel = document.getElementById("roundSelect");
+  sel.innerHTML = "";
+  snap.docs.forEach(d=>{
+    const o = document.createElement("option");
+    o.value = d.id;
+    o.text = d.id;
+    sel.appendChild(o);
   });
-}
 
-// 📂 LAST RUNDE
-function loadRound() {
+  if(!currentRound && snap.docs.length){
+    currentRound = snap.docs[0].id;
+    sel.value = currentRound;
+    loadRound();
+  }
+});
+
+// 📂 LAST
+function loadRound(){
   currentRound = document.getElementById("roundSelect").value;
 
-  onSnapshot(collection(db, "rounds", currentRound, "players"), snap => {
-    players = snap.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+  onSnapshot(collection(db,"rounds",currentRound,"players"), snap=>{
+    players = snap.docs.map(d=>({id:d.id,...d.data()}));
     render();
   });
 }
 
-// ➕ LEGG TIL SPILLER
-async function addPlayer() {
+// ➕ LEGG TIL
+async function addPlayer(){
   const name = document.getElementById("name").value;
-  const file = document.getElementById("imageInput").files[0];
+  if(!name) return;
 
-  if (!name || !currentRound) return;
-
-  let imageUrl = "";
-
-  if (file) {
-    const storageRef = ref(storage, "images/" + Date.now());
-    await uploadBytes(storageRef, file);
-    imageUrl = await getDownloadURL(storageRef);
-  }
-
-  await addDoc(collection(db, "rounds", currentRound, "players"), {
+  await addDoc(collection(db,"rounds",currentRound,"players"),{
     name,
-    image: imageUrl,
-    scores: Array(holes).fill(0)
+    image:"",
+    scores:Array(18).fill(0)
   });
 
-  document.getElementById("name").value = "";
-  document.getElementById("imageInput").value = "";
+  document.getElementById("name").value="";
 }
+
+// 📸 KLIKK BILDE
+function uploadImage(id){
+  selectedPlayer = id;
+  document.getElementById("hiddenFile").click();
+}
+
+document.getElementById("hiddenFile").addEventListener("change", async (e)=>{
+  const file = e.target.files[0];
+  if(!file || !selectedPlayer) return;
+
+  const storageRef = ref(storage,"images/"+Date.now());
+  await uploadBytes(storageRef,file);
+  const url = await getDownloadURL(storageRef);
+
+  await updateDoc(doc(db,"rounds",currentRound,"players",selectedPlayer),{
+    image:url
+  });
+});
 
 // ❌ SLETT
-async function deletePlayer(id) {
-  await deleteDoc(doc(db, "rounds", currentRound, "players", id));
+async function deletePlayer(id){
+  await deleteDoc(doc(db,"rounds",currentRound,"players",id));
 }
-
-// ✏️ EDIT
-async function editName(id, oldName) {
-  const name = prompt("Nytt navn:", oldName);
-  if (!name) return;
-  await updateDoc(doc(db, "rounds", currentRound, "players", id), { name });
-}
-
-// ⛳ SCORE
-async function updateScore(id, i, val) {
-  const p = players.find(p => p.id === id);
-  p.scores[i] = parseInt(val) || 0;
-
-  await updateDoc(doc(db, "rounds", currentRound, "players", id), {
-    scores: p.scores
-  });
-}
-
-function total(p){ return p.scores.reduce((a,b)=>a+b,0); }
 
 // 🎨 RENDER
-function render() {
-  let sorted = [...players].sort((a,b)=>total(a)-total(b));
+function render(){
+  let sorted=[...players].sort((a,b)=>total(a)-total(b));
 
-  let lb = "<tr><th>#</th><th>Navn</th><th>Score</th><th></th></tr>";
+  let html="<tr><th>#</th><th></th><th>Navn</th><th>Score</th><th></th></tr>";
 
   sorted.forEach((p,i)=>{
-    let cls = i===0?'gold':i===1?'silver':i===2?'bronze':'';
-    lb += `<tr class="${cls}">
+    let cls=i===0?'gold':i===1?'silver':i===2?'bronze':'';
+
+    html+=`
+    <tr class="${cls}">
       <td>${i+1}</td>
-      <td onclick="editName('${p.id}','${p.name}')">
-        ${p.image ? `<img src="${p.image}" width="25">` : ""}
-        ${p.name}
+      <td onclick="uploadImage('${p.id}')">
+        ${p.image ? `<img src="${p.image}" class="avatar">` : `<div class="avatar"></div>`}
       </td>
+      <td>${p.name}</td>
       <td>${total(p)}</td>
       <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
     </tr>`;
   });
 
-  document.getElementById("leaderboard").innerHTML = lb;
-
-  let sc = "<tr><th>Spiller</th>";
-  for(let i=1;i<=holes;i++) sc += `<th>${i}</th>`;
-  sc += "</tr>";
-
-  players.forEach(p=>{
-    sc += `<tr><td>${p.name}</td>`;
-    p.scores.forEach((s,i)=>{
-      sc += `<td><input type="number" value="${s}" onchange="updateScore('${p.id}',${i},this.value)"></td>`;
-    });
-    sc += "</tr>`;
-  });
-
-  document.getElementById("scoreTable").innerHTML = sc;
+  document.getElementById("leaderboard").innerHTML=html;
 }
 
-// START
-loadRounds();
-window.newRound = newRound;
-window.loadRound = loadRound;
-window.addPlayer = addPlayer;
-window.deletePlayer = deletePlayer;
-window.editName = editName;
-window.updateScore = updateScore;
+function total(p){ return p.scores.reduce((a,b)=>a+b,0); }
+
+// FIX MODULE EVENTS
+window.newRound=newRound;
+window.loadRound=loadRound;
+window.addPlayer=addPlayer;
+window.deletePlayer=deletePlayer;
+window.uploadImage=uploadImage;
+
 </script>
 
 </body>
