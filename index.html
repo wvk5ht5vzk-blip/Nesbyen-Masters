@@ -15,17 +15,30 @@ button {
   background:#22c55e;
   color:white;
   touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
 }
 
 input, select { padding:10px; border-radius:8px; }
 
 .avatar { width:60px; height:60px; border-radius:50%; border:2px solid white; }
 
-.scroll { overflow-x:auto; -webkit-overflow-scrolling: touch; }
+.scroll { overflow-x:auto; }
 #scoreTable { min-width:900px; }
 
 .gold { background:gold; color:black; }
+.silver { background:#cbd5f5; color:black; }
+.bronze { background:#fbbf24; color:black; }
+
+#winnerModal {
+  position:fixed;
+  top:0; left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.8);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  font-size:24px;
+}
 </style>
 </head>
 
@@ -51,6 +64,7 @@ input, select { padding:10px; border-radius:8px; }
 
 <select id="roundSelect" onchange="loadRound()"></select>
 <button onclick="newRound()">➕ Ny runde</button>
+<button onclick="finishRound()">🏁 Ferdig runde</button>
 
 <br><br>
 
@@ -69,12 +83,14 @@ input, select { padding:10px; border-radius:8px; }
 
 </div>
 
+<div id="winnerModal" onclick="this.style.display='none'"></div>
+
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyDDrqLTUtImklgFF1W59aWaNolyg7GBmj0",
+  apiKey: "AIzaSy...",
   authDomain: "nesbyen-masters-v2.firebaseapp.com",
   projectId: "nesbyen-masters-v2"
 };
@@ -103,7 +119,6 @@ function login(){
   init();
 }
 
-// AUTO LOGIN
 window.onload=function(){
   const saved=localStorage.getItem("user");
   if(saved){
@@ -112,7 +127,7 @@ window.onload=function(){
   }
 }
 
-// INIT (FIXED)
+// INIT
 function init(){
   const url=new URL(window.location.href);
   tournamentId=url.searchParams.get("tid") || localStorage.getItem("tid");
@@ -123,6 +138,13 @@ function init(){
 
     setTimeout(()=>{
       const savedRound=localStorage.getItem("round");
+      const savedCourse=localStorage.getItem("course");
+
+      if(savedCourse){
+        currentCourse=courses.find(c=>c.id===savedCourse);
+        document.getElementById("courseSelect").value=savedCourse;
+      }
+
       if(savedRound){
         currentRound=savedRound;
         document.getElementById("roundSelect").value=savedRound;
@@ -164,17 +186,17 @@ db.collection("courses").onSnapshot(snap=>{
   }
 });
 
+// CHANGE COURSE (SAVE!)
 document.getElementById("courseSelect").onchange=function(){
   currentCourse=courses.find(c=>c.id===this.value);
+  localStorage.setItem("course", this.value);
   render();
 };
 
 function addCourse(){
-  const name=prompt("Navn på bane?");
+  const name=prompt("Navn?");
   if(!name) return;
-
-  const pars=prompt("18 hull par (4,4,3...)").split(",").map(x=>parseInt(x));
-
+  const pars=prompt("Pars").split(",").map(x=>parseInt(x));
   db.collection("courses").add({name, pars});
 }
 
@@ -210,14 +232,13 @@ function loadRounds(){
   });
 }
 
-// NEW ROUND
 function newRound(){
   db.collection("tournaments").doc(tournamentId)
   .collection("rounds")
   .add({created:Date.now()});
 }
 
-// LOAD ROUND (FIXED SAVE)
+// LOAD ROUND
 function loadRound(){
   currentRound=document.getElementById("roundSelect").value;
   localStorage.setItem("round", currentRound);
@@ -247,55 +268,15 @@ function addPlayer(){
   .collection("rounds").doc(currentRound)
   .collection("players")
   .add({
-    name,
-    hcp,
+    name,hcp,
     scores:Array(18).fill(0),
-    image:"",
-    longest:0,
-    closest:0
+    image:"",longest:0,closest:0
   });
 
   document.getElementById("name").value="";
 }
 
-// DELETE PLAYER
-function deletePlayer(id){
-  db.collection("tournaments").doc(tournamentId)
-  .collection("rounds").doc(currentRound)
-  .collection("players").doc(id).delete();
-}
-
-// IMAGE
-function uploadImage(id){
-  document.getElementById("fileInput").onchange=e=>{
-    const file=e.target.files[0];
-    const reader=new FileReader();
-
-    reader.onload=()=>{
-      db.collection("tournaments").doc(tournamentId)
-      .collection("rounds").doc(currentRound)
-      .collection("players").doc(id)
-      .update({image:reader.result});
-    };
-
-    reader.readAsDataURL(file);
-  };
-
-  document.getElementById("fileInput").click();
-}
-
-// EXTRA
-function updateExtra(id,field){
-  let val=prompt(field==="longest"?"Meter?":"CM?");
-  val=parseFloat(val)||0;
-
-  db.collection("tournaments").doc(tournamentId)
-  .collection("rounds").doc(currentRound)
-  .collection("players").doc(id)
-  .update({[field]:val});
-}
-
-// SCORE (FIXED TOUCH)
+// SCORE FIX
 function updateScore(id,hole,val){
   const p=players.find(x=>x.id===id);
   p.scores[hole]+=val;
@@ -331,35 +312,56 @@ function netToPar(p){
   return netScore(p) - getPars().reduce((a,b)=>a+b,0);
 }
 
+// FINISH ROUND + MODAL + CONFETTI
+function finishRound(){
+  let winner=[...players].sort((a,b)=>netToPar(a)-netToPar(b))[0];
+
+  const modal=document.getElementById("winnerModal");
+  modal.innerHTML="🏆 "+winner.name+" vant!";
+  modal.style.display="flex";
+
+  launchConfetti();
+}
+
+function launchConfetti(){
+  for(let i=0;i<120;i++){
+    let c=document.createElement("div");
+    c.style.position="fixed";
+    c.style.width="6px";
+    c.style.height="6px";
+    c.style.background="hsl("+Math.random()*360+",100%,50%)";
+    c.style.top="-10px";
+    c.style.left=Math.random()*100+"%";
+    document.body.appendChild(c);
+
+    c.animate([{transform:"translateY(0)"},{transform:"translateY(100vh)"}],
+    {duration:2000});
+
+    setTimeout(()=>c.remove(),2000);
+  }
+}
+
 // RENDER
 function render(){
   let sorted=[...players].sort((a,b)=>netToPar(a)-netToPar(b));
 
-  let lb="<tr><th>#</th><th></th><th>Navn</th><th>Score</th><th>Drive</th><th>Pin</th><th></th></tr>";
+  let lb="<tr><th>#</th><th>Navn</th><th>Score</th></tr>";
 
   sorted.forEach((p,i)=>{
+    let cls=i===0?"gold":i===1?"silver":i===2?"bronze":"";
+
     lb+=`
-    <tr class="${i===0?'gold':''}">
+    <tr class="${cls}">
       <td>${i+1}</td>
-      <td onclick="uploadImage('${p.id}')">
-        ${p.image?`<img src="${p.image}" class="avatar">`:`<div class="avatar"></div>`}
-      </td>
-      <td>${p.name}<br><small>hcp ${p.hcp}</small></td>
-      <td>
-        ${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})
-        <br>
-        <small>Netto: ${netScore(p)} (${netToPar(p)>0?'+':''}${netToPar(p)})</small>
-      </td>
-      <td onclick="updateExtra('${p.id}','longest')">${p.longest||0} m</td>
-      <td onclick="updateExtra('${p.id}','closest')">${p.closest||0} cm</td>
-      <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
+      <td>${p.name}</td>
+      <td>${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})</td>
     </tr>`;
   });
 
   document.getElementById("leaderboard").innerHTML=lb;
 
   let sc="<tr><th>Spiller</th>";
-  for(let i=1;i<=18;i++) sc+=`<th>${i}<br>${getPars()[i-1]}</th>`;
+  for(let i=1;i<=18;i++) sc+=`<th>${i}</th>`;
   sc+="</tr>";
 
   players.forEach(p=>{
