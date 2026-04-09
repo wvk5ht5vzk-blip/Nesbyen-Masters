@@ -162,24 +162,29 @@ function loadRound(){
     currentCourse=courses.find(c=>c.id===data.courseId) || courses[0];
   });
 
-  db.collection("rounds").doc(currentRound).collection("players")
-.onSnapshot(snap=>{
-  const newPlayers = [];
+  db.collection("rounds")
+    .doc(currentRound)
+    .collection("players")
+    .onSnapshot(snap=>{
 
-snap.forEach(d=>{
-  const data = {id:d.id,...d.data()};
+      const newPlayers=[];
 
-  const existing = players.find(p=>p.id===d.id);
+      snap.forEach(d=>{
+        const data={id:d.id,...d.data()};
 
-  if(existing && existing.image && !data.image){
-    data.image = existing.image;
-  }
+        const existing=players.find(p=>p.id===d.id);
 
-  newPlayers.push(data);
-});
+        if(existing && existing.image && !data.image){
+          data.image=existing.image;
+        }
 
-players = newPlayers;
-render();
+        newPlayers.push(data);
+      });
+
+      players=newPlayers;
+      render();
+    });
+}
 
 // DELETE ROUND
 async function deleteRound(){
@@ -191,12 +196,12 @@ async function deleteRound(){
   await db.collection("rounds").doc(currentRound).delete();
 }
 
-// ADD PLAYER WITH HCP 🔥
+// ADD PLAYER
 function addPlayer(){
   const name=document.getElementById("name").value;
   if(!name) return;
 
-  const hcp = parseInt(prompt("Handicap?")) || 0;
+  const hcp=parseInt(prompt("Handicap?")) || 0;
 
   db.collection("rounds").doc(currentRound).collection("players").add({
     name,
@@ -221,20 +226,20 @@ function uploadImage(id){
   document.getElementById("fileInput").click();
 }
 
-document.getElementById("fileInput").addEventListener("change", async function(e){
-  const file = e.target.files[0];
+document.getElementById("fileInput").addEventListener("change",function(e){
+  const file=e.target.files[0];
   if(!file || !selectedPlayer) return;
 
-  const reader = new FileReader();
+  const reader=new FileReader();
 
-  reader.onload = async function(){
+  reader.onload=async function(){
     await db.collection("rounds")
       .doc(currentRound)
       .collection("players")
       .doc(selectedPlayer)
-      .update({ image: reader.result });
+      .update({image:reader.result});
 
-    document.getElementById("fileInput").value="";
+    selectedPlayer=null;
   };
 
   reader.readAsDataURL(file);
@@ -242,10 +247,10 @@ document.getElementById("fileInput").addEventListener("change", async function(e
 
 // HCP PER HULL
 function hcpPerHole(p){
-  const base = Math.floor((p.hcp||0)/18);
-  const extra = (p.hcp||0)%18;
+  const base=Math.floor((p.hcp||0)/18);
+  const extra=(p.hcp||0)%18;
 
-  let arr = Array(18).fill(base);
+  let arr=Array(18).fill(base);
   for(let i=0;i<extra;i++) arr[i]++;
 
   return arr;
@@ -268,14 +273,13 @@ function totalToPar(p){
   return p.scores.reduce((sum,s,i)=>sum+(s-getPars()[i]),0);
 }
 
-// NETTO
 function netScore(p){
   const h=hcpPerHole(p);
   return p.scores.reduce((sum,s,i)=>sum+(s-h[i]),0);
 }
 
 function netToPar(p){
-  return netScore(p) - getPars().reduce((a,b)=>a+b,0);
+  return netScore(p)-getPars().reduce((a,b)=>a+b,0);
 }
 
 // RENDER
@@ -291,14 +295,10 @@ function render(){
       <td onclick="uploadImage('${p.id}')">
         ${p.image ? `<img src="${p.image}" class="avatar">` : `<div class="avatar"></div>`}
       </td>
-      <td>
-        ${p.name}
-        <br><small>hcp ${p.hcp||0}</small>
-      </td>
+      <td>${p.name}<br><small>hcp ${p.hcp||0}</small></td>
       <td>
         ${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})
-        <br>
-        <small>Netto: ${netScore(p)} (${netToPar(p)>0?'+':''}${netToPar(p)})</small>
+        <br><small>Netto: ${netScore(p)} (${netToPar(p)>0?'+':''}${netToPar(p)})</small>
       </td>
       <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
     </tr>`;
