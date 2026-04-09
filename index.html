@@ -138,20 +138,32 @@ function loadRound(){
   });
 }
 
-// ❌ SLETT RUNDE
 async function deleteRound(){
-  if(!currentRound) return;
-
-  if(!confirm("Slette denne runden?")) return;
-
-  const playersSnap = await getDocs(collection(db,"rounds",currentRound,"players"));
-
-  for(const p of playersSnap.docs){
-    await deleteDoc(doc(db,"rounds",currentRound,"players",p.id));
+  if(!currentRound){
+    alert("Ingen runde valgt");
+    return;
   }
 
-  await deleteDoc(doc(db,"rounds",currentRound));
+  const ok = confirm("Slette hele runden?");
+  if(!ok) return;
+
+  const snap = await getDocs(
+    collection(db,"rounds",currentRound,"players")
+  );
+
+  for(const p of snap.docs){
+    await deleteDoc(
+      doc(db,"rounds",currentRound,"players",p.id)
+    );
+  }
+
+  await deleteDoc(
+    doc(db,"rounds",currentRound)
+  );
+
   currentRound = null;
+
+  alert("Runde slettet ✅");
 }
 
 // ➕ LEGG TIL SPILLER
