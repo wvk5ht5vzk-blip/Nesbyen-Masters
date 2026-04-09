@@ -33,6 +33,12 @@ input, select { padding:10px; border-radius:8px; }
 
 <p id="welcome"></p>
 
+<!-- BANE -->
+<select id="courseSelect"></select>
+<button onclick="addCourse()">➕ Ny bane</button>
+
+<br>
+
 <button onclick="newTournament()">➕ Ny turnering</button>
 
 <select id="roundSelect" onchange="loadRound()"></select>
@@ -72,6 +78,8 @@ let user=null;
 let tournamentId=null;
 let currentRound=null;
 let players=[];
+let courses=[];
+let currentCourse=null;
 
 // LOGIN
 function login(){
@@ -108,16 +116,57 @@ function init(){
   }
 }
 
-// NEW TOURNAMENT
+// TOURNAMENT
 function newTournament(){
-  db.collection("tournaments").add({
-    created:Date.now()
-  }).then(doc=>{
+  db.collection("tournaments").add({created:Date.now()})
+  .then(doc=>{
     window.location="?tid="+doc.id;
   });
 }
 
-// LOAD ROUNDS
+// COURSES
+db.collection("courses").onSnapshot(snap=>{
+  const sel=document.getElementById("courseSelect");
+  courses=[];
+  sel.innerHTML="";
+
+  snap.forEach(d=>{
+    const c={id:d.id,...d.data()};
+    courses.push(c);
+
+    const o=document.createElement("option");
+    o.value=c.id;
+    o.text=c.name;
+    sel.appendChild(o);
+  });
+
+  if(courses.length && !currentCourse){
+    currentCourse=courses[0];
+  }
+});
+
+// CHANGE COURSE
+document.getElementById("courseSelect").onchange=function(){
+  currentCourse=courses.find(c=>c.id===this.value);
+  render();
+};
+
+// ADD COURSE
+function addCourse(){
+  const name=prompt("Navn på bane?");
+  if(!name) return;
+
+  const pars=prompt("18 hull par (4,4,3...)").split(",").map(x=>parseInt(x));
+
+  db.collection("courses").add({name, pars});
+}
+
+// GET PAR
+function getPars(){
+  return currentCourse?.pars || Array(18).fill(4);
+}
+
+// ROUNDS
 function loadRounds(){
   db.collection("tournaments").doc(tournamentId)
   .collection("rounds")
@@ -245,7 +294,7 @@ function updateScore(id,hole,val){
 function total(p){ return p.scores.reduce((a,b)=>a+b,0); }
 
 function totalToPar(p){
-  return p.scores.reduce((sum,s,i)=>sum+(s-4),0);
+  return p.scores.reduce((sum,s,i)=>sum+(s-getPars()[i]),0);
 }
 
 function hcpPerHole(p){
@@ -262,7 +311,7 @@ function netScore(p){
 }
 
 function netToPar(p){
-  return netScore(p)-72;
+  return netScore(p) - getPars().reduce((a,b)=>a+b,0);
 }
 
 // RENDER
@@ -293,7 +342,7 @@ function render(){
   document.getElementById("leaderboard").innerHTML=lb;
 
   let sc="<tr><th>Spiller</th>";
-  for(let i=1;i<=18;i++) sc+=`<th>${i}</th>`;
+  for(let i=1;i<=18;i++) sc+=`<th>${i}<br>${getPars()[i-1]}</th>`;
   sc+="</tr>";
 
   players.forEach(p=>{
