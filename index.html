@@ -23,8 +23,6 @@ td, th { padding:6px; }
 .avatar { width:65px; height:65px; border-radius:50%; }
 
 .gold { background:gold; color:black; }
-.silver { background:silver; color:black; }
-.bronze { background:#cd7f32; }
 
 .score-minus { color:#22c55e; font-weight:bold; }
 .score-plus { color:#ef4444; font-weight:bold; }
@@ -77,7 +75,7 @@ let selectedPlayer=null;
 let courses=[];
 let currentCourse=null;
 
-// LOAD COURSES
+// COURSES
 db.collection("courses").onSnapshot(snap=>{
   const sel=document.getElementById("courseSelect");
   courses=[];
@@ -93,21 +91,30 @@ db.collection("courses").onSnapshot(snap=>{
     sel.appendChild(o);
   });
 
-  if(courses.length) currentCourse=courses[0];
+  if(courses.length && !currentCourse){
+    currentCourse=courses[0];
+  }
 });
+
+// CHANGE COURSE FIX 🔥
+document.getElementById("courseSelect").onchange=function(){
+  const id=this.value;
+  currentCourse=courses.find(c=>c.id===id);
+  render();
+};
 
 // ADD COURSE
 function addCourse(){
   const name=prompt("Navn på bane?");
   if(!name) return;
 
-  const parString=prompt("18 hull par (f.eks: 4,4,3...)");
+  const parString=prompt("18 hull par (4,4,3...)");
   const pars=parString.split(",").map(x=>parseInt(x));
 
   db.collection("courses").add({name, pars});
 }
 
-// GET PARS
+// GET PAR
 function getPars(){
   return currentCourse?.pars || Array(18).fill(4);
 }
@@ -122,7 +129,7 @@ function newRound(){
   });
 }
 
-// LOAD ROUNDS
+// ROUNDS
 db.collection("rounds").onSnapshot(snap=>{
   const sel=document.getElementById("roundSelect");
 
@@ -152,7 +159,7 @@ function loadRound(){
 
   db.collection("rounds").doc(currentRound).get().then(doc=>{
     const data=doc.data();
-    currentCourse=courses.find(c=>c.id===data.courseId);
+    currentCourse=courses.find(c=>c.id===data.courseId) || courses[0];
   });
 
   db.collection("rounds").doc(currentRound).collection("players")
@@ -165,7 +172,7 @@ function loadRound(){
 
 // DELETE ROUND
 async function deleteRound(){
-  if(!confirm("Slette?")) return;
+  if(!confirm("Slette runde?")) return;
 
   const snap=await db.collection("rounds").doc(currentRound).collection("players").get();
   for(const d of snap.docs){ await d.ref.delete(); }
@@ -176,6 +183,7 @@ async function deleteRound(){
 // PLAYER
 function addPlayer(){
   const name=document.getElementById("name").value;
+  if(!name) return;
 
   db.collection("rounds").doc(currentRound).collection("players").add({
     name,
@@ -186,20 +194,35 @@ function addPlayer(){
   document.getElementById("name").value="";
 }
 
-// IMAGE
+// DELETE PLAYER ✅
+function deletePlayer(id){
+  db.collection("rounds").doc(currentRound)
+  .collection("players").doc(id).delete();
+}
+
+// IMAGE FIX 🔥
 function uploadImage(id){
   selectedPlayer=id;
+  document.getElementById("fileInput").value="";
   document.getElementById("fileInput").click();
 }
 
-document.getElementById("fileInput").addEventListener("change",e=>{
-  const file=e.target.files[0];
-  const reader=new FileReader();
+document.getElementById("fileInput").addEventListener("change", async function(e){
+  const file = e.target.files[0];
+  if(!file || !selectedPlayer) return;
 
-  reader.onload=async ()=>{
-    await db.collection("rounds").doc(currentRound)
-    .collection("players").doc(selectedPlayer)
-    .update({image:reader.result});
+  const reader = new FileReader();
+
+  reader.onload = async function(){
+    const base64 = reader.result;
+
+    await db.collection("rounds")
+      .doc(currentRound)
+      .collection("players")
+      .doc(selectedPlayer)
+      .update({ image: base64 });
+
+    document.getElementById("fileInput").value="";
   };
 
   reader.readAsDataURL(file);
@@ -226,7 +249,7 @@ function totalToPar(p){
 function render(){
   let sorted=[...players].sort((a,b)=>totalToPar(a)-totalToPar(b));
 
-  let lb="<tr><th>#</th><th></th><th>Navn</th><th>Score</th></tr>";
+  let lb="<tr><th>#</th><th></th><th>Navn</th><th>Score</th><th></th></tr>";
 
   sorted.forEach((p,i)=>{
     lb+=`
@@ -237,6 +260,7 @@ function render(){
       </td>
       <td>${p.name}</td>
       <td>${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})</td>
+      <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
     </tr>`;
   });
 
