@@ -42,6 +42,14 @@
       font-weight: bold;
     }
 
+    img {
+      width: 25px;
+      height: 25px;
+      border-radius: 50%;
+      vertical-align: middle;
+      margin-right: 5px;
+    }
+
     .gold { background: #ffd700; color: black; }
     .silver { background: #c0c0c0; color: black; }
     .bronze { background: #cd7f32; color: black; }
@@ -92,10 +100,13 @@
 
   function addPlayer() {
     const name = document.getElementById("name").value;
+    const image = prompt("Lim inn bilde-URL (valgfritt)");
+
     if (!name) return;
 
     addDoc(playersRef, {
       name,
+      image: image || "",
       scores: Array(holes).fill(0)
     });
 
@@ -149,7 +160,12 @@
 
       lb += `<tr class="${cls}">
         <td>${i+1}</td>
-        <td onclick="editName('${p.id}','${p.name}')">${p.name}</td>
+        <td onclick="editName('${p.id}','${p.name}')">
+          ${p.image 
+            ? `<img src="${p.image}">`
+            : "👤"}
+          ${p.name}
+        </td>
         <td>${total(p)}</td>
         <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
       </tr>`;
