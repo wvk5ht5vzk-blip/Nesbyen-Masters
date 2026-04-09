@@ -2,7 +2,15 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>Nesbyen Masters</title>
+
+<!-- 🔥 PWA -->
+<link rel="manifest" href="manifest.json">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black">
+<meta name="apple-mobile-web-app-title" content="Masters">
+<link rel="apple-touch-icon" href="icon.png">
 
 <style>
 body { font-family: Arial; background:#0f172a; color:white; text-align:center; }
@@ -15,8 +23,8 @@ table { width:100%; margin-top:10px; border-collapse: collapse; }
 td, th { border:1px solid #555; padding:5px; }
 
 .avatar {
-  width:55px;
-  height:55px;
+  width:60px;
+  height:60px;
   border-radius:50%;
   background:#333;
 }
@@ -48,6 +56,7 @@ td, th { border:1px solid #555; padding:5px; }
 <h2>Scorekort</h2>
 <table id="scoreTable"></table>
 
+<!-- 🔥 FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
