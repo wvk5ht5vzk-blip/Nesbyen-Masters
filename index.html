@@ -7,13 +7,22 @@
 <style>
 body { font-family: Arial; background:#020617; color:white; text-align:center; }
 
-button { padding:10px; margin:4px; border:none; border-radius:10px; background:#22c55e; color:white; }
+button {
+  padding:10px;
+  margin:4px;
+  border:none;
+  border-radius:10px;
+  background:#22c55e;
+  color:white;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
 
 input, select { padding:10px; border-radius:8px; }
 
 .avatar { width:60px; height:60px; border-radius:50%; border:2px solid white; }
 
-.scroll { overflow-x:auto; }
+.scroll { overflow-x:auto; -webkit-overflow-scrolling: touch; }
 #scoreTable { min-width:900px; }
 
 .gold { background:gold; color:black; }
@@ -33,7 +42,6 @@ input, select { padding:10px; border-radius:8px; }
 
 <p id="welcome"></p>
 
-<!-- BANE -->
 <select id="courseSelect"></select>
 <button onclick="addCourse()">➕ Ny bane</button>
 
@@ -104,15 +112,26 @@ window.onload=function(){
   }
 }
 
-// INIT
+// INIT (FIXED)
 function init(){
   const url=new URL(window.location.href);
-  tournamentId=url.searchParams.get("tid");
+  tournamentId=url.searchParams.get("tid") || localStorage.getItem("tid");
 
-  if(!tournamentId){
-    newTournament();
-  }else{
+  if(tournamentId){
+    localStorage.setItem("tid", tournamentId);
     loadRounds();
+
+    setTimeout(()=>{
+      const savedRound=localStorage.getItem("round");
+      if(savedRound){
+        currentRound=savedRound;
+        document.getElementById("roundSelect").value=savedRound;
+        loadRound();
+      }
+    },500);
+
+  } else {
+    newTournament();
   }
 }
 
@@ -145,13 +164,11 @@ db.collection("courses").onSnapshot(snap=>{
   }
 });
 
-// CHANGE COURSE
 document.getElementById("courseSelect").onchange=function(){
   currentCourse=courses.find(c=>c.id===this.value);
   render();
 };
 
-// ADD COURSE
 function addCourse(){
   const name=prompt("Navn på bane?");
   if(!name) return;
@@ -161,7 +178,6 @@ function addCourse(){
   db.collection("courses").add({name, pars});
 }
 
-// GET PAR
 function getPars(){
   return currentCourse?.pars || Array(18).fill(4);
 }
@@ -201,9 +217,10 @@ function newRound(){
   .add({created:Date.now()});
 }
 
-// LOAD ROUND
+// LOAD ROUND (FIXED SAVE)
 function loadRound(){
   currentRound=document.getElementById("roundSelect").value;
+  localStorage.setItem("round", currentRound);
 
   db.collection("tournaments").doc(tournamentId)
   .collection("rounds").doc(currentRound)
@@ -278,7 +295,7 @@ function updateExtra(id,field){
   .update({[field]:val});
 }
 
-// SCORE
+// SCORE (FIXED TOUCH)
 function updateScore(id,hole,val){
   const p=players.find(x=>x.id===id);
   p.scores[hole]+=val;
@@ -350,9 +367,9 @@ function render(){
     p.scores.forEach((s,i)=>{
       sc+=`
       <td>
-        <button onclick="updateScore('${p.id}',${i},-1)">-</button>
+        <button ontouchstart="event.preventDefault(); updateScore('${p.id}',${i},-1)">-</button>
         ${s}
-        <button onclick="updateScore('${p.id}',${i},1)">+</button>
+        <button ontouchstart="event.preventDefault(); updateScore('${p.id}',${i},1)">+</button>
       </td>`;
     });
     sc+="</tr>";
