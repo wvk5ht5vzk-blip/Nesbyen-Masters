@@ -164,11 +164,22 @@ function loadRound(){
 
   db.collection("rounds").doc(currentRound).collection("players")
   .onSnapshot(snap=>{
-    players=[];
-    snap.forEach(d=>players.push({id:d.id,...d.data()}));
-    render();
-  });
-}
+  const newPlayers = [];
+
+snap.forEach(d=>{
+  const data = {id:d.id,...d.data()};
+
+  const existing = players.find(p=>p.id===d.id);
+
+  if(existing && existing.image && !data.image){
+    data.image = existing.image;
+  }
+
+  newPlayers.push(data);
+});
+
+players = newPlayers;
+render();
 
 // DELETE ROUND
 async function deleteRound(){
