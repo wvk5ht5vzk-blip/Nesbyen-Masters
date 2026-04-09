@@ -7,27 +7,11 @@
 <style>
 body { font-family: Arial; background:#0f172a; color:white; text-align:center; }
 
-button {
-  padding:8px 12px;
-  margin:3px;
-  border:none;
-  border-radius:8px;
-  background:#22c55e;
-  color:white;
-}
-
+button { padding:8px; margin:3px; border:none; border-radius:8px; background:#22c55e; color:white; }
 input { padding:8px; border-radius:6px; }
 
-table {
-  width:100%;
-  margin-top:10px;
-  border-collapse: collapse;
-}
-
-td, th {
-  border:1px solid #555;
-  padding:5px;
-}
+table { width:100%; margin-top:10px; border-collapse: collapse; }
+td, th { border:1px solid #555; padding:5px; }
 
 .avatar {
   width:50px;
@@ -39,10 +23,6 @@ td, th {
 .gold { background:gold; color:black; }
 .silver { background:silver; color:black; }
 .bronze { background:#cd7f32; }
-
-.scoreBtn {
-  width:35px;
-}
 </style>
 </head>
 
@@ -69,20 +49,15 @@ td, th {
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-import { getStorage, ref, uploadBytes, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-storage.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyDDrqLTUtImklgFF1W59aWaNolyg7GBmj0",
   authDomain: "nesbyen-masters-v2.firebaseapp.com",
   projectId: "nesbyen-masters-v2",
-  storageBucket: "nesbyen-masters-v2.firebasestorage.app",
-  messagingSenderId: "733141987995",
-  appId: "1:733141987995:web:835ca47d74f244d4220c3e"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const storage = getStorage(app);
 
 let currentRound = null;
 let players = [];
@@ -101,15 +76,18 @@ async function newRound(){
   currentRound = r.id;
 }
 
-// 🔄 RUNDER
+// 🔄 RUNDER (FIX undefined)
 onSnapshot(collection(db,"rounds"), snap=>{
   const sel = document.getElementById("roundSelect");
   sel.innerHTML="";
 
-  snap.docs.forEach(d=>{
+  snap.docs.forEach((d,i)=>{
+    const data = d.data();
+    const name = data.name || "Runde " + (i+1);
+
     const o = document.createElement("option");
     o.value = d.id;
-    o.text = d.data().name;
+    o.text = name;
     sel.appendChild(o);
   });
 
@@ -120,7 +98,7 @@ onSnapshot(collection(db,"rounds"), snap=>{
   }
 });
 
-// 📂 LAST RUNDE
+// 📂 LAST
 function loadRound(){
   currentRound = document.getElementById("roundSelect").value;
 
@@ -144,23 +122,25 @@ async function addPlayer(){
   document.getElementById("name").value="";
 }
 
-// 📸 LAST OPP BILDE
+// 📸 BILDE (BASE64 – GRATIS)
 function uploadImage(id){
   selectedPlayer = id;
   document.getElementById("fileInput").click();
 }
 
-document.getElementById("fileInput").addEventListener("change", async (e)=>{
+document.getElementById("fileInput").addEventListener("change", function(e){
   const file = e.target.files[0];
   if(!file) return;
 
-  const storageRef = ref(storage,"images/"+Date.now());
-  await uploadBytes(storageRef,file);
-  const url = await getDownloadURL(storageRef);
+  const reader = new FileReader();
 
-  await updateDoc(doc(db,"rounds",currentRound,"players",selectedPlayer),{
-    image:url
-  });
+  reader.onload = async function(){
+    await updateDoc(doc(db,"rounds",currentRound,"players",selectedPlayer),{
+      image: reader.result
+    });
+  };
+
+  reader.readAsDataURL(file);
 });
 
 // ❌ SLETT
@@ -179,7 +159,6 @@ async function updateScore(id,hole,val){
   });
 }
 
-// 🧮 TOTAL
 function total(p){
   return p.scores.reduce((a,b)=>a+b,0);
 }
@@ -221,9 +200,9 @@ function render(){
     p.scores.forEach((s,i)=>{
       sc+=`
       <td>
-        <button class="scoreBtn" onclick="updateScore('${p.id}',${i},-1)">-</button>
+        <button onclick="updateScore('${p.id}',${i},-1)">-</button>
         ${s}
-        <button class="scoreBtn" onclick="updateScore('${p.id}',${i},1)">+</button>
+        <button onclick="updateScore('${p.id}',${i},1)">+</button>
       </td>`;
     });
 
