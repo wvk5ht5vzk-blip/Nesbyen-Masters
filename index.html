@@ -5,43 +5,45 @@
 
 <title>Nesbyen Masters</title>
 
-<!-- 🔥 PWA -->
 <link rel="manifest" href="manifest.json">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black">
-<meta name="apple-mobile-web-app-title" content="Masters">
-<link rel="apple-touch-icon" href="icon.png">
+<link rel="apple-touch-icon" href="A2DCBCD1-97DE-4610-8292-A174AC3EBD0E.png">
 
 <style>
-body { font-family: Arial; background:#0f172a; color:white; text-align:center; }
+body { font-family: Arial; background: linear-gradient(135deg,#0f172a,#1e293b); color:white; text-align:center; }
 
-button { padding:8px; margin:3px; border:none; border-radius:8px; background:#22c55e; color:white; }
+button { padding:10px; margin:4px; border:none; border-radius:10px; background:#22c55e; color:white; }
 
-input { padding:8px; border-radius:6px; }
+input, select { padding:10px; border-radius:8px; }
 
-table { width:100%; margin-top:10px; border-collapse: collapse; }
-td, th { border:1px solid #555; padding:5px; }
+table { width:95%; margin:auto; border-collapse: collapse; background:rgba(255,255,255,0.05); }
 
-.avatar {
-  width:60px;
-  height:60px;
-  border-radius:50%;
-  background:#333;
-}
+td, th { padding:6px; }
+
+.avatar { width:65px; height:65px; border-radius:50%; }
 
 .gold { background:gold; color:black; }
 .silver { background:silver; color:black; }
 .bronze { background:#cd7f32; }
+
+.score-minus { color:#22c55e; font-weight:bold; }
+.score-plus { color:#ef4444; font-weight:bold; }
+.score-zero { color:white; }
 </style>
 </head>
 
 <body>
 
-<h1>🏌️ Nesbyen Masters LIVE</h1>
+<h1>🏌️ Nesbyen Masters</h1>
+
+<select id="courseSelect"></select>
+<button onclick="addCourse()">➕ Ny bane</button>
+
+<br>
 
 <button onclick="newRound()">➕ Ny runde</button>
 <select id="roundSelect" onchange="loadRound()"></select>
-<button onclick="deleteRound()">🧨 Slett runde</button>
+<button onclick="deleteRound()">🧨</button>
 
 <br><br>
 
@@ -56,7 +58,6 @@ td, th { border:1px solid #555; padding:5px; }
 <h2>Scorekort</h2>
 <table id="scoreTable"></table>
 
-<!-- 🔥 FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 
@@ -70,20 +71,60 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-let currentRound = null;
-let players = [];
-let selectedPlayer = null;
+let currentRound=null;
+let players=[];
+let selectedPlayer=null;
+let courses=[];
+let currentCourse=null;
 
-// NY RUNDE
+// LOAD COURSES
+db.collection("courses").onSnapshot(snap=>{
+  const sel=document.getElementById("courseSelect");
+  courses=[];
+  sel.innerHTML="";
+
+  snap.forEach(d=>{
+    const c={id:d.id,...d.data()};
+    courses.push(c);
+
+    const o=document.createElement("option");
+    o.value=d.id;
+    o.text=c.name;
+    sel.appendChild(o);
+  });
+
+  if(courses.length) currentCourse=courses[0];
+});
+
+// ADD COURSE
+function addCourse(){
+  const name=prompt("Navn på bane?");
+  if(!name) return;
+
+  const parString=prompt("18 hull par (f.eks: 4,4,3...)");
+  const pars=parString.split(",").map(x=>parseInt(x));
+
+  db.collection("courses").add({name, pars});
+}
+
+// GET PARS
+function getPars(){
+  return currentCourse?.pars || Array(18).fill(4);
+}
+
+// NEW ROUND
 function newRound(){
+  const courseId=document.getElementById("courseSelect").value;
+
   db.collection("rounds").add({
-    created: Date.now()
+    created:Date.now(),
+    courseId
   });
 }
 
-// RUNDER
+// LOAD ROUNDS
 db.collection("rounds").onSnapshot(snap=>{
-  const sel = document.getElementById("roundSelect");
+  const sel=document.getElementById("roundSelect");
 
   let rounds=[];
   snap.forEach(d=>rounds.push({id:d.id,...d.data()}));
@@ -105,9 +146,14 @@ db.collection("rounds").onSnapshot(snap=>{
   }
 });
 
-// LAST RUNDE
+// LOAD ROUND
 function loadRound(){
   currentRound=document.getElementById("roundSelect").value;
+
+  db.collection("rounds").doc(currentRound).get().then(doc=>{
+    const data=doc.data();
+    currentCourse=courses.find(c=>c.id===data.courseId);
+  });
 
   db.collection("rounds").doc(currentRound).collection("players")
   .onSnapshot(snap=>{
@@ -117,26 +163,19 @@ function loadRound(){
   });
 }
 
-// SLETT RUNDE
+// DELETE ROUND
 async function deleteRound(){
-  if(!currentRound) return;
-  if(!confirm("Slette runde?")) return;
+  if(!confirm("Slette?")) return;
 
-  const snap = await db.collection("rounds").doc(currentRound).collection("players").get();
-
-  for(const docu of snap.docs){
-    await docu.ref.delete();
-  }
+  const snap=await db.collection("rounds").doc(currentRound).collection("players").get();
+  for(const d of snap.docs){ await d.ref.delete(); }
 
   await db.collection("rounds").doc(currentRound).delete();
-
-  currentRound=null;
 }
 
-// LEGG TIL SPILLER
+// PLAYER
 function addPlayer(){
   const name=document.getElementById("name").value;
-  if(!name) return;
 
   db.collection("rounds").doc(currentRound).collection("players").add({
     name,
@@ -147,19 +186,17 @@ function addPlayer(){
   document.getElementById("name").value="";
 }
 
-// BILDE
+// IMAGE
 function uploadImage(id){
   selectedPlayer=id;
   document.getElementById("fileInput").click();
 }
 
-document.getElementById("fileInput").addEventListener("change",function(e){
+document.getElementById("fileInput").addEventListener("change",e=>{
   const file=e.target.files[0];
-  if(!file) return;
-
   const reader=new FileReader();
 
-  reader.onload=async function(){
+  reader.onload=async ()=>{
     await db.collection("rounds").doc(currentRound)
     .collection("players").doc(selectedPlayer)
     .update({image:reader.result});
@@ -167,12 +204,6 @@ document.getElementById("fileInput").addEventListener("change",function(e){
 
   reader.readAsDataURL(file);
 });
-
-// SLETT SPILLER
-function deletePlayer(id){
-  db.collection("rounds").doc(currentRound)
-  .collection("players").doc(id).delete();
-}
 
 // SCORE
 function updateScore(id,hole,val){
@@ -185,45 +216,48 @@ function updateScore(id,hole,val){
   .update({scores:p.scores});
 }
 
-function total(p){
-  return p.scores.reduce((a,b)=>a+b,0);
+function total(p){ return p.scores.reduce((a,b)=>a+b,0); }
+
+function totalToPar(p){
+  return p.scores.reduce((sum,s,i)=>sum+(s-getPars()[i]),0);
 }
 
 // RENDER
 function render(){
-  let sorted=[...players].sort((a,b)=>total(a)-total(b));
+  let sorted=[...players].sort((a,b)=>totalToPar(a)-totalToPar(b));
 
-  let lb="<tr><th>#</th><th></th><th>Navn</th><th>Score</th><th></th></tr>";
+  let lb="<tr><th>#</th><th></th><th>Navn</th><th>Score</th></tr>";
 
   sorted.forEach((p,i)=>{
-    let cls=i===0?'gold':i===1?'silver':i===2?'bronze':'';
-
     lb+=`
-    <tr class="${cls}">
+    <tr class="${i===0?'gold':''}">
       <td>${i+1}</td>
       <td onclick="uploadImage('${p.id}')">
         ${p.image ? `<img src="${p.image}" class="avatar">` : `<div class="avatar"></div>`}
       </td>
       <td>${p.name}</td>
-      <td>${total(p)}</td>
-      <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
+      <td>${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})</td>
     </tr>`;
   });
 
   document.getElementById("leaderboard").innerHTML=lb;
 
   let sc="<tr><th>Spiller</th>";
-  for(let i=1;i<=18;i++) sc+=`<th>${i}</th>`;
+  for(let i=1;i<=18;i++) sc+=`<th>${i}<br>${getPars()[i-1]}</th>`;
   sc+="</tr>";
 
   players.forEach(p=>{
     sc+=`<tr><td>${p.name}</td>`;
 
     p.scores.forEach((s,i)=>{
+      const diff=s-getPars()[i];
+
       sc+=`
       <td>
         <button onclick="updateScore('${p.id}',${i},-1)">-</button>
-        ${s}
+        <span class="${
+          diff<0?'score-minus':diff>0?'score-plus':'score-zero'
+        }">${s}</span>
         <button onclick="updateScore('${p.id}',${i},1)">+</button>
       </td>`;
     });
