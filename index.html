@@ -163,7 +163,7 @@ function loadRound(){
   });
 
   db.collection("rounds").doc(currentRound).collection("players")
-  .onSnapshot(snap=>{
+.onSnapshot(snap=>{
   const newPlayers = [];
 
 snap.forEach(d=>{
