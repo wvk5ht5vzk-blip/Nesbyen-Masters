@@ -4,6 +4,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nesbyen Masters LIVE</title>
 
+  <link rel="apple-touch-icon" href="icon.png">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+
   <style>
     body {
       font-family: Arial;
@@ -19,7 +22,7 @@
 
     td, th {
       border: 1px solid gold;
-      padding: 3px;
+      padding: 4px;
     }
 
     input {
@@ -30,17 +33,18 @@
       text-align: center;
     }
 
-    .leader {
-      background: #1f6f50;
-    }
-
     button {
-      margin-top: 10px;
-      padding: 8px 12px;
+      margin: 5px;
+      padding: 6px 10px;
       background: gold;
       border: none;
+      border-radius: 6px;
       font-weight: bold;
     }
+
+    .gold { background: #ffd700; color: black; }
+    .silver { background: #c0c0c0; color: black; }
+    .bronze { background: #cd7f32; color: black; }
   </style>
 </head>
 
@@ -58,10 +62,11 @@
 
 <input id="name" placeholder="Spiller">
 <button onclick="addPlayer()">Legg til</button>
+<button onclick="resetAll()">Reset</button>
 
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-  import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+  import { getFirestore, collection, addDoc, onSnapshot, updateDoc, doc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
   const firebaseConfig = {
     apiKey: "AIzaSyAbU6RL1oIdtjGNF-min5swSbB77iM31LA",
@@ -97,6 +102,19 @@
     document.getElementById("name").value = "";
   }
 
+  function deletePlayer(id) {
+    if (!confirm("Slette spiller?")) return;
+    deleteDoc(doc(db, "players", id));
+  }
+
+  function resetAll() {
+    if (!confirm("Slette ALLE spillere?")) return;
+
+    players.forEach(p => {
+      deleteDoc(doc(db, "players", p.id));
+    });
+  }
+
   function updateScore(id, index, value) {
     const player = players.find(p => p.id === id);
     player.scores[index] = parseInt(value) || 0;
@@ -106,18 +124,34 @@
     });
   }
 
+  function editName(id, oldName) {
+    const newName = prompt("Endre navn:", oldName);
+    if (!newName) return;
+
+    updateDoc(doc(db, "players", id), {
+      name: newName
+    });
+  }
+
   function sum(arr){ return arr.reduce((a,b)=>a+b,0); }
   function total(p){ return sum(p.scores); }
 
   function render() {
     let sorted = [...players].sort((a,b)=>total(a)-total(b));
 
-    let lb = "<tr><th>#</th><th>Navn</th><th>Score</th></tr>";
+    let lb = "<tr><th>#</th><th>Navn</th><th>Score</th><th></th></tr>";
+
     sorted.forEach((p,i)=>{
-      lb += `<tr class="${i===0?'leader':''}">
+      let cls = "";
+      if(i===0) cls="gold";
+      if(i===1) cls="silver";
+      if(i===2) cls="bronze";
+
+      lb += `<tr class="${cls}">
         <td>${i+1}</td>
-        <td>${p.name}</td>
+        <td onclick="editName('${p.id}','${p.name}')">${p.name}</td>
         <td>${total(p)}</td>
+        <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
       </tr>`;
     });
 
@@ -143,6 +177,9 @@
 
   window.addPlayer = addPlayer;
   window.updateScore = updateScore;
+  window.deletePlayer = deletePlayer;
+  window.resetAll = resetAll;
+  window.editName = editName;
 </script>
 
 </body>
