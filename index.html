@@ -11,15 +11,32 @@
 
 <style>
 body { font-family: Arial; background: linear-gradient(135deg,#020617,#0f172a); color:white; text-align:center; }
-button { padding:10px; margin:4px; border:none; border-radius:12px; background:linear-gradient(45deg,#22c55e,#16a34a); color:white; font-weight:bold; }
+
+button { padding:10px; margin:4px; border:none; border-radius:12px; background:linear-gradient(45deg,#22c55e,#16a34a); color:white; font-weight:bold; touch-action: manipulation; }
+
 input, select { padding:10px; border-radius:10px; border:none; }
+
 table { width:95%; margin:auto; border-collapse: collapse; background:rgba(255,255,255,0.06); }
+
 td, th { padding:8px; }
+
 .avatar { width:70px; height:70px; border-radius:50%; border:2px solid white; }
+
 .gold { background:linear-gradient(45deg,gold,#facc15); color:black; }
+
 .score-minus { color:#22c55e; font-weight:bold; }
 .score-plus { color:#ef4444; font-weight:bold; }
 .score-zero { color:white; }
+
+/* 🔥 SCROLL FIX */
+.scroll {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+#scoreTable {
+  min-width: 900px;
+}
 </style>
 </head>
 
@@ -48,7 +65,10 @@ td, th { padding:8px; }
 <table id="leaderboard"></table>
 
 <h2>Scorekort</h2>
-<table id="scoreTable"></table>
+
+<div class="scroll">
+  <table id="scoreTable"></table>
+</div>
 
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
@@ -102,9 +122,7 @@ function addCourse(){
   const name=prompt("Navn på bane?");
   if(!name) return;
 
-  const parString=prompt("18 hull par (4,4,3...)");
-  const pars=parString.split(",").map(x=>parseInt(x));
-
+  const pars=prompt("18 hull par (4,4,3...)").split(",").map(x=>parseInt(x));
   db.collection("courses").add({name, pars});
 }
 
@@ -147,17 +165,15 @@ db.collection("rounds").onSnapshot(snap=>{
   }
 });
 
-// 🔥 LOAD ROUND (FIXED)
+// LOAD ROUND
 function loadRound(){
   currentRound=document.getElementById("roundSelect").value;
 
-  // 👉 HENT COURSE (DETTE VAR FEILEN DIN)
   db.collection("rounds").doc(currentRound).get().then(doc=>{
     const data = doc.data();
     currentCourse = courses.find(c=>c.id===data.courseId) || courses[0];
   });
 
-  // PLAYERS
   db.collection("rounds").doc(currentRound).collection("players")
   .onSnapshot(snap=>{
 
@@ -165,7 +181,6 @@ function loadRound(){
 
     snap.forEach(d=>{
       const data = {id:d.id,...d.data()};
-
       const existing = players.find(p=>p.id===d.id);
 
       if(existing && existing.image && !data.image){
@@ -180,31 +195,33 @@ function loadRound(){
   });
 }
 
-// DELETE ROUND
-async function deleteRound(){
-  if(!confirm("Slette runde?")) return;
-
-  const snap=await db.collection("rounds").doc(currentRound).collection("players").get();
-  for(const d of snap.docs){ await d.ref.delete(); }
-
-  await db.collection("rounds").doc(currentRound).delete();
-}
-
 // ADD PLAYER
 function addPlayer(){
   const name=document.getElementById("name").value;
   if(!name) return;
 
-  const hcp = parseInt(prompt("Handicap?")) || 0;
+  const hcp=parseInt(prompt("Handicap?"))||0;
 
   db.collection("rounds").doc(currentRound).collection("players").add({
     name,
     hcp,
     image:"",
-    scores:Array(18).fill(0)
+    scores:Array(18).fill(0),
+    longest:0,
+    closest:0
   });
 
   document.getElementById("name").value="";
+}
+
+// UPDATE EXTRA
+function updateExtra(id,field){
+  let val=prompt(field==="longest"?"Meter?":"CM?");
+  val=parseFloat(val)||0;
+
+  db.collection("rounds").doc(currentRound)
+    .collection("players").doc(id)
+    .update({[field]:val});
 }
 
 // DELETE PLAYER
@@ -220,35 +237,20 @@ function uploadImage(id){
   document.getElementById("fileInput").click();
 }
 
-document.getElementById("fileInput").addEventListener("change", async function(e){
-  const file = e.target.files[0];
-  if(!file || !selectedPlayer) return;
+document.getElementById("fileInput").addEventListener("change", e=>{
+  const file=e.target.files[0];
+  if(!file) return;
 
-  const reader = new FileReader();
+  const reader=new FileReader();
 
-  reader.onload = async function(){
-    await db.collection("rounds")
-      .doc(currentRound)
-      .collection("players")
-      .doc(selectedPlayer)
-      .update({ image: reader.result });
-
-    document.getElementById("fileInput").value="";
+  reader.onload=()=>{
+    db.collection("rounds").doc(currentRound)
+    .collection("players").doc(selectedPlayer)
+    .update({image:reader.result});
   };
 
   reader.readAsDataURL(file);
 });
-
-// HCP
-function hcpPerHole(p){
-  const base = Math.floor((p.hcp||0)/18);
-  const extra = (p.hcp||0)%18;
-
-  let arr = Array(18).fill(base);
-  for(let i=0;i<extra;i++) arr[i]++;
-
-  return arr;
-}
 
 // SCORE
 function updateScore(id,hole,val){
@@ -307,7 +309,7 @@ function launchConfetti(){
 function render(){
   let sorted=[...players].sort((a,b)=>totalToPar(a)-totalToPar(b));
 
-  let lb="<tr><th>#</th><th></th><th>Navn</th><th>Score</th><th></th></tr>";
+  let lb="<tr><th>#</th><th></th><th>Navn</th><th>Score</th><th>Drive</th><th>Pin</th><th></th></tr>";
 
   sorted.forEach((p,i)=>{
     lb+=`
@@ -317,9 +319,9 @@ function render(){
         ${p.image ? `<img src="${p.image}" class="avatar">` : `<div class="avatar"></div>`}
       </td>
       <td>${p.name}<br><small>hcp ${p.hcp||0}</small></td>
-      <td>
-        ${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})
-      </td>
+      <td>${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})</td>
+      <td onclick="updateExtra('${p.id}','longest')">${p.longest||0} m</td>
+      <td onclick="updateExtra('${p.id}','closest')">${p.closest||0} cm</td>
       <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
     </tr>`;
   });
