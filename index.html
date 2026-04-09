@@ -11,19 +11,12 @@
 
 <style>
 body { font-family: Arial; background: linear-gradient(135deg,#020617,#0f172a); color:white; text-align:center; }
-
 button { padding:10px; margin:4px; border:none; border-radius:12px; background:linear-gradient(45deg,#22c55e,#16a34a); color:white; font-weight:bold; }
-
 input, select { padding:10px; border-radius:10px; border:none; }
-
 table { width:95%; margin:auto; border-collapse: collapse; background:rgba(255,255,255,0.06); }
-
 td, th { padding:8px; }
-
 .avatar { width:70px; height:70px; border-radius:50%; border:2px solid white; }
-
 .gold { background:linear-gradient(45deg,gold,#facc15); color:black; }
-
 .score-minus { color:#22c55e; font-weight:bold; }
 .score-plus { color:#ef4444; font-weight:bold; }
 .score-zero { color:white; }
@@ -154,30 +147,38 @@ db.collection("rounds").onSnapshot(snap=>{
   }
 });
 
-// LOAD ROUND
+// 🔥 LOAD ROUND (FIXED)
 function loadRound(){
   currentRound=document.getElementById("roundSelect").value;
 
-  db.collection("rounds").doc(currentRound).collection("players")
-.onSnapshot(snap=>{
-
-  const newPlayers = [];
-
-  snap.forEach(d=>{
-    const data = {id:d.id,...d.data()};
-
-    const existing = players.find(p=>p.id===d.id);
-
-    if(existing && existing.image && !data.image){
-      data.image = existing.image;
-    }
-
-    newPlayers.push(data);
+  // 👉 HENT COURSE (DETTE VAR FEILEN DIN)
+  db.collection("rounds").doc(currentRound).get().then(doc=>{
+    const data = doc.data();
+    currentCourse = courses.find(c=>c.id===data.courseId) || courses[0];
   });
 
-  players = newPlayers;
-  render();
-});
+  // PLAYERS
+  db.collection("rounds").doc(currentRound).collection("players")
+  .onSnapshot(snap=>{
+
+    const newPlayers = [];
+
+    snap.forEach(d=>{
+      const data = {id:d.id,...d.data()};
+
+      const existing = players.find(p=>p.id===d.id);
+
+      if(existing && existing.image && !data.image){
+        data.image = existing.image;
+      }
+
+      newPlayers.push(data);
+    });
+
+    players = newPlayers;
+    render();
+  });
+}
 
 // DELETE ROUND
 async function deleteRound(){
@@ -189,7 +190,7 @@ async function deleteRound(){
   await db.collection("rounds").doc(currentRound).delete();
 }
 
-// ADD PLAYER WITH HCP
+// ADD PLAYER
 function addPlayer(){
   const name=document.getElementById("name").value;
   if(!name) return;
@@ -238,7 +239,7 @@ document.getElementById("fileInput").addEventListener("change", async function(e
   reader.readAsDataURL(file);
 });
 
-// HCP PER HULL
+// HCP
 function hcpPerHole(p){
   const base = Math.floor((p.hcp||0)/18);
   const extra = (p.hcp||0)%18;
@@ -266,28 +267,17 @@ function totalToPar(p){
   return p.scores.reduce((sum,s,i)=>sum+(s-getPars()[i]),0);
 }
 
-// NETTO
-function netScore(p){
-  const h=hcpPerHole(p);
-  return p.scores.reduce((sum,s,i)=>sum+(s-h[i]),0);
-}
-
-function netToPar(p){
-  return netScore(p) - getPars().reduce((a,b)=>a+b,0);
-}
-
-// 🎉 FINISH ROUND
+// FINISH
 function finishRound(){
   if(players.length===0) return;
 
   let winner=[...players].sort((a,b)=>totalToPar(a)-totalToPar(b))[0];
 
   alert("🏆 Vinner: "+winner.name+"\nScore: "+total(winner));
-
   launchConfetti();
 }
 
-// 🎆 CONFETTI
+// CONFETTI
 function launchConfetti(){
   for(let i=0;i<150;i++){
     let c=document.createElement("div");
@@ -297,8 +287,6 @@ function launchConfetti(){
     c.style.background="hsl("+Math.random()*360+",100%,50%)";
     c.style.top="-10px";
     c.style.left=Math.random()*100+"%";
-    c.style.zIndex=9999;
-
     document.body.appendChild(c);
 
     let fall=Math.random()*3+2;
@@ -328,13 +316,9 @@ function render(){
       <td onclick="uploadImage('${p.id}')">
         ${p.image ? `<img src="${p.image}" class="avatar">` : `<div class="avatar"></div>`}
       </td>
-      <td>
-        ${p.name}<br><small>hcp ${p.hcp||0}</small>
-      </td>
+      <td>${p.name}<br><small>hcp ${p.hcp||0}</small></td>
       <td>
         ${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})
-        <br>
-        <small>Netto: ${netScore(p)} (${netToPar(p)>0?'+':''}${netToPar(p)})</small>
       </td>
       <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
     </tr>`;
