@@ -317,12 +317,19 @@ function addCourse(){
 
   if(!name || !pars) return;
 
-  course = {
+  const newCourse = {
     name,
     pars: pars.split(",").map(x=>parseInt(x))
   };
 
-  alert("Bane lagret!");
+  db.collection("tournaments").doc(state.tid)
+    .update({
+      course: newCourse
+    });
+
+  course = newCourse;
+
+  showToast("🏌️ Bane lagret!");
 }
 
 // ----------------------
