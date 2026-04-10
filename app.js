@@ -345,6 +345,8 @@ function addCourse(){
 
 function chooseRound(){
 
+  const modal = document.getElementById("roundModal");
+
   db.collection("tournaments").doc(state.tid)
     .collection("rounds")
     .get()
@@ -355,20 +357,60 @@ function chooseRound(){
 
       rounds.sort((a,b)=>a.created-b.created);
 
-      let text = "Velg runde:\n";
+      modal.innerHTML = `
+        <div class="card" style="width:85%; max-height:80%; overflow:auto;">
+          <h3>📜 Runder</h3>
 
-      rounds.forEach((r,i)=>{
-        text += `${i+1}: Runde ${i+1}\n`;
-      });
+          ${rounds.map((r,i)=>`
+            <div style="
+              display:flex;
+              justify-content:space-between;
+              align-items:center;
+              padding:10px;
+              border-bottom:1px solid #333;
+            ">
 
-      let choice = parseInt(prompt(text)) - 1;
+              <div onclick="selectRound('${r.id}')" style="cursor:pointer;">
+                Runde ${i+1}
+              </div>
 
-      if(choice >= 0 && choice < rounds.length){
-        state.roundId = rounds[choice].id;
-        listenPlayers();
-      }
+              <button style="background:#dc2626"
+                onclick="deleteRound('${r.id}')">
+                🗑️
+              </button>
 
+            </div>
+          `).join("")}
+
+          <button onclick="closeRoundModal()">Lukk</button>
+        </div>
+      `;
+
+      modal.style.display = "flex";
     });
+}
+
+function selectRound(id){
+  state.roundId = id;
+  closeRoundModal();
+  listenPlayers();
+}
+
+function closeRoundModal(){
+  document.getElementById("roundModal").style.display = "none";
+}
+
+function deleteRound(id){
+
+  if(!confirm("Slette denne runden?")) return;
+
+  db.collection("tournaments").doc(state.tid)
+    .collection("rounds").doc(id)
+    .delete();
+
+  showToast("🗑️ Runde slettet");
+
+  chooseRound(); // refresh liste
 }
 
 // ----------------------
