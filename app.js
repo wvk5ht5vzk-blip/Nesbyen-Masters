@@ -99,6 +99,16 @@ function joinGame(){
 
 function start(){
   login.innerHTML = "";
+
+  // 🔥 Hent bane fra Firebase
+  db.collection("tournaments").doc(state.tid)
+    .onSnapshot(doc=>{
+      const data = doc.data();
+      if(data && data.course){
+        course = data.course;
+      }
+    });
+
   listenRounds();
 }
 
