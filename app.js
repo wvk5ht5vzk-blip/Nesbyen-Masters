@@ -297,7 +297,7 @@ function reverseMulligan(id){
 
   let p = state.players.find(x=>x.id===id);
 
-  showToast("💀 " + p.name + " ble sabotert!");
+  showToast("💀 " + p.name + " fikk en REVERSE MULLIGAN!");
 
   addEvent(state.user + " ga " + p.name + " reverse mulligan 🍺");
 }
