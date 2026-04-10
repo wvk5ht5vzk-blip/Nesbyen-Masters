@@ -461,6 +461,13 @@ window.onload = function(){
   const savedTid = localStorage.getItem("tid");
 
   if(savedUser){
+
+    const savedCode = localStorage.getItem("code");
+
+if(savedCode){
+  document.getElementById("gameCode").innerText = "Spillkode: " + savedCode;
+}
+    
     document.getElementById("playerName").value = savedUser;
   }
 
