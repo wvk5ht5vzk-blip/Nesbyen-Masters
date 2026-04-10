@@ -262,14 +262,19 @@ function updateExtra(id,type){
 }
 
 function mulligan(id){
-  let hole = parseInt(prompt("Hull (1-18)"))-1;
-  if(hole<0||hole>17) return;
-
-  updateScore(id,hole,1);
 
   let p = state.players.find(x=>x.id===id);
 
-  showToast("🍻 SKÅL! " + p.name + " tok en mulligan!");
+  // legg til 1 slag (enkelt)
+  p.scores[0] += 1;
+
+  db.collection("tournaments").doc(state.tid)
+    .collection("rounds").doc(state.roundId)
+    .collection("players").doc(id)
+    .update({scores:p.scores});
+
+  // 🔥 SKÅL toast (samme type som reverse)
+  showToast("🍻 SKÅL! " + p.name + "!");
 }
 
 function showToast(text){
