@@ -229,8 +229,14 @@ function mulligan(id){
 
 function showToast(text){
   const el = document.getElementById("toast");
-  el.innerText = text;
-  el.style.display = "block";
+  const txt = document.getElementById("toastText");
+
+  txt.innerText = text;
+  el.style.display = "flex";
+}
+  function closeToast(){
+  document.getElementById("toast").style.display = "none";
+}
 
   setTimeout(()=>{
     el.style.display = "none";
