@@ -343,41 +343,41 @@ function render(){
 
   // SCORE
   if(state.screen==="score"){
-    html += state.players.map(p=>`
-      <div class="card">
-        <h3>${p.name}</h3>
+  html += state.players.map(p=>`
+    <div class="card">
 
-        ${p.scores.map((s,i)=>{
-          const diff = s - course.pars[i];
-          const sign = diff>0?"+":"";
+      <h3>${p.name}</h3>
 
-          return `
-          <div class="score">
-            Hull ${i+1} (par ${course.pars[i]}): ${sign}${diff}
+      ${p.scores.map((s,i)=>{
+        const diff = s - course.pars[i];
+        const sign = diff>0?"+":"";
 
-            <button onclick="updateScore('${p.id}',${i},-1)">➖</button>
-            <button onclick="updateScore('${p.id}',${i},1)">➕</button>
-          </div>
-          `;
-        }).join("")}
+        return `
+        <div class="score">
+          Hull ${i+1} (par ${course.pars[i]}): ${sign}${diff}
 
-        <div style="margin-top:10px">
-  <button onclick="updateExtra('${p.id}','longest')">🏌️ Drive</button>
-  <button onclick="updateExtra('${p.id}','closest')">🎯 Pin</button>
-</div>
+          <button onclick="updateScore('${p.id}',${i},-1)">➖</button>
+          <button onclick="updateScore('${p.id}',${i},1)">➕</button>
+        </div>
+        `;
+      }).join("")}
 
-<div style="margin-top:10px">
-  <button onclick="mulligan('${p.id}')">🍺 Mulligan</button>
-</div>
+      <div style="margin-top:10px; display:flex; gap:10px;">
+        <button onclick="updateExtra('${p.id}','longest')">🏌️ Drive</button>
+        <button onclick="updateExtra('${p.id}','closest')">🎯 Pin</button>
+      </div>
 
-<div style="margin-top:10px">
-  <button style="background:#dc2626" onclick="reverseMulligan('${p.id}')">
-    💀 Reverse Mulligan
-  </button>
-</div>
-    `).join("");
-  }
+      <div style="margin-top:10px; display:flex; justify-content:space-between;">
+        <button onclick="mulligan('${p.id}')">🍺 Mulligan</button>
 
+        <button style="background:#dc2626" onclick="reverseMulligan('${p.id}')">
+          💀 Reverse
+        </button>
+      </div>
+
+    </div>
+  `).join("");
+}
   // PLAYERS
   if(state.screen==="players"){
     html = `
