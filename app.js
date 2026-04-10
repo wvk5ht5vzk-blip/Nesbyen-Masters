@@ -266,6 +266,10 @@ function mulligan(id){
   if(hole<0||hole>17) return;
 
   updateScore(id,hole,1);
+
+  let p = state.players.find(x=>x.id===id);
+
+  showToast("🍻 SKÅL! " + p.name + " tok en mulligan!");
 }
 
 function showToast(text){
