@@ -104,6 +104,7 @@ let currentRound=null;
 let players=[];
 let courses=[];
 let currentCourse=null;
+let selectedPlayer=null;
 
 // LOGIN
 function login(){
@@ -148,7 +149,7 @@ function newTournament(){
   });
 }
 
-// COURSES (FIXED)
+// COURSES
 db.collection("courses").onSnapshot(snap=>{
   const sel=document.getElementById("courseSelect");
   courses=[];
@@ -176,7 +177,6 @@ db.collection("courses").onSnapshot(snap=>{
   render();
 });
 
-// CHANGE COURSE
 document.getElementById("courseSelect").onchange=function(){
   currentCourse=courses.find(c=>c.id===this.value);
   localStorage.setItem("course", this.value);
@@ -236,7 +236,7 @@ function newRound(){
   .add({created:Date.now()});
 }
 
-// LOAD ROUND (FIXED DRIVE/PIN)
+// LOAD ROUND
 function loadRound(){
   currentRound=document.getElementById("roundSelect").value;
   localStorage.setItem("round", currentRound);
@@ -250,8 +250,9 @@ function loadRound(){
       let data={id:d.id,...d.data()};
 
       if(!data.scores) data.scores=Array(18).fill(0);
-      if(data.longest === undefined) data.longest = 0;
-      if(data.closest === undefined) data.closest = 0;
+      if(!data.image) data.image="";
+      if(data.longest===undefined) data.longest=0;
+      if(data.closest===undefined) data.closest=0;
 
       players.push(data);
     });
@@ -260,7 +261,7 @@ function loadRound(){
   });
 }
 
-// ADD PLAYER
+// PLAYER
 function addPlayer(){
   const name=document.getElementById("name").value;
   if(!name) return;
@@ -281,17 +282,35 @@ function addPlayer(){
   document.getElementById("name").value="";
 }
 
-// SCORE
-function updateScore(id,hole,val){
-  const p=players.find(x=>x.id===id);
-  p.scores[hole]+=val;
-  if(p.scores[hole]<0)p.scores[hole]=0;
-
+function deletePlayer(id){
   db.collection("tournaments").doc(tournamentId)
   .collection("rounds").doc(currentRound)
-  .collection("players").doc(id)
-  .update({scores:p.scores});
+  .collection("players").doc(id).delete();
 }
+
+// IMAGE FIX
+function uploadImage(id){
+  selectedPlayer=id;
+  const input=document.getElementById("fileInput");
+  input.value="";
+  setTimeout(()=>input.click(),50);
+}
+
+document.getElementById("fileInput").addEventListener("change", e=>{
+  const file=e.target.files[0];
+  if(!file || !selectedPlayer) return;
+
+  const reader=new FileReader();
+
+  reader.onload=()=>{
+    db.collection("tournaments").doc(tournamentId)
+    .collection("rounds").doc(currentRound)
+    .collection("players").doc(selectedPlayer)
+    .update({image:reader.result});
+  };
+
+  reader.readAsDataURL(file);
+});
 
 // EXTRA
 function updateExtra(id,field){
@@ -302,6 +321,18 @@ function updateExtra(id,field){
   .collection("rounds").doc(currentRound)
   .collection("players").doc(id)
   .update({[field]:val});
+}
+
+// SCORE
+function updateScore(id,hole,val){
+  const p=players.find(x=>x.id===id);
+  p.scores[hole]+=val;
+  if(p.scores[hole]<0)p.scores[hole]=0;
+
+  db.collection("tournaments").doc(tournamentId)
+  .collection("rounds").doc(currentRound)
+  .collection("players").doc(id)
+  .update({scores:p.scores});
 }
 
 // CALC
@@ -332,9 +363,8 @@ function netToPar(p){
 function finishRound(){
   let winner=[...players].sort((a,b)=>netToPar(a)-netToPar(b))[0];
 
-  const modal=document.getElementById("winnerModal");
-  modal.innerHTML="🏆 "+winner.name+" vant!";
-  modal.style.display="flex";
+  document.getElementById("winnerModal").innerHTML="🏆 "+winner.name+" vant!";
+  document.getElementById("winnerModal").style.display="flex";
 
   launchConfetti();
 }
@@ -359,48 +389,30 @@ function launchConfetti(){
 
 // RENDER
 function render(){
-
   if(!getPars()) return;
 
   let sorted=[...players].sort((a,b)=>netToPar(a)-netToPar(b));
 
   let lb="<tr><th>#</th><th></th><th>Navn</th><th>Score</th><th>Drive</th><th>Pin</th><th></th></tr>";
 
-sorted.forEach((p,i)=>{
-  lb+=`
-  <tr class="${i===0?'gold':''}">
-    <td>${i+1}</td>
+  sorted.forEach((p,i)=>{
+    lb+=`
+    <tr class="${i===0?'gold':''}">
+      <td>${i+1}</td>
+      <td onclick="uploadImage('${p.id}')">
+        ${p.image ? `<img src="${p.image}" class="avatar">` : `<div class="avatar"></div>`}
+      </td>
+      <td>${p.name}<br><small>hcp ${p.hcp||0}</small></td>
+      <td>${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})<br>
+      <small>Netto: ${netScore(p)} (${netToPar(p)>0?'+':''}${netToPar(p)})</small></td>
+      <td onclick="updateExtra('${p.id}','longest')">${p.longest} m</td>
+      <td onclick="updateExtra('${p.id}','closest')">${p.closest} cm</td>
+      <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
+    </tr>`;
+  });
 
-    <td onclick="uploadImage('${p.id}')">
-      ${p.image ? `<img src="${p.image}" class="avatar">` : `<div class="avatar"></div>`}
-    </td>
+  document.getElementById("leaderboard").innerHTML=lb;
 
-    <td>
-      ${p.name}<br>
-      <small>hcp ${p.hcp||0}</small>
-    </td>
-
-    <td>
-      ${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})
-      <br>
-      <small>Netto: ${netScore(p)} (${netToPar(p)>0?'+':''}${netToPar(p)})</small>
-    </td>
-
-    <td onclick="updateExtra('${p.id}','longest')">
-      ${p.longest||0} m
-    </td>
-
-    <td onclick="updateExtra('${p.id}','closest')">
-      ${p.closest||0} cm
-    </td>
-
-    <td>
-      <button onclick="deletePlayer('${p.id}')">❌</button>
-    </td>
-  </tr>`;
-});
-
-document.getElementById("leaderboard").innerHTML=lb;
   let sc="<tr><th>Spiller</th>";
   for(let i=1;i<=18;i++) sc+=`<th>${i}<br>${getPars()[i-1]}</th>`;
   sc+="</tr>";
