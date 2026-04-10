@@ -501,51 +501,41 @@ function render(){
       <h3>${p.name}</h3>
 
       ${p.scores.map((s,i)=>{
-        const diff = s - course.pars[i];
-        const sign = diff>0?"+":"";
+  const diff = s - course.pars[i];
+  const sign = diff>0?"+":"";
 
-        
+  const color = diff < 0 ? "#22c55e" : diff > 0 ? "#ef4444" : "#fff";
 
-let color = "#fff";
-if(diff < 0) color = "#22c55e";
-if(diff > 0) color = "#ef4444";
-
-return `
-<div class="score" style="
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-">
-
-  <div>
-    Hull ${i+1} (par ${course.pars[i]}): ${sign}${diff}
-  </div>
-
-  <div style="
+  return `
+  <div class="score" style="
     display:flex;
+    justify-content:space-between;
     align-items:center;
-    gap:12px;
   ">
 
-    <button onclick="updateScore('${p.id}',${i},-1)">➖</button>
+    <div>
+      Hull ${i+1} (par ${course.pars[i]}): ${sign}${diff}
+    </div>
 
-    <span style="
-      font-size:20px;
-      font-weight:bold;
-      color:${color};
-      min-width:24px;
-      text-align:center;
-    ">
-      ${s}
-    </span>
+    <div style="display:flex; align-items:center; gap:12px;">
+      <button onclick="updateScore('${p.id}',${i},-1)">➖</button>
 
-    <button onclick="updateScore('${p.id}',${i},1)">➕</button>
+      <span style="
+        font-size:20px;
+        font-weight:bold;
+        color:${color};
+        min-width:24px;
+        text-align:center;
+      ">
+        ${s}
+      </span>
+
+      <button onclick="updateScore('${p.id}',${i},1)">➕</button>
+    </div>
 
   </div>
-
-</div>
-`;
-      }).join("")}
+  `;
+}).join("")}
 
       <div style="margin-top:10px; display:flex; gap:10px;">
         <button onclick="updateExtra('${p.id}','longest')">🏌️ Drive</button>
