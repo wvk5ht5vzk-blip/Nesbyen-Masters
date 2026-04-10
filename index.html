@@ -271,7 +271,7 @@ function loadRound(){
       let data={id:d.id,...d.data()};
 
       if(!data.scores) data.scores=Array(18).fill(0);
-      if(!data.image) data.image="";
+      if(data.image === undefined) data.image="";
       if(data.longest===undefined) data.longest=0;
       if(data.closest===undefined) data.closest=0;
 
