@@ -131,3 +131,18 @@ nav{
   padding:6px 10px;
   border-radius:8px;
 }
+
+#profileModal{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.85);
+
+  display:none;
+  justify-content:center;
+  align-items:center;
+
+  z-index:1000;
+}
