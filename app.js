@@ -348,8 +348,9 @@ function render(){
         }).join("")}
 
         <button onclick="mulligan('${p.id}')">🍺 Mulligan</button>
-        <button onclick="updateExtra('${p.id}','longest')">🏌️ Drive</button>
-        <button onclick="updateExtra('${p.id}','closest')">🎯 Pin</button>
+<button onclick="reverseMulligan('${p.id}')">💀 Reverse</button>
+<button onclick="updateExtra('${p.id}','longest')">🏌️ Drive</button>
+<button onclick="updateExtra('${p.id}','closest')">🎯 Pin</button>
       </div>
     `).join("");
   }
