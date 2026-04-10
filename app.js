@@ -576,8 +576,4 @@ function render(){
 
 loadLocal();
 
-if(state.user && state.tid){
-  start();
-}else{
-  showLogin();
-}
+start();
