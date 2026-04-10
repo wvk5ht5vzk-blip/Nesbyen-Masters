@@ -337,7 +337,7 @@ function render(){
 
   <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
 
-    <img src="${p.image||''}" class="avatar" onclick="uploadImage('${p.id}')">
+    <img src="${p.image||''}" class="avatar" onclick="openProfile(${JSON.stringify(p).replace(/"/g,'&quot;')})">
 
     <button style="background:#dc2626" onclick="reverseMulligan('${p.id}')">
       💀
