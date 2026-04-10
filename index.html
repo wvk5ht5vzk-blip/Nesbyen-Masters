@@ -227,19 +227,27 @@ function getPars(){
 // ROUNDS
 function loadRounds(){
   
-  db.collection("tournaments").doc(tournamentId)
-.collection("events")
-.orderBy("time","desc")
-.limit(1)
-.onSnapshot(snap=>{
-  snap.forEach(doc=>{
-    const data = doc.data();
-    if(!window.lastEvent || window.lastEvent !== data.time){
-  window.lastEvent = data.time;
-  showToast(data.text);
-}
-  });
-});
+  function loadRounds(){
+
+  if(!window.eventListenerStarted){
+    window.eventListenerStarted = true;
+
+    db.collection("tournaments").doc(tournamentId)
+    .collection("events")
+    .orderBy("time","desc")
+    .limit(1)
+    .onSnapshot(snap=>{
+      snap.forEach(doc=>{
+        const data = doc.data();
+
+        if(!window.lastEvent || window.lastEvent !== data.time){
+          window.lastEvent = data.time;
+          showToast(data.text);
+        }
+      });
+    });
+
+  }
   
   db.collection("tournaments").doc(tournamentId)
   .collection("rounds")
