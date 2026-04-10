@@ -146,3 +146,8 @@ nav{
 
   z-index:1000;
 }
+
+#profileModal img{
+  border:3px solid #16a34a;
+  border-radius:50%;
+}
