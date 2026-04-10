@@ -44,7 +44,6 @@ input, select { padding:10px; border-radius:8px; }
 
 <h1>🏌️ Nesbyen Masters</h1>
 
-<!-- 🔥 NY LOGIN -->
 <div id="loginBox">
   <input id="playerName" placeholder="Ditt navn">
 
@@ -111,7 +110,7 @@ let courses=[];
 let currentCourse=null;
 let selectedPlayer=null;
 
-// 🔥 CREATE GAME
+// CREATE GAME
 function createGame(){
   user=document.getElementById("playerName").value;
   if(!user) return alert("Skriv navn");
@@ -125,11 +124,9 @@ function createGame(){
     code:code
   })
   .then(doc=>{
-
     alert("Spillkode: "+code);
 
     tournamentId=doc.id;
-
     localStorage.setItem("tid", doc.id);
 
     document.getElementById("loginBox").style.display="none";
@@ -140,23 +137,10 @@ function createGame(){
   })
   .catch(err=>{
     alert("FEIL: " + err.message);
-    console.error(err);
   });
 }
 
-    // 🔥 VIKTIG
-    localStorage.setItem("tid", doc.id);
-
-    // 🔥 START APP RIKTIG
-    document.getElementById("loginBox").style.display="none";
-    document.getElementById("app").style.display="block";
-    document.getElementById("welcome").innerText="Hei "+user;
-
-    loadRounds();
-  });
-}
-
-// 🔥 JOIN GAME
+// JOIN GAME
 function joinGame(){
   user=document.getElementById("playerName").value;
   const code=document.getElementById("joinCode").value;
@@ -179,22 +163,12 @@ function joinGame(){
 
     localStorage.setItem("tid",doc.id);
 
-    // 🔥 START APP
     document.getElementById("loginBox").style.display="none";
     document.getElementById("app").style.display="block";
     document.getElementById("welcome").innerText="Hei "+user;
 
     loadRounds();
   });
-}
-
-// START APP
-function startApp(){
-  document.getElementById("loginBox").style.display="none";
-  document.getElementById("app").style.display="block";
-  document.getElementById("welcome").innerText="Hei "+user;
-
-  loadRounds();
 }
 
 // COURSES
@@ -436,7 +410,7 @@ function render(){
       <td onclick="updateExtra('${p.id}','longest')">${p.longest} m</td>
       <td onclick="updateExtra('${p.id}','closest')">${p.closest} cm</td>
       <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
-     < /tr>";
+    </tr>`;
   });
 
   document.getElementById("leaderboard").innerHTML=lb;
@@ -455,12 +429,13 @@ function render(){
         <button ontouchstart="event.preventDefault(); updateScore('${p.id}',${i},1)">+</button>
       </td>`;
     });
-    sc+="</tr>`;
+    sc+="</tr>";
   });
 
   document.getElementById("scoreTable").innerHTML=sc;
 }
-// AUTO START (fikser nytt spill + husker spill)
+
+// AUTO START
 window.onload = function(){
   const savedUser = localStorage.getItem("user");
   const savedTid = localStorage.getItem("tid");
