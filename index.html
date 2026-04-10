@@ -234,7 +234,10 @@ function loadRounds(){
 .onSnapshot(snap=>{
   snap.forEach(doc=>{
     const data = doc.data();
-    showToast(data.text);
+    if(!window.lastEvent || window.lastEvent !== data.time){
+  window.lastEvent = data.time;
+  showToast(data.text);
+}
   });
 });
   
