@@ -545,7 +545,7 @@ return `
 
 </div>
 `;
-      }).join("")
+      }).join("")}
 
       <div style="margin-top:10px; display:flex; gap:10px;">
         <button onclick="updateExtra('${p.id}','longest')">🏌️ Drive</button>
