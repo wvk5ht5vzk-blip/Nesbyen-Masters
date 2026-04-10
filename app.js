@@ -343,6 +343,34 @@ function addCourse(){
   showToast("🏌️ Bane lagret!");
 }
 
+function chooseRound(){
+
+  db.collection("tournaments").doc(state.tid)
+    .collection("rounds")
+    .get()
+    .then(snap=>{
+
+      let rounds = [];
+      snap.forEach(d=>rounds.push({id:d.id,...d.data()}));
+
+      rounds.sort((a,b)=>a.created-b.created);
+
+      let text = "Velg runde:\n";
+
+      rounds.forEach((r,i)=>{
+        text += `${i+1}: Runde ${i+1}\n`;
+      });
+
+      let choice = parseInt(prompt(text)) - 1;
+
+      if(choice >= 0 && choice < rounds.length){
+        state.roundId = rounds[choice].id;
+        listenPlayers();
+      }
+
+    });
+}
+
 // ----------------------
 // NAV
 // ----------------------
