@@ -7,7 +7,7 @@ let state={
   selectedPlayer:null
 };
 
-// LOCAL
+// INIT
 function loadLocal(){
   state.user=localStorage.getItem("user");
   state.tid=localStorage.getItem("tid");
@@ -29,9 +29,11 @@ function showLogin(){
   `;
 }
 
-// CREATE / JOIN
+// CREATE
 function createGame(){
   state.user=name.value;
+  if(!state.user) return alert("Navn!");
+
   const code=Math.floor(1000+Math.random()*9000);
 
   db.collection("tournaments").add({code,created:Date.now()})
@@ -44,8 +46,10 @@ function createGame(){
   });
 }
 
+// JOIN
 function joinGame(){
   state.user=name.value;
+
   db.collection("tournaments")
   .where("code","==",parseInt(code.value))
   .get()
@@ -61,7 +65,6 @@ function joinGame(){
 function start(){
   login.innerHTML="";
   listenRounds();
-  listenEvents();
 }
 
 // ROUNDS
@@ -78,6 +81,7 @@ function listenRounds(){
     let r=[];
     snap.forEach(d=>r.push({id:d.id,...d.data()}));
     r.sort((a,b)=>a.created-b.created);
+
     if(r.length){
       state.roundId=r[r.length-1].id;
       listenPlayers();
@@ -95,7 +99,6 @@ function listenPlayers(){
     snap.forEach(d=>{
       let p=d.data();
       if(!p.scores)p.scores=Array(18).fill(0);
-      if(!p.stats)p.stats={wins:0,rounds:0};
       if(!p.image)p.image="";
       if(!p.longest)p.longest=0;
       if(!p.closest)p.closest=0;
@@ -116,11 +119,20 @@ function addPlayer(){
   .add({
     name:n,hcp:h,
     scores:Array(18).fill(0),
-    stats:{wins:0,rounds:0},
     image:"",
     longest:0,
     closest:0
   });
+}
+
+// DELETE PLAYER
+function deletePlayer(id){
+  if(!confirm("Slette spiller?")) return;
+
+  db.collection("tournaments").doc(state.tid)
+  .collection("rounds").doc(state.roundId)
+  .collection("players").doc(id)
+  .delete();
 }
 
 // SCORE
@@ -135,44 +147,14 @@ function updateScore(id,hole,val){
   .update({scores:p.scores});
 }
 
-// HANDICAP
+// NET
 function net(p){
-  const base=Math.floor(p.hcp/18);
+  const base=Math.floor((p.hcp||0)/18);
   return p.scores.reduce((sum,s)=>sum+(s-base),0);
 }
 
-// EVENTS 🍺
-function addEvent(text){
-  db.collection("tournaments").doc(state.tid)
-  .collection("events")
-  .add({text,time:Date.now()});
-}
-
-function listenEvents(){
-  db.collection("tournaments").doc(state.tid)
-  .collection("events")
-  .orderBy("time","desc")
-  .limit(1)
-  .onSnapshot(snap=>{
-    snap.forEach(d=>{
-      feed.innerText=d.data().text;
-      setTimeout(()=>feed.innerText="",3000);
-    });
-  });
-}
-
-// MULLIGAN
-function mulligan(id){
-  let hole=parseInt(prompt("Hull"))-1;
-  let p=state.players.find(x=>x.id===id);
-  p.scores[hole]+=1;
-
-  updateScore(id,hole,1);
-  addEvent(state.user+" ga "+p.name+" mulligan 🍺");
-}
-
-// IMAGE UPLOAD
-fileInput.addEventListener("change",e=>{
+// IMAGE
+fileInput.addEventListener("change", e=>{
   const file=e.target.files[0];
   if(!file||!state.selectedPlayer)return;
 
@@ -201,6 +183,14 @@ function updateExtra(id,type){
   .update({[type]:val});
 }
 
+// MULLIGAN
+function mulligan(id){
+  let hole=parseInt(prompt("Hull (1-18)"))-1;
+  if(hole<0||hole>17)return;
+
+  updateScore(id,hole,1);
+}
+
 // NAV
 function setScreen(s){
   state.screen=s;
@@ -213,12 +203,16 @@ function render(){
   let html="";
 
   if(state.screen==="leaderboard"){
+    html+=`<button onclick="newRound()">➕ Ny runde</button>`;
+
     html+=state.players.sort((a,b)=>net(a)-net(b))
-    .map(p=>`
+    .map((p,i)=>`
       <div class="card">
+        <b>${i+1}. ${p.name}</b> (${net(p)})
+        <br>
+        🏌️ ${p.longest}m | 🎯 ${p.closest}cm
+        <br>
         <img src="${p.image||''}" class="avatar" onclick="uploadImage('${p.id}')">
-        ${p.name} (${net(p)})
-        <br>🏌️ ${p.longest}m | 🎯 ${p.closest}cm
       </div>
     `).join("");
   }
@@ -227,13 +221,15 @@ function render(){
     html+=state.players.map(p=>`
       <div class="card">
         <h3>${p.name}</h3>
+
         ${p.scores.map((s,i)=>`
           <div class="score">
-            ${i+1}: ${s}
-            <button onclick="updateScore('${p.id}',${i},1)">+</button>
-            <button onclick="updateScore('${p.id}',${i},-1)">-</button>
+            Hull ${i+1}: ${s}
+            <button onclick="updateScore('${p.id}',${i},-1)">➖</button>
+            <button onclick="updateScore('${p.id}',${i},1)">➕</button>
           </div>
         `).join("")}
+
         <button onclick="mulligan('${p.id}')">🍺 Mulligan</button>
         <button onclick="updateExtra('${p.id}','longest')">🏌️ Drive</button>
         <button onclick="updateExtra('${p.id}','closest')">🎯 Pin</button>
@@ -244,8 +240,12 @@ function render(){
   if(state.screen==="players"){
     html=`
       <button onclick="addPlayer()">+ spiller</button>
+
       ${state.players.map(p=>`
-        <div class="card">${p.name}</div>
+        <div class="card">
+          ${p.name}
+          <button onclick="deletePlayer('${p.id}')">❌</button>
+        </div>
       `).join("")}
     `;
   }
