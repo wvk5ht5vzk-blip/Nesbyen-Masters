@@ -460,17 +460,15 @@ window.onload = function(){
   const savedUser = localStorage.getItem("user");
   const savedTid = localStorage.getItem("tid");
 
-  if(savedUser){
+if(savedUser){
+  document.getElementById("playerName").value = savedUser;
+}
 
-    const savedCode = localStorage.getItem("code");
-
+const savedCode = localStorage.getItem("code");
 if(savedCode){
   document.getElementById("gameCode").innerText = "Spillkode: " + savedCode;
 }
-    
-    document.getElementById("playerName").value = savedUser;
-  }
-
+  
   if(savedUser && savedTid){
     user = savedUser;
     tournamentId = savedTid;
