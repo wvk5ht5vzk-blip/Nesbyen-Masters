@@ -504,9 +504,7 @@ function render(){
         const diff = s - course.pars[i];
         const sign = diff>0?"+":"";
 
-        const diff = s - course.pars[i];
-const sign = diff > 0 ? "+" : "";
-
+        
 // farger
 let color = "#fff";
 if(diff < 0) color = "#22c55e";
