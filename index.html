@@ -134,6 +134,8 @@ function createGame(){
   .then(doc=>{
     alert("Spillkode: "+code);
 
+    localStorage.setItem("code", code);
+    
     tournamentId=doc.id;
     localStorage.setItem("tid", doc.id);
 
