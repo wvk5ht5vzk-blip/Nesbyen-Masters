@@ -442,6 +442,16 @@ function render(){
   document.getElementById("scoreTable").innerHTML=sc;
 }
 
+function leaveGame(){
+  localStorage.removeItem("tid");
+
+  document.getElementById("app").style.display="none";
+  document.getElementById("loginBox").style.display="block";
+
+  // valgfritt: tøm input
+  document.getElementById("joinCode").value="";
+}
+  
 // AUTO START
 window.onload = function(){
   const savedUser = localStorage.getItem("user");
