@@ -1,15 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-
 <title>Nesbyen Masters</title>
-
-<!-- 🔥 PWA (ANDROID + IOS) -->
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#020617">
-<meta name="apple-mobile-web-app-capable" content="yes">
 
 <style>
 body { font-family: Arial; background:#020617; color:white; text-align:center; }
@@ -53,7 +46,6 @@ input, select { padding:10px; border-radius:8px; }
 
 <!-- 🔥 NY LOGIN -->
 <div id="loginBox">
-
   <input id="playerName" placeholder="Ditt navn">
 
   <br><br>
@@ -64,7 +56,6 @@ input, select { padding:10px; border-radius:8px; }
 
   <input id="joinCode" placeholder="Spillkode">
   <button onclick="joinGame()">🔑 Bli med</button>
-
 </div>
 
 <div id="app" style="display:none;">
@@ -120,14 +111,7 @@ let courses=[];
 let currentCourse=null;
 let selectedPlayer=null;
 
-window.onload=function(){
-  const saved=localStorage.getItem("user");
-  if(saved){
-    document.getElementById("playerName").value=saved;
-  }
-}
-
-// 🎮 CREATE GAME
+// 🔥 CREATE GAME
 function createGame(){
   user=document.getElementById("playerName").value;
   if(!user) return alert("Skriv navn");
@@ -149,7 +133,7 @@ function createGame(){
   });
 }
 
-// 🎮 JOIN GAME
+// 🔥 JOIN GAME
 function joinGame(){
   user=document.getElementById("playerName").value;
   const code=document.getElementById("joinCode").value;
@@ -210,8 +194,9 @@ document.getElementById("courseSelect").onchange=function(){
 
 function addCourse(){
   const name=prompt("Navn?");
+  if(!name) return;
   const pars=prompt("Pars (4,4,3...)").split(",").map(x=>parseInt(x));
-  db.collection("courses").add({name,pars});
+  db.collection("courses").add({name, pars});
 }
 
 function getPars(){
@@ -263,12 +248,15 @@ function loadRound(){
     players=[];
     snap.forEach(d=>{
       let data={id:d.id,...d.data()};
+
       if(!data.scores) data.scores=Array(18).fill(0);
       if(!data.image) data.image="";
       if(data.longest===undefined) data.longest=0;
       if(data.closest===undefined) data.closest=0;
+
       players.push(data);
     });
+
     render();
   });
 }
@@ -276,15 +264,24 @@ function loadRound(){
 // PLAYER
 function addPlayer(){
   const name=document.getElementById("name").value;
+  if(!name) return;
+
   const hcp=parseInt(prompt("HCP?"))||0;
 
   db.collection("tournaments").doc(tournamentId)
   .collection("rounds").doc(currentRound)
   .collection("players")
-  .add({name,hcp,scores:Array(18).fill(0),image:"",longest:0,closest:0});
+  .add({
+    name,hcp,
+    scores:Array(18).fill(0),
+    image:"",
+    longest:0,
+    closest:0
+  });
+
+  document.getElementById("name").value="";
 }
 
-// DELETE
 function deletePlayer(id){
   db.collection("tournaments").doc(tournamentId)
   .collection("rounds").doc(currentRound)
@@ -301,6 +298,8 @@ function uploadImage(id){
 
 document.getElementById("fileInput").addEventListener("change", e=>{
   const file=e.target.files[0];
+  if(!file || !selectedPlayer) return;
+
   const reader=new FileReader();
 
   reader.onload=()=>{
@@ -312,6 +311,17 @@ document.getElementById("fileInput").addEventListener("change", e=>{
 
   reader.readAsDataURL(file);
 });
+
+// EXTRA
+function updateExtra(id,field){
+  let val=prompt(field==="longest"?"Meter?":"CM?");
+  val=parseFloat(val)||0;
+
+  db.collection("tournaments").doc(tournamentId)
+  .collection("rounds").doc(currentRound)
+  .collection("players").doc(id)
+  .update({[field]:val});
+}
 
 // SCORE
 function updateScore(id,hole,val){
@@ -332,11 +342,58 @@ function totalToPar(p){
   return p.scores.reduce((sum,s,i)=>sum+(s-getPars()[i]),0);
 }
 
+function hcpPerHole(p){
+  const base=Math.floor((p.hcp||0)/18);
+  const extra=(p.hcp||0)%18;
+  let arr=Array(18).fill(base);
+  for(let i=0;i<extra;i++) arr[i]++;
+  return arr;
+}
+
+function netScore(p){
+  const h=hcpPerHole(p);
+  return p.scores.reduce((sum,s,i)=>sum+(s-h[i]),0);
+}
+
+function netToPar(p){
+  return netScore(p) - getPars().reduce((a,b)=>a+b,0);
+}
+
+// FINISH
+function finishRound(){
+  let winner=[...players].sort((a,b)=>netToPar(a)-netToPar(b))[0];
+
+  document.getElementById("winnerModal").innerHTML="🏆 "+winner.name+" vant!";
+  document.getElementById("winnerModal").style.display="flex";
+
+  launchConfetti();
+}
+
+function launchConfetti(){
+  for(let i=0;i<120;i++){
+    let c=document.createElement("div");
+    c.style.position="fixed";
+    c.style.width="6px";
+    c.style.height="6px";
+    c.style.background="hsl("+Math.random()*360+",100%,50%)";
+    c.style.top="-10px";
+    c.style.left=Math.random()*100+"%";
+    document.body.appendChild(c);
+
+    c.animate([{transform:"translateY(0)"},{transform:"translateY(100vh)"}],
+    {duration:2000});
+
+    setTimeout(()=>c.remove(),2000);
+  }
+}
+
 // RENDER
 function render(){
-  let sorted=[...players].sort((a,b)=>totalToPar(a)-totalToPar(b));
+  if(!getPars()) return;
 
-  let lb="<tr><th>#</th><th></th><th>Navn</th><th>Score</th><th></th></tr>";
+  let sorted=[...players].sort((a,b)=>netToPar(a)-netToPar(b));
+
+  let lb="<tr><th>#</th><th></th><th>Navn</th><th>Score</th><th>Drive</th><th>Pin</th><th></th></tr>";
 
   sorted.forEach((p,i)=>{
     lb+=`
@@ -345,8 +402,11 @@ function render(){
       <td onclick="uploadImage('${p.id}')">
         ${p.image ? `<img src="${p.image}" class="avatar">` : `<div class="avatar"></div>`}
       </td>
-      <td>${p.name}</td>
-      <td>${total(p)} (${totalToPar(p)})</td>
+      <td>${p.name}<br><small>hcp ${p.hcp||0}</small></td>
+      <td>${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})<br>
+      <small>Netto: ${netScore(p)} (${netToPar(p)>0?'+':''}${netToPar(p)})</small></td>
+      <td onclick="updateExtra('${p.id}','longest')">${p.longest} m</td>
+      <td onclick="updateExtra('${p.id}','closest')">${p.closest} cm</td>
       <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
     </tr>`;
   });
@@ -354,7 +414,7 @@ function render(){
   document.getElementById("leaderboard").innerHTML=lb;
 
   let sc="<tr><th>Spiller</th>";
-  for(let i=1;i<=18;i++) sc+=`<th>${i}</th>`;
+  for(let i=1;i<=18;i++) sc+=`<th>${i}<br>${getPars()[i-1]}</th>`;
   sc+="</tr>";
 
   players.forEach(p=>{
@@ -362,12 +422,12 @@ function render(){
     p.scores.forEach((s,i)=>{
       sc+=`
       <td>
-        <button onclick="updateScore('${p.id}',${i},-1)">-</button>
+        <button ontouchstart="event.preventDefault(); updateScore('${p.id}',${i},-1)">-</button>
         ${s}
-        <button onclick="updateScore('${p.id}',${i},1)">+</button>
+        <button ontouchstart="event.preventDefault(); updateScore('${p.id}',${i},1)">+</button>
       </td>`;
     });
-    sc+="</tr>";
+    sc+="</tr>`;
   });
 
   document.getElementById("scoreTable").innerHTML=sc;
