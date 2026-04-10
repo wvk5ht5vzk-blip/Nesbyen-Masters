@@ -363,9 +363,13 @@ function render(){
   if(state.screen==="leaderboard"){
 
     html += `
-      <button onclick="newRound()">➕ Ny runde</button>
-      <button onclick="addCourse()">🏌️ Bane</button>
-    `;
+  <h3 style="text-align:center;margin-top:10px;">
+    🏌️ ${course.name}
+  </h3>
+
+  <button onclick="newRound()">➕ Ny runde</button>
+  <button onclick="addCourse()">🏌️ Bane</button>
+`;
 
     let sorted = [...state.players].sort((a,b)=>netScore(a)-netScore(b));
 
