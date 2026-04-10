@@ -445,6 +445,26 @@ function render(){
 
   document.getElementById("scoreTable").innerHTML=sc;
 }
+// AUTO START (fikser nytt spill + husker spill)
+window.onload = function(){
+  const savedUser = localStorage.getItem("user");
+  const savedTid = localStorage.getItem("tid");
+
+  if(savedUser){
+    document.getElementById("playerName").value = savedUser;
+  }
+
+  if(savedUser && savedTid){
+    user = savedUser;
+    tournamentId = savedTid;
+
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("app").style.display="block";
+    document.getElementById("welcome").innerText="Hei "+user;
+
+    loadRounds();
+  }
+};
 </script>
 
 </body>
