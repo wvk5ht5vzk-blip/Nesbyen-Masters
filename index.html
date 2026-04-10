@@ -226,6 +226,18 @@ function getPars(){
 
 // ROUNDS
 function loadRounds(){
+  
+  db.collection("tournaments").doc(tournamentId)
+.collection("events")
+.orderBy("time","desc")
+.limit(1)
+.onSnapshot(snap=>{
+  snap.forEach(doc=>{
+    const data = doc.data();
+    showToast(data.text);
+  });
+});
+  
   db.collection("tournaments").doc(tournamentId)
   .collection("rounds")
   .onSnapshot(snap=>{
