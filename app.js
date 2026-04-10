@@ -227,6 +227,17 @@ function mulligan(id){
   updateScore(id,hole,1);
 }
 
+function reverseMulligan(id){
+  let hole = parseInt(prompt("Hvilket hull (1-18)?")) - 1;
+  if(hole < 0 || hole > 17) return;
+
+  updateScore(id, hole, 1);
+
+  let p = state.players.find(x=>x.id===id);
+
+  addEvent(state.user + " ga " + p.name + " reverse mulligan 🍺");
+}
+
 // ----------------------
 // IMAGE UPLOAD
 // ----------------------
