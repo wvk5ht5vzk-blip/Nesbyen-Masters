@@ -290,13 +290,18 @@ function closeToast(){
 }
 
 function reverseMulligan(id){
-  let hole = parseInt(prompt("Hull (1-18)")) - 1;
-  if(hole < 0 || hole > 17) return;
-
-  updateScore(id, hole, 1);
 
   let p = state.players.find(x=>x.id===id);
 
+  // legg til 1 slag (enkelt)
+  p.scores[0] += 1;
+
+  db.collection("tournaments").doc(state.tid)
+    .collection("rounds").doc(state.roundId)
+    .collection("players").doc(id)
+    .update({scores:p.scores});
+
+  // 🔥 NY TEKST
   showToast("💀 " + p.name + " fikk en REVERSE MULLIGAN!");
 
   addEvent(state.user + " ga " + p.name + " reverse mulligan 🍺");
