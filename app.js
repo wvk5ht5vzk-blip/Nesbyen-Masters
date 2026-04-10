@@ -21,8 +21,23 @@ let course = {
 // ----------------------
 
 function loadLocal(){
-  state.user = localStorage.getItem("user");
-  state.tid = localStorage.getItem("tid");
+
+  const params = new URLSearchParams(window.location.search);
+
+  const urlTid = params.get("tid");
+  const urlName = params.get("name");
+
+  if(urlTid){
+    state.tid = urlTid;
+  }else{
+    state.tid = localStorage.getItem("tid");
+  }
+
+  if(urlName){
+    state.user = urlName;
+  }else{
+    state.user = localStorage.getItem("user");
+  }
 }
 
 function saveLocal(){
