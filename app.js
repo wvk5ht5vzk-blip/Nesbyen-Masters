@@ -211,6 +211,29 @@ function netScore(p){
 // EXTRA FEATURES
 // ----------------------
 
+function openProfile(p){
+  const modal = document.getElementById("profileModal");
+
+  modal.innerHTML = `
+    <div class="card" style="width:80%; text-align:center;">
+      <h2>${p.name}</h2>
+
+      <img src="${p.image||''}" class="avatar" style="width:80px;height:80px;">
+
+      <p>🏌️ Drive: ${p.longest}m</p>
+      <p>🎯 Closest: ${p.closest}cm</p>
+
+      <button onclick="closeProfile()">Lukk</button>
+    </div>
+  `;
+
+  modal.style.display = "flex";
+}
+
+function closeProfile(){
+  document.getElementById("profileModal").style.display = "none";
+}
+
 function updateExtra(id,type){
   let val = parseFloat(prompt(type==="longest"?"Meter":"CM")) || 0;
 
