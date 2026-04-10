@@ -356,6 +356,30 @@ function updateScore(id,hole,val){
   .update({scores:p.scores});
 }
 
+function applyReverseMulligan(id){
+  let hole = prompt("Hull (1-18)?");
+  hole = parseInt(hole) - 1;
+
+  if(hole < 0 || hole > 17) return;
+
+  const p = players.find(x=>x.id===id);
+
+  p.scores[hole] += 1;
+
+  db.collection("tournaments").doc(tournamentId)
+  .collection("rounds").doc(currentRound)
+  .collection("players").doc(id)
+  .update({scores:p.scores});
+
+  // 🔥 lag event i databasen
+  db.collection("tournaments").doc(tournamentId)
+  .collection("events")
+  .add({
+    text: user + " ga " + p.name + " en reverse mulligan 😈",
+    time: Date.now()
+  });
+}
+  
 // CALC
 function total(p){ return p.scores.reduce((a,b)=>a+b,0); }
 
