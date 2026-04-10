@@ -57,3 +57,17 @@ nav{
   font-size:12px;
   opacity:0.7;
 }
+
+#toast{
+  position:fixed;
+  bottom:100px;
+  left:50%;
+  transform:translateX(-50%);
+  background:#dc2626;
+  color:white;
+  padding:14px 22px;
+  border-radius:12px;
+  font-weight:600;
+  display:none;
+  z-index:999;
+}
