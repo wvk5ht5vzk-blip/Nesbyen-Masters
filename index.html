@@ -15,39 +15,91 @@
 
 <title>Nesbyen Masters</title>
 <style>
-body { font-family: Arial; background:#020617; color:white; text-align:center; }
-
-button {
-  padding:10px;
-  margin:4px;
-  border:none;
-  border-radius:10px;
-  background:#22c55e;
+body {
+  font-family: 'Inter', sans-serif;
+  background:#020617;
   color:white;
-  touch-action: manipulation;
+  text-align:center;
+  margin:0;
 }
 
-input, select { padding:10px; border-radius:8px; }
+/* BUTTONS */
+button {
+  padding:12px;
+  margin:6px;
+  border:none;
+  border-radius:14px;
+  background:#16a34a;
+  color:white;
+  font-weight:600;
+  box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+  touch-action: manipulation;
+  transition: all 0.15s ease;
+}
 
-.avatar { width:60px; height:60px; border-radius:50%; border:2px solid white; }
+button:active {
+  transform: scale(0.95);
+}
 
-.scroll { overflow-x:auto; }
-#scoreTable { min-width:900px; }
+/* INPUT */
+input, select {
+  padding:12px;
+  border-radius:12px;
+  background:#0f172a;
+  color:white;
+  border:none;
+}
 
-.gold { background:gold; color:black; }
+/* AVATAR */
+.avatar {
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  border:2px solid white;
+}
 
+/* TABLE */
+table {
+  background:#0f172a;
+  border-radius:14px;
+  overflow:hidden;
+  margin:auto;
+}
+
+/* SCROLL */
+.scroll {
+  overflow-x:auto;
+}
+
+/* SCORE TABLE */
+#scoreTable {
+  min-width:900px;
+}
+
+/* WINNER */
+.gold {
+  background:linear-gradient(135deg, gold, orange);
+  color:black;
+}
+
+/* MODAL */
 #winnerModal {
   position:fixed;
-  top:0; left:0;
+  top:0;
+  left:0;
   width:100%;
   height:100%;
-  background:rgba(0,0,0,0.8);
+  background:rgba(0,0,0,0.85);
   display:none;
   justify-content:center;
   align-items:center;
-  font-size:24px;
+  font-size:26px;
+  backdrop-filter: blur(6px);
 }
 </style>
+  
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
