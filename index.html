@@ -90,7 +90,7 @@ input, select { padding:10px; border-radius:8px; }
 
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSy...",
+  apiKey: "AIzaSyDDrqLTUtImklgFF1W59aWaNolyg7GBmj0",
   authDomain: "nesbyen-masters-v2.firebaseapp.com",
   projectId: "nesbyen-masters-v2"
 };
@@ -135,23 +135,6 @@ function init(){
   if(tournamentId){
     localStorage.setItem("tid", tournamentId);
     loadRounds();
-
-    setTimeout(()=>{
-      const savedRound=localStorage.getItem("round");
-      const savedCourse=localStorage.getItem("course");
-
-      if(savedCourse){
-        currentCourse=courses.find(c=>c.id===savedCourse);
-        document.getElementById("courseSelect").value=savedCourse;
-      }
-
-      if(savedRound){
-        currentRound=savedRound;
-        document.getElementById("roundSelect").value=savedRound;
-        loadRound();
-      }
-    },500);
-
   } else {
     newTournament();
   }
@@ -165,7 +148,7 @@ function newTournament(){
   });
 }
 
-// COURSES
+// COURSES (FIXED)
 db.collection("courses").onSnapshot(snap=>{
   const sel=document.getElementById("courseSelect");
   courses=[];
@@ -181,12 +164,19 @@ db.collection("courses").onSnapshot(snap=>{
     sel.appendChild(o);
   });
 
-  if(courses.length && !currentCourse){
-    currentCourse=courses[0];
+  const savedCourse = localStorage.getItem("course");
+
+  if(savedCourse && courses.find(c=>c.id===savedCourse)){
+    currentCourse = courses.find(c=>c.id===savedCourse);
+    sel.value = savedCourse;
+  } else if(courses.length){
+    currentCourse = courses[0];
   }
+
+  render();
 });
 
-// CHANGE COURSE (SAVE!)
+// CHANGE COURSE
 document.getElementById("courseSelect").onchange=function(){
   currentCourse=courses.find(c=>c.id===this.value);
   localStorage.setItem("course", this.value);
@@ -196,12 +186,13 @@ document.getElementById("courseSelect").onchange=function(){
 function addCourse(){
   const name=prompt("Navn?");
   if(!name) return;
-  const pars=prompt("Pars").split(",").map(x=>parseInt(x));
+  const pars=prompt("Pars (4,4,3...)").split(",").map(x=>parseInt(x));
   db.collection("courses").add({name, pars});
 }
 
 function getPars(){
-  return currentCourse?.pars || Array(18).fill(4);
+  if(!currentCourse || !currentCourse.pars) return null;
+  return currentCourse.pars;
 }
 
 // ROUNDS
@@ -225,7 +216,14 @@ function loadRounds(){
     });
 
     if(rounds.length){
-      currentRound=rounds[0].id;
+      const savedRound = localStorage.getItem("round");
+
+      if(savedRound && rounds.find(r=>r.id===savedRound)){
+        currentRound=savedRound;
+      } else {
+        currentRound=rounds[0].id;
+      }
+
       sel.value=currentRound;
       loadRound();
     }
@@ -238,7 +236,7 @@ function newRound(){
   .add({created:Date.now()});
 }
 
-// LOAD ROUND
+// LOAD ROUND (FIXED DRIVE/PIN)
 function loadRound(){
   currentRound=document.getElementById("roundSelect").value;
   localStorage.setItem("round", currentRound);
@@ -250,9 +248,14 @@ function loadRound(){
     players=[];
     snap.forEach(d=>{
       let data={id:d.id,...d.data()};
+
       if(!data.scores) data.scores=Array(18).fill(0);
+      if(data.longest === undefined) data.longest = 0;
+      if(data.closest === undefined) data.closest = 0;
+
       players.push(data);
     });
+
     render();
   });
 }
@@ -270,13 +273,15 @@ function addPlayer(){
   .add({
     name,hcp,
     scores:Array(18).fill(0),
-    image:"",longest:0,closest:0
+    image:"",
+    longest:0,
+    closest:0
   });
 
   document.getElementById("name").value="";
 }
 
-// SCORE FIX
+// SCORE
 function updateScore(id,hole,val){
   const p=players.find(x=>x.id===id);
   p.scores[hole]+=val;
@@ -286,6 +291,17 @@ function updateScore(id,hole,val){
   .collection("rounds").doc(currentRound)
   .collection("players").doc(id)
   .update({scores:p.scores});
+}
+
+// EXTRA
+function updateExtra(id,field){
+  let val=prompt(field==="longest"?"Meter?":"CM?");
+  val=parseFloat(val)||0;
+
+  db.collection("tournaments").doc(tournamentId)
+  .collection("rounds").doc(currentRound)
+  .collection("players").doc(id)
+  .update({[field]:val});
 }
 
 // CALC
@@ -312,7 +328,7 @@ function netToPar(p){
   return netScore(p) - getPars().reduce((a,b)=>a+b,0);
 }
 
-// FINISH ROUND + MODAL + CONFETTI
+// FINISH
 function finishRound(){
   let winner=[...players].sort((a,b)=>netToPar(a)-netToPar(b))[0];
 
@@ -343,9 +359,12 @@ function launchConfetti(){
 
 // RENDER
 function render(){
+
+  if(!getPars()) return;
+
   let sorted=[...players].sort((a,b)=>netToPar(a)-netToPar(b));
 
-  let lb="<tr><th>#</th><th>Navn</th><th>Score</th></tr>";
+  let lb="<tr><th>#</th><th>Navn</th><th>Score</th><th>Drive</th><th>Pin</th></tr>";
 
   sorted.forEach((p,i)=>{
     let cls=i===0?"gold":i===1?"silver":i===2?"bronze":"";
@@ -354,14 +373,20 @@ function render(){
     <tr class="${cls}">
       <td>${i+1}</td>
       <td>${p.name}</td>
-      <td>${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})</td>
+      <td>
+        ${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})
+        <br>
+        <small>Netto: ${netScore(p)} (${netToPar(p)>0?'+':''}${netToPar(p)})</small>
+      </td>
+      <td onclick="updateExtra('${p.id}','longest')">${p.longest ?? 0} m</td>
+      <td onclick="updateExtra('${p.id}','closest')">${p.closest ?? 0} cm</td>
     </tr>`;
   });
 
   document.getElementById("leaderboard").innerHTML=lb;
 
   let sc="<tr><th>Spiller</th>";
-  for(let i=1;i<=18;i++) sc+=`<th>${i}</th>`;
+  for(let i=1;i<=18;i++) sc+=`<th>${i}<br>${getPars()[i-1]}</th>`;
   sc+="</tr>";
 
   players.forEach(p=>{
