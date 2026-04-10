@@ -467,6 +467,7 @@ function showToast(text){
   
 // RENDER
 function render(){
+ 
   if(!getPars()) return;
 
   let sorted=[...players].sort((a,b)=>netToPar(a)-netToPar(b));
@@ -477,16 +478,20 @@ function render(){
     lb+=`
     <tr class="${i===0?'gold':''}">
       <td>${i+1}</td>
+
       <td onclick="uploadImage('${p.id}')">
         ${p.image ? `<img src="${p.image}" class="avatar">` : `<div class="avatar"></div>`}
       </td>
+
       <td ontouchstart="event.preventDefault(); applyReverseMulligan('${p.id}')" onclick="applyReverseMulligan('${p.id}')">
-  ${p.name}<br><small>hcp ${p.hcp||0}</small>
-</td>
-  ${p.name}<br><small>hcp ${p.hcp||0}</small>
-</td>
-      <td>${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})<br>
-      <small>Netto: ${netScore(p)} (${netToPar(p)>0?'+':''}${netToPar(p)})</small></td>
+        ${p.name}<br><small>hcp ${p.hcp||0}</small>
+      </td>
+
+      <td>
+        ${total(p)} (${totalToPar(p)>0?'+':''}${totalToPar(p)})<br>
+        <small>Netto: ${netScore(p)} (${netToPar(p)>0?'+':''}${netToPar(p)})</small>
+      </td>
+
       <td onclick="updateExtra('${p.id}','longest')">${p.longest} m</td>
       <td onclick="updateExtra('${p.id}','closest')">${p.closest} cm</td>
       <td><button onclick="deletePlayer('${p.id}')">❌</button></td>
