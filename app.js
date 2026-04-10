@@ -359,11 +359,20 @@ function render(){
           `;
         }).join("")}
 
-        <button onclick="mulligan('${p.id}')">🍺 Mulligan</button>
-<button onclick="reverseMulligan('${p.id}')">💀 Reverse</button>
-<button onclick="updateExtra('${p.id}','longest')">🏌️ Drive</button>
-<button onclick="updateExtra('${p.id}','closest')">🎯 Pin</button>
-      </div>
+        <div style="margin-top:10px">
+  <button onclick="updateExtra('${p.id}','longest')">🏌️ Drive</button>
+  <button onclick="updateExtra('${p.id}','closest')">🎯 Pin</button>
+</div>
+
+<div style="margin-top:10px">
+  <button onclick="mulligan('${p.id}')">🍺 Mulligan</button>
+</div>
+
+<div style="margin-top:10px">
+  <button style="background:#dc2626" onclick="reverseMulligan('${p.id}')">
+    💀 Reverse Mulligan
+  </button>
+</div>
     `).join("");
   }
 
