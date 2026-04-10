@@ -66,7 +66,11 @@ function createGame(){
     state.tid = doc.id;
     saveLocal();
 
-    alert("Kode: " + code);
+    const url = window.location.origin + "?tid=" + doc.id + "&name=" + state.user;
+
+navigator.clipboard.writeText(url);
+
+alert("Spill opprettet!\n\nLink kopiert:\n" + url);
 
     newRound();
     start();
