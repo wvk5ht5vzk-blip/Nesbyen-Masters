@@ -512,9 +512,12 @@ function showToast(text){
   el.style.display = "block";
 
   setTimeout(()=>{
+  el.style.opacity = "0";
+  setTimeout(()=>{
     el.style.display = "none";
-  }, 2500);
-}
+    el.style.opacity = "1";
+  }, 300);
+}, 6000);
 
   
 // RENDER
