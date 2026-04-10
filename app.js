@@ -618,4 +618,8 @@ function render(){
 
 loadLocal();
 
+document.getElementById("roundModal").style.display = "none";
+document.getElementById("profileModal").style.display = "none";
+document.getElementById("toast").style.display = "none";
+
 start();
