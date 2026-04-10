@@ -124,12 +124,20 @@ function createGame(){
     created:Date.now(),
     code:code
   }).then(doc=>{
+
     alert("Spillkode: "+code);
 
     tournamentId=doc.id;
-    localStorage.setItem("tid",doc.id);
 
-    startApp();
+    // 🔥 VIKTIG
+    localStorage.setItem("tid", doc.id);
+
+    // 🔥 START APP RIKTIG
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("app").style.display="block";
+    document.getElementById("welcome").innerText="Hei "+user;
+
+    loadRounds();
   });
 }
 
@@ -156,7 +164,12 @@ function joinGame(){
 
     localStorage.setItem("tid",doc.id);
 
-    startApp();
+    // 🔥 START APP
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("app").style.display="block";
+    document.getElementById("welcome").innerText="Hei "+user;
+
+    loadRounds();
   });
 }
 
