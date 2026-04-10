@@ -123,11 +123,26 @@ function createGame(){
   db.collection("tournaments").add({
     created:Date.now(),
     code:code
-  }).then(doc=>{
+  })
+  .then(doc=>{
 
     alert("Spillkode: "+code);
 
     tournamentId=doc.id;
+
+    localStorage.setItem("tid", doc.id);
+
+    document.getElementById("loginBox").style.display="none";
+    document.getElementById("app").style.display="block";
+    document.getElementById("welcome").innerText="Hei "+user;
+
+    loadRounds();
+  })
+  .catch(err=>{
+    alert("FEIL: " + err.message);
+    console.error(err);
+  });
+}
 
     // 🔥 VIKTIG
     localStorage.setItem("tid", doc.id);
