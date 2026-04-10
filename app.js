@@ -227,13 +227,26 @@ function mulligan(id){
   updateScore(id,hole,1);
 }
 
+function showToast(text){
+  const el = document.getElementById("toast");
+  el.innerText = text;
+  el.style.display = "block";
+
+  setTimeout(()=>{
+    el.style.display = "none";
+  }, 2500);
+}
+
 function reverseMulligan(id){
-  let hole = parseInt(prompt("Hvilket hull (1-18)?")) - 1;
+  let hole = parseInt(prompt("Hull (1-18)")) - 1;
   if(hole < 0 || hole > 17) return;
 
   updateScore(id, hole, 1);
 
   let p = state.players.find(x=>x.id===id);
+
+  showToast("💀 " + p.name + " ble sabotert!");
+}
 
   addEvent(state.user + " ga " + p.name + " reverse mulligan 🍺");
 }
