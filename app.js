@@ -8,6 +8,8 @@ let state = {
   selectedPlayer: null
 };
 
+const fileInput = document.getElementById("fileInput");
+
 // COURSE (default)
 let course = {
   name: "Standard",
