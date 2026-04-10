@@ -505,7 +505,7 @@ function render(){
         const sign = diff>0?"+":"";
 
         
-// farger
+
 let color = "#fff";
 if(diff < 0) color = "#22c55e";
 if(diff > 0) color = "#ef4444";
@@ -545,7 +545,7 @@ return `
 
 </div>
 `;
-      }).join("")}
+      }).join("")
 
       <div style="margin-top:10px; display:flex; gap:10px;">
         <button onclick="updateExtra('${p.id}','longest')">🏌️ Drive</button>
