@@ -218,7 +218,12 @@ function openProfile(p){
     <div class="card" style="width:80%; text-align:center;">
       <h2>${p.name}</h2>
 
-      <img src="${p.image||''}" class="avatar" style="width:80px;height:80px;">
+      <img src="${p.image||''}" 
+           class="avatar" 
+           style="width:90px;height:90px;cursor:pointer;"
+           onclick="uploadImage('${p.id}')">
+
+      <p>📸 Trykk for å endre bilde</p>
 
       <p>🏌️ Drive: ${p.longest}m</p>
       <p>🎯 Closest: ${p.closest}cm</p>
