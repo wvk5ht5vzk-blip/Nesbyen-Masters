@@ -232,15 +232,11 @@ function showToast(text){
   const txt = document.getElementById("toastText");
 
   txt.innerText = text;
-  el.style.display = "flex";
-}
-  function closeToast(){
-  document.getElementById("toast").style.display = "none";
+  el.style.display = "block";
 }
 
-  setTimeout(()=>{
-    el.style.display = "none";
-  }, 2500);
+function closeToast(){
+  document.getElementById("toast").style.display = "none";
 }
 
 function reverseMulligan(id){
