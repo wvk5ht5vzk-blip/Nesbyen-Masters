@@ -370,10 +370,28 @@ function mulligan(id){
 }
 
 function showToast(text){
+
   const el = document.getElementById("toast");
   const txt = document.getElementById("toastText");
 
   txt.innerText = text;
+
+  // 🔥 fjern gamle klasser
+  el.className = "";
+
+  // 🟢 Mulligan = grønn
+  if(text.includes("🍻")){
+    el.style.background = "#22c55e";
+  }
+  // 🔴 Reverse = rød
+  else if(text.includes("💀")){
+    el.style.background = "#ef4444";
+  }
+  // fallback
+  else{
+    el.style.background = "#334155";
+  }
+
   el.style.display = "block";
 }
 
