@@ -406,7 +406,16 @@ function showToast(text){
   const el = document.getElementById("toast");
   const txt = document.getElementById("toastText");
 
-  txt.innerText = text;
+el.innerHTML = `
+  <span id="toastText">${text}</span>
+  <button onclick="closeToast()" style="
+    margin-left:10px;
+    background:none;
+    border:none;
+    color:white;
+    font-size:18px;
+  ">❌</button>
+`;
 
   // 🔥 fjern gamle klasser
   el.className = "";
