@@ -30,10 +30,10 @@ function loadLocal(){
   const urlTid = params.get("tid");
   const urlName = params.get("name");
 
-  // 🔥 TID (spill-id)
+  // 🔥 TID
   if(urlTid){
     state.tid = urlTid;
-    localStorage.setItem("tid", urlTid); // lagre for senere
+    localStorage.setItem("tid", urlTid);
   }else{
     state.tid = localStorage.getItem("tid");
   }
@@ -41,19 +41,17 @@ function loadLocal(){
   // 🔥 USER
   if(urlName){
     state.user = urlName;
-    localStorage.setItem("user", urlName); // lagre for senere
+    localStorage.setItem("user", urlName);
   }else{
     state.user = localStorage.getItem("user");
   }
 
-  // 🔥 DEBUG
-  console.log("Loaded TID:", state.tid);
-  console.log("Loaded USER:", state.user);
+  // 🔥 NØD-FIX
+  if(!state.tid){
+    alert("Åpne spillet via invitasjonslink først 🔗");
+  }
 
-}
-function saveLocal(){
-  localStorage.setItem("user", state.user);
-  localStorage.setItem("tid", state.tid);
+  console.log("TID etter load:", state.tid);
 }
 
 // ----------------------
