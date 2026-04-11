@@ -294,15 +294,25 @@ function addEvent(text){
 }
 
 function listenEvents(){
+
+  let firstLoad = true;
+
   db.collection("tournaments").doc(state.tid)
     .collection("events")
     .orderBy("time", "desc")
     .limit(1)
     .onSnapshot(snap=>{
+
+      if(firstLoad){
+        firstLoad = false;
+        return; // 🚫 ignorer første load
+      }
+
       snap.forEach(d=>{
         const e = d.data();
         showToast(e.text);
       });
+
     });
 }
 
