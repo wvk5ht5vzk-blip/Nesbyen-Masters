@@ -701,9 +701,13 @@ document.getElementById("profileModal").style.display = "none";
 document.getElementById("toast").style.display = "none";
 
 start();
+
 document.addEventListener("click", (e) => {
-  if(e.target.id === "btnNewRound") newRound();
-  if(e.target.id === "btnCourse") addCourse();
-  if(e.target.id === "btnRounds") chooseRound();
-  if(e.target.id === "btnShare") shareGame();
+  const btn = e.target.closest("button");
+  if(!btn) return;
+
+  if(btn.id === "btnNewRound") newRound();
+  if(btn.id === "btnCourse") addCourse();
+  if(btn.id === "btnRounds") chooseRound();
+  if(btn.id === "btnShare") shareGame();
 });
