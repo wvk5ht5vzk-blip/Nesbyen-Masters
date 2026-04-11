@@ -128,8 +128,14 @@ function joinGame(){
 // ----------------------
 
 function start(){
- console.log("STATE TID:", state.tid); 
-  
+  console.log("STATE TID:", state.tid);
+
+  // 🔥 stopp hvis ingen spill
+  if(!state.tid){
+    alert("Mangler spill-ID – åpne via link igjen");
+    return;
+  }
+
   login.innerHTML = "";
 
   db.collection("tournaments").doc(state.tid)
@@ -138,14 +144,12 @@ function start(){
 
       if(data && data.course){
         course = data.course;
-        render(); // 🔥 DETTE ER FIXEN
+        render();
       }
     });
 
   listenRounds();
-
 }
-
 // ----------------------
 // ROUNDS
 // ----------------------
