@@ -703,11 +703,16 @@ document.getElementById("toast").style.display = "none";
 start();
 
 document.addEventListener("click", (e) => {
-  const btn = e.target.closest("button");
-  if(!btn) return;
+  let el = e.target;
 
-  if(btn.id === "btnNewRound") newRound();
-  if(btn.id === "btnCourse") addCourse();
-  if(btn.id === "btnRounds") chooseRound();
-  if(btn.id === "btnShare") shareGame();
+  while (el && el.tagName !== "BUTTON") {
+    el = el.parentElement;
+  }
+
+  if (!el) return;
+
+  if (el.id === "btnNewRound") newRound();
+  if (el.id === "btnCourse") addCourse();
+  if (el.id === "btnRounds") chooseRound();
+  if (el.id === "btnShare") shareGame();
 });
