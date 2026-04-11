@@ -164,6 +164,10 @@ nav{
   display: none;
 }
 
-#roundModal, #toast {
-  display:none !important;
+#roundModal {
+  pointer-events: none;
+}
+
+#roundModal.active {
+  pointer-events: auto;
 }
