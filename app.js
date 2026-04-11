@@ -617,7 +617,7 @@ function render(){
     🏌️ ${course.name}
   </h3>
 
-<div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px; position:relative; z-index:9999;">
+<div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
 <button onclick="newRound()">➕ Ny runde</button>
 <button onclick="addCourse()">🏌️ Bane</button>
 <button onclick="chooseRound()">📜 Runder</button>
