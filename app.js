@@ -562,7 +562,7 @@ function render(){
     <div class="card">
 
       <h3 onclick="togglePlayer('${p.id}')" style="cursor:pointer;">
-  ${p.name}
+  ${p.name} ${state.openPlayers[p.id] === false ? "▼" : "▲"}
 </h3>
 
       ${state.openPlayers[p.id] !== false ? p.scores.map((s,i)=>{
