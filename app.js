@@ -386,7 +386,7 @@ function openProfile(p){
       <img src="${p.image||''}" 
            class="avatar" 
            style="width:90px;height:90px;cursor:pointer;"
-           onclick="alert('TEST')"
+           onclick="alert('TEST')">
 
       <p>📸 Trykk for å endre bilde</p>
 
@@ -402,7 +402,6 @@ function openProfile(p){
 }
 
 function closeProfile(){
-  document.getElementById("profileModal").style.display = "none";
   const modal = document.getElementById("profileModal");
   modal.style.display = "none";
   modal.classList.remove("active");
