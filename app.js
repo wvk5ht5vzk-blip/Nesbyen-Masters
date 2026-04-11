@@ -141,6 +141,13 @@ function start(){
 // ----------------------
 
 function newRound(){
+  console.log("TID:", state.tid);
+
+  if(!state.tid){
+    alert("Ingen spill aktivt!");
+    return;
+  }
+
   db.collection("tournaments").doc(state.tid)
     .collection("rounds")
     .add({created: Date.now()});
@@ -472,7 +479,14 @@ function addCourse(){
 
 function chooseRound(){
 
+  if(!state.tid){
+    alert("Ingen spill aktivt!");
+    return;
+  }
+
   const modal = document.getElementById("roundModal");
+  ...
+}
 
   db.collection("tournaments").doc(state.tid)
     .collection("rounds")
