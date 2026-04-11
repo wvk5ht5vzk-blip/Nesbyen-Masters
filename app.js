@@ -1,4 +1,4 @@
-document.addEventListener("touchstart", function(){}, true);
+
 
 // STATE
 let state = {
