@@ -536,9 +536,7 @@ function render(){
   <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px">
     <img src="${p.image||''}" class="avatar">
     
-    <button style="background:#dc2626" onclick="deletePlayer('${p.id}')">
-      🗑️
-    </button>
+    
   </div>
 
   <div style="margin-top:10px; display:flex; gap:6px">
