@@ -131,6 +131,8 @@ function start(){
     });
 
   listenRounds();
+
+  listenEvents();
 }
 
 // ----------------------
