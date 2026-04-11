@@ -127,6 +127,19 @@ function joinGame(){
     });
 }
 
+function quickJoin(){
+  const nameInput = document.getElementById("name").value;
+
+  if(!nameInput){
+    alert("Skriv navn");
+    return;
+  }
+
+  state.user = nameInput;
+  localStorage.setItem("user", nameInput);
+
+  start();
+}
 // ----------------------
 // START
 // ----------------------
