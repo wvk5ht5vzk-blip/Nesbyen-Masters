@@ -500,8 +500,7 @@ function addCourse(){
 }
 
 function chooseRound(){
-console.log("TID i chooseRound:", state.tid);
-  console.log("CHOOSE ROUND CLICK");
+alert("TID: " + state.tid);
 
   if(!state.tid){
     alert("Ingen spill funnet");
