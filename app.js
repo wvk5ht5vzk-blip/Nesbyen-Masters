@@ -236,6 +236,21 @@ function deletePlayer(id){
     .delete();
 }
 
+function shareGame(){
+  const url = window.location.origin + "/Nesbyen-Masters/?tid=" + state.tid;
+
+  if (navigator.share) {
+    navigator.share({
+      title: "Nesbyen Masters",
+      text: "Bli med på spillet!",
+      url: url
+    });
+  } else {
+    navigator.clipboard.writeText(url);
+    alert("Link kopiert 👍\n" + url);
+  }
+}
+
 // ----------------------
 // SCORE
 // ----------------------
