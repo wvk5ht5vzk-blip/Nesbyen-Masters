@@ -672,7 +672,8 @@ function render(){
   bottom:15px;
   background:#dc2626;
 " onclick="reverseMulligan('${p.id}')">
-    </button>
+  💀
+   </button>
 
   </div>
 
