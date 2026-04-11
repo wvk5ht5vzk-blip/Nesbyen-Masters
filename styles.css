@@ -164,10 +164,3 @@ nav{
   display: none;
 }
 
-#roundModal {
-  pointer-events: none;
-}
-
-#roundModal.active {
-  pointer-events: auto;
-}
