@@ -38,13 +38,13 @@ function loadLocal(){
     state.tid = localStorage.getItem("tid");
   }
 
-  // 🔥 USER
-  if(urlName){
-    state.user = urlName;
-    localStorage.setItem("user", urlName);
-  }else{
-    state.user = localStorage.getItem("user");
-  }
+// 🔥 USER
+state.user = localStorage.getItem("user");
+
+if(!state.user && urlName){
+  state.user = urlName;
+  localStorage.setItem("user", urlName);
+}
 
   // 🔥 NØD-FIX
   if(!state.tid){
