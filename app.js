@@ -493,6 +493,10 @@ function setScreen(s){
   render();
 }
 
+function togglePlayer(id){
+  console.log("toggle", id);
+}
+
 // ----------------------
 // RENDER
 // ----------------------
@@ -556,7 +560,9 @@ function render(){
   html += state.players.map(p=>`
     <div class="card">
 
-      <h3>${p.name}</h3>
+      <h3 onclick="togglePlayer('${p.id}')" style="cursor:pointer;">
+  ${p.name}
+</h3>
 
       ${p.scores.map((s,i)=>{
   const diff = s - course.pars[i];
