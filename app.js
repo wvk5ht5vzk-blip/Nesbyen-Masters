@@ -527,31 +527,28 @@ function render(){
       return `
 <div class="card" style="${i===0?'border:2px solid gold':''}">
 
+  <b>
+    ${i+1}. ${p.name}
+  </b> (${sign}${diff})
 
+  <br> 🏌️ ${p.longest}m | 🎯 ${p.closest}cm
 
-<b onclick="togglePlayer('${i}')" style="cursor:pointer;">
-  ${i+1}. ${p.name} ${isOpen ? "▲" : "▼"}
-</b> (${sign}${diff})
-
-<div style="display:${isOpen ? 'block' : 'none'};">
-
-<br> 🏌️ ${p.longest}m | 🎯 ${p.closest}cm
-
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-
-    <img src="${p.image||''}" class="avatar" onclick="openProfile(${JSON.stringify(p).replace(/"/g,'&quot;')})">
-
-    <button style="background:#dc2626" onclick="reverseMulligan('${p.id}')">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px">
+    <img src="${p.image||''}" class="avatar">
+    
+    <button style="background:#dc2626" onclick="deletePlayer('${p.id}')">
       💀
     </button>
-
   </div>
 
-  <div style="margin-top:10px; display:flex; gap:10px;">
-    <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
-    <button onclick="updateExtra('${p.id}','closest')">🎯</button>
+  <div style="margin-top:10px; display:flex; gap:6px">
+    <button onclick="updateExtra('${p.id}',1)">+1</button>
+    <button onclick="updateExtra('${p.id}',-1)">-1</button>
     <button onclick="mulligan('${p.id}')">🍺</button>
   </div>
+
+</div>
+`;
 
 </div>
 `;
