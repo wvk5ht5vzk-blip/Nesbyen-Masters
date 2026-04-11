@@ -296,14 +296,12 @@ function addEvent(text){
 function listenEvents(){
   db.collection("tournaments").doc(state.tid)
     .collection("events")
-    .orderBy("time")
+    .orderBy("time", "desc")
+    .limit(1)
     .onSnapshot(snap=>{
-      snap.docChanges().forEach(change=>{
-        if(change.type === "added"){
-          const e = change.doc.data();
-
-          showToast(e.text);
-        }
+      snap.forEach(d=>{
+        const e = d.data();
+        showToast(e.text);
       });
     });
 }
@@ -349,13 +347,10 @@ function mulligan(id){
 
   let p = state.players.find(x=>x.id===id);
 
+  // 🔥 vis lokalt
+  showToast("🍻 " + p.name + " tok en mulligan!");
 
-  db.collection("tournaments").doc(state.tid)
-    .collection("rounds").doc(state.roundId)
-    .collection("players").doc(id)
-    .update({scores:p.scores});
-
-  // 🔥 SKÅL toast (samme type som reverse)
+  // 🔥 send til alle
   addEvent("🍻 " + p.name + " tok en mulligan!");
 }
 
