@@ -498,7 +498,7 @@ function addCourse(){
 }
 
 function chooseRound(){
-alert("TID: " + state.tid);
+
 
   if(!state.tid){
     alert("Ingen spill funnet");
