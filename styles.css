@@ -164,3 +164,6 @@ nav{
   display: none;
 }
 
+#roundModal, #toast {
+  display:none !important;
+}
