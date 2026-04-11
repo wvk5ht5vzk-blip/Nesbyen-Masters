@@ -646,7 +646,7 @@ function render(){
       const gross = p.scores.reduce((sum,s)=>sum+s,0);
       
       return `
-<div class="card" style="${i===0?'border:2px solid gold':''}">
+<div class="card" style="position:relative; ${i===0?'border:2px solid gold':''}">
 
 <div style="display:flex; justify-content:space-between; align-items:center;">
   <b>${i+1}. ${p.name} (HCP ${p.hcp})</b>
@@ -666,8 +666,12 @@ function render(){
 
 
 
-    <button style="background:#dc2626" onclick="reverseMulligan('${p.id}')">
-      💀
+    <button style="
+  position:absolute;
+  right:15px;
+  bottom:15px;
+  background:#dc2626;
+" onclick="reverseMulligan('${p.id}')">
     </button>
 
   </div>
