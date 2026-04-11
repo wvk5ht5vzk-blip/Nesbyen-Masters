@@ -30,19 +30,27 @@ function loadLocal(){
   const urlTid = params.get("tid");
   const urlName = params.get("name");
 
+  // 🔥 TID (spill-id)
   if(urlTid){
     state.tid = urlTid;
+    localStorage.setItem("tid", urlTid); // lagre for senere
   }else{
     state.tid = localStorage.getItem("tid");
   }
 
+  // 🔥 USER
   if(urlName){
     state.user = urlName;
+    localStorage.setItem("user", urlName); // lagre for senere
   }else{
     state.user = localStorage.getItem("user");
   }
-}
 
+  // 🔥 DEBUG
+  console.log("Loaded TID:", state.tid);
+  console.log("Loaded USER:", state.user);
+
+}
 function saveLocal(){
   localStorage.setItem("user", state.user);
   localStorage.setItem("tid", state.tid);
