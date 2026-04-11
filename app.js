@@ -386,7 +386,7 @@ function openProfile(p){
       <img src="${p.image||''}" 
            class="avatar" 
            style="width:90px;height:90px;cursor:pointer;"
-           onclick="uploadImage('${p.id}')">
+           onclick="alert('TEST')"
 
       <p>📸 Trykk for å endre bilde</p>
 
