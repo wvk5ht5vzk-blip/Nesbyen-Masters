@@ -495,9 +495,9 @@ function setScreen(s){
 }
 
 function togglePlayer(id){
-  console.log("toggle", id);
+  state.openPlayers[id] = !state.openPlayers[id];
+  render();
 }
-
 // ----------------------
 // RENDER
 // ----------------------
