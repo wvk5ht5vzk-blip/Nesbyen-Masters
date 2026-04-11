@@ -5,7 +5,8 @@ let state = {
   roundId: null,
   players: [],
   screen: "leaderboard",
-  selectedPlayer: null
+  selectedPlayer: null,
+  openPlayers: {}
 };
 
 const fileInput = document.getElementById("fileInput");
