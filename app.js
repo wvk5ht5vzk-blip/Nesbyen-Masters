@@ -514,6 +514,7 @@ function chooseRound(){
       `;
 
       modal.style.display = "flex";
+modal.classList.add("active");
     });
 }
 
@@ -524,7 +525,9 @@ function selectRound(id){
 }
 
 function closeRoundModal(){
-  document.getElementById("roundModal").style.display = "none";
+  const modal = document.getElementById("roundModal");
+  modal.style.display = "none";
+  modal.classList.remove("active");
 }
 
 function deleteRound(id){
