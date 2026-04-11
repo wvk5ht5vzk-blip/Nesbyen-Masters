@@ -643,11 +643,19 @@ function render(){
       const totalPar = course.pars.reduce((a,b)=>a+b,0);
       const diff = netScore(p) - totalPar;
       const sign = diff>0?"+":"";
-
+      const gross = p.scores.reduce((sum,s)=>sum+s,0);
+      
       return `
 <div class="card" style="${i===0?'border:2px solid gold':''}">
 
-  <b>${i+1}. ${p.name}</b> (${sign}${diff})
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <b>${i+1}. ${p.name} (HCP ${p.hcp})</b>
+  <span>⛳ ${gross}</span>
+</div>
+
+<div style="font-size:20px; font-weight:bold;">
+  ${sign}${diff}
+</div>
 
   <br>🏌️ ${p.longest}m | 🎯 ${p.closest}cm
 
