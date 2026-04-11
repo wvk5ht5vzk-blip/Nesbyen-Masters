@@ -128,6 +128,8 @@ function joinGame(){
 // ----------------------
 
 function start(){
+ console.log("STATE TID:", state.tid); 
+  
   login.innerHTML = "";
 
   db.collection("tournaments").doc(state.tid)
