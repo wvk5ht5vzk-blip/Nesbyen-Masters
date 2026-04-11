@@ -500,7 +500,7 @@ function addCourse(){
 }
 
 function chooseRound(){
-
+console.log("TID i chooseRound:", state.tid);
   console.log("CHOOSE ROUND CLICK");
 
   if(!state.tid){
