@@ -57,6 +57,14 @@
   align-items:center;
   z-index:1000;
 "></div>
+
+<script>
+document.addEventListener("click", function(e){
+  if(e.target.tagName === "BUTTON"){
+    e.target.blur(); // 🔥 fikser iOS PWA click bug
+  }
+});
+</script>
   
 </body>
 </html>
