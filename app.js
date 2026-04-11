@@ -6,7 +6,7 @@ let state = {
   players: [],
   screen: "leaderboard",
   selectedPlayer: null,
-  openPlayers: {}   // 🔥 LEGG TIL DENNE
+
 };
 
 const fileInput = document.getElementById("fileInput");
