@@ -653,7 +653,7 @@ function render(){
   <span>⛳ ${gross}</span>
 </div>
 
-<div style="margin-top:10px; text-align:center;">
+<div style="margin-top:10px; display:flex; align-items:center;">
   <img src="${p.image||''}" class="avatar">
 </div>
 <div style="font-size:20px; font-weight:bold;">
