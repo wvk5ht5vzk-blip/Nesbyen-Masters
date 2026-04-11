@@ -341,7 +341,7 @@ function mulligan(id){
     .update({scores:p.scores});
 
   // 🔥 SKÅL toast (samme type som reverse)
-  showToast("🍻 SKÅL! " + p.name + "!");
+  addEvent("🍻 " + p.name + " tok en mulligan!");
 }
 
 function showToast(text){
