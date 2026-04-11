@@ -574,10 +574,10 @@ function render(){
   </h3>
 
   <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
-<button id="btnNewRound">➕ Ny runde</button>
-<button id="btnCourse">🏌️ Bane</button>
-<button id="btnRounds">📜 Runder</button>
-<button id="btnShare">🔗 Inviter</button>
+<button onclick="newRound()">➕ Ny runde</button>
+<button onclick="addCourse()">🏌️ Bane</button>
+<button onclick="chooseRound()">📜 Runder</button>
+<button onclick="shareGame()">🔗 Inviter</button>
   </div>
 
 </div>
@@ -701,17 +701,4 @@ document.getElementById("toast").style.display = "none";
 
 start();
 
-document.addEventListener("click", (e) => {
-  let el = e.target;
 
-  while (el && el.tagName !== "BUTTON") {
-    el = el.parentElement;
-  }
-
-  if (!el) return;
-
-  if (el.id === "btnNewRound") newRound();
-  if (el.id === "btnCourse") addCourse();
-  if (el.id === "btnRounds") chooseRound();
-  if (el.id === "btnShare") shareGame();
-});
