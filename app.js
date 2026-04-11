@@ -702,3 +702,7 @@ document.getElementById("toast").style.display = "none";
 
 start();
 
+window.newRound = newRound;
+window.addCourse = addCourse;
+window.chooseRound = chooseRound;
+window.shareGame = shareGame;
