@@ -653,6 +653,9 @@ function render(){
   <span>⛳ ${gross}</span>
 </div>
 
+<div style="margin-top:10px; text-align:center;">
+  <img src="${p.image||''}" class="avatar">
+</div>
 <div style="font-size:20px; font-weight:bold;">
   ${sign}${diff}
 </div>
@@ -661,7 +664,7 @@ function render(){
 
   <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
 
-    <img src="${p.image||''}" class="avatar" onclick="openProfile(${JSON.stringify(p).replace(/"/g,'&quot;')})">
+
 
     <button style="background:#dc2626" onclick="reverseMulligan('${p.id}')">
       💀
