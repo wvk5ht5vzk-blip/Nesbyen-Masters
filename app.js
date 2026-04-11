@@ -501,6 +501,14 @@ fileInput.addEventListener("change", e=>{
 
 function uploadImage(id){
   state.selectedPlayer = id;
+
+  const fileInput = document.getElementById("fileInput");
+
+  if(!fileInput){
+    alert("Finner ikke fileInput 😬");
+    return;
+  }
+
   fileInput.click();
 }
 
