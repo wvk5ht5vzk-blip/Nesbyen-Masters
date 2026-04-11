@@ -537,7 +537,7 @@ function render(){
     <img src="${p.image||''}" class="avatar">
     
     <button style="background:#dc2626" onclick="deletePlayer('${p.id}')">
-      💀
+      🗑️
     </button>
   </div>
 
