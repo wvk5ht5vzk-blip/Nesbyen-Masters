@@ -565,16 +565,20 @@ function render(){
   // LEADERBOARD
   if(state.screen==="leaderboard"){
 
-    html += `
-  <h3 style="text-align:center;margin-top:10px;">
+  html += `
+<div style="padding:10px; text-align:center;">
+
+  <h3>
     🏌️ ${course.name}
   </h3>
 
-<div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin:10px 0;">
-  <button onclick="newRound()">➕ Ny runde</button>
-  <button onclick="addCourse()">🏌️ Bane</button>
-  <button onclick="chooseRound()">📜 Runder</button>
-  <button class="green" onclick="shareGame()">🔗 Inviter</button>
+  <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
+    <button onclick="newRound()">➕ Ny runde</button>
+    <button onclick="addCourse()">🏌️ Bane</button>
+    <button onclick="chooseRound()">📜 Runder</button>
+    <button class="green" onclick="shareGame()">🔗 Inviter</button>
+  </div>
+
 </div>
 `;
 
