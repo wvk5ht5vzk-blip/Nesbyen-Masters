@@ -5,8 +5,7 @@ let state = {
   roundId: null,
   players: [],
   screen: "leaderboard",
-  selectedPlayer: null,
-  openPlayers: {}   // 🔥 LEGG TIL DENNE
+  selectedPlayer: null
 };
 
 const fileInput = document.getElementById("fileInput");
@@ -523,19 +522,13 @@ function render(){
       const totalPar = course.pars.reduce((a,b)=>a+b,0);
       const diff = netScore(p) - totalPar;
       const sign = diff>0?"+":"";
-      const isOpen = state.openPlayers[i];
+
       return `
 <div class="card" style="${i===0?'border:2px solid gold':''}">
 
+  <b>${i+1}. ${p.name}</b> (${sign}${diff})
 
-
-<b onclick="togglePlayer('${i}')" style="cursor:pointer;">
-  ${i+1}. ${p.name} ${isOpen ? "▲" : "▼"}
-</b> (${sign}${diff})
-
-<div style="display:${isOpen ? 'block' : 'none'};">
-
-<br> 🏌️ ${p.longest}m | 🎯 ${p.closest}cm
+  <br>🏌️ ${p.longest}m | 🎯 ${p.closest}cm
 
   <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
 
