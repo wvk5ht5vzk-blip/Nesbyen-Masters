@@ -300,7 +300,7 @@ function addEvent(text){
 
 function listenEvents(){
 
-  let firstLoad = true;
+  let initialized = false;
 
   db.collection("tournaments").doc(state.tid)
     .collection("events")
@@ -308,13 +308,17 @@ function listenEvents(){
     .limit(1)
     .onSnapshot(snap=>{
 
-      if(firstLoad){
-        firstLoad = false;
-        return; // 🚫 ignorer første load
+      if(!initialized){
+        initialized = true;
+        return;
       }
 
       snap.forEach(d=>{
         const e = d.data();
+
+        // 🔥 SIKKERHET
+        if(!e.text) return;
+
         showToast(e.text);
       });
 
