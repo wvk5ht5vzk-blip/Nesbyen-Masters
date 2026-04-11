@@ -527,7 +527,7 @@ function selectRound(id){
 function closeRoundModal(){
   const modal = document.getElementById("roundModal");
   modal.style.display = "none";
-}
+  modal.innerHTML = "";
 }
 
 function deleteRound(id){
