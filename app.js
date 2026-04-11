@@ -293,6 +293,21 @@ function addEvent(text){
     });
 }
 
+function listenEvents(){
+  db.collection("tournaments").doc(state.tid)
+    .collection("events")
+    .orderBy("time")
+    .onSnapshot(snap=>{
+      snap.docChanges().forEach(change=>{
+        if(change.type === "added"){
+          const e = change.doc.data();
+
+          showToast(e.text);
+        }
+      });
+    });
+}
+
 function openProfile(p){
   const modal = document.getElementById("profileModal");
 
