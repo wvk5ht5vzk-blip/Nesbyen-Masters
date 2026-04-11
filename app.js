@@ -523,7 +523,7 @@ function render(){
       const totalPar = course.pars.reduce((a,b)=>a+b,0);
       const diff = netScore(p) - totalPar;
       const sign = diff>0?"+":"";
-      const isOpen = state.openPlayers[i];
+      
       return `
 <div class="card" style="${i===0?'border:2px solid gold':''}">
 
@@ -542,16 +542,15 @@ function render(){
   </div>
 
   <div style="margin-top:10px; display:flex; gap:6px">
-    <button onclick="updateExtra('${p.id}',1)">+1</button>
-    <button onclick="updateExtra('${p.id}',-1)">-1</button>
+    <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
+    <button onclick="updateExtra('${p.id}','closest')">🎯</button>
     <button onclick="mulligan('${p.id}')">🍺</button>
   </div>
 
 </div>
 `;
 
-</div>
-`;
+
     }).join("");
   }
 
