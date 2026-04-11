@@ -527,7 +527,11 @@ function render(){
       return `
 <div class="card" style="${i===0?'border:2px solid gold':''}">
 
-  <b>${i+1}. ${p.name}</b> (${sign}${diff})
+const isOpen = state.openPlayers[i];
+
+<b onclick="togglePlayer('${i}')" style="cursor:pointer;">
+  ${i+1}. ${p.name} ${isOpen ? "▲" : "▼"}
+</b> (${sign}${diff})
 
   <br>🏌️ ${p.longest}m | 🎯 ${p.closest}cm
 
