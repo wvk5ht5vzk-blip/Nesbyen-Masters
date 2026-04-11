@@ -565,7 +565,7 @@ function render(){
   ${p.name}
 </h3>
 
-      ${p.scores.map((s,i)=>{
+      ${state.openPlayers[p.id] !== false ? p.scores.map((s,i)=>{
   const diff = s - course.pars[i];
   const sign = diff>0?"+":"";
 
@@ -600,7 +600,7 @@ function render(){
 
   </div>
   `;
-}).join("")}
+}).join("") : ""}
 
       <div style="margin-top:10px; display:flex; gap:10px;">
         <button onclick="updateExtra('${p.id}','longest')">🏌️ Drive</button>
