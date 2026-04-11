@@ -799,3 +799,4 @@ window.newRound = newRound;
 window.addCourse = addCourse;
 window.chooseRound = chooseRound;
 window.shareGame = shareGame;
+window.uploadImage = uploadImage;
