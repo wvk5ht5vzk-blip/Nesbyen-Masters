@@ -274,7 +274,7 @@ function deletePlayer(id){
 }
 
 function shareGame(){
-  const url = window.location.origin + window.location.pathname + "?tid=" + state.tid + "&name=" + state.user;
+const url = window.location.href.split("?")[0] + "?tid=" + state.tid + "&name=" + state.user;
   if (navigator.share) {
     navigator.share({
       title: "Nesbyen Masters",
