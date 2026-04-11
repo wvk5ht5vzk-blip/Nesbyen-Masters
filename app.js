@@ -602,18 +602,7 @@ function render(){
   `;
 }).join("") : ""}
 
-      <div style="margin-top:10px; display:flex; gap:10px;">
-        <button onclick="updateExtra('${p.id}','longest')">🏌️ Drive</button>
-        <button onclick="updateExtra('${p.id}','closest')">🎯 Pin</button>
-      </div>
-
-      <div style="margin-top:10px; display:flex; justify-content:space-between;">
-        <button onclick="mulligan('${p.id}')">🍺 Mulligan</button>
-
-        <button style="background:#dc2626" onclick="reverseMulligan('${p.id}')">
-          💀 Reverse
-        </button>
-      </div>
+      
 
     </div>
   `).join("");
