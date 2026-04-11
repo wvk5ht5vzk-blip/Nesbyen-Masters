@@ -684,12 +684,23 @@ function render(){
   }
 
   app.innerHTML = html;
-setTimeout(() => {
-  document.getElementById("btnNewRound")?.addEventListener("click", newRound);
-  document.getElementById("btnCourse")?.addEventListener("click", addCourse);
-  document.getElementById("btnRounds")?.addEventListener("click", chooseRound);
-  document.getElementById("btnShare")?.addEventListener("click", shareGame);
-}, 0);
+
+// 🔥 FIX – clone nodes (fjerner gamle listeners)
+const btnNewRound = document.getElementById("btnNewRound");
+const btnCourse = document.getElementById("btnCourse");
+const btnRounds = document.getElementById("btnRounds");
+const btnShare = document.getElementById("btnShare");
+
+btnNewRound?.replaceWith(btnNewRound.cloneNode(true));
+btnCourse?.replaceWith(btnCourse.cloneNode(true));
+btnRounds?.replaceWith(btnRounds.cloneNode(true));
+btnShare?.replaceWith(btnShare.cloneNode(true));
+
+// hent de på nytt etter clone
+document.getElementById("btnNewRound")?.addEventListener("click", newRound);
+document.getElementById("btnCourse")?.addEventListener("click", addCourse);
+document.getElementById("btnRounds")?.addEventListener("click", chooseRound);
+document.getElementById("btnShare")?.addEventListener("click", shareGame);
 
 }
 
