@@ -132,7 +132,6 @@ function start(){
 
   listenRounds();
 
-  listenEvents();
 }
 
 // ----------------------
@@ -210,6 +209,12 @@ if(urlName){
 }
 
 render();
+
+// 🔥 start events når alt er klart
+if(!state.eventsStarted){
+  state.eventsStarted = true;
+  listenEvents();
+}
     });
 }
 
