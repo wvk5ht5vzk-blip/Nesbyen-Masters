@@ -398,10 +398,14 @@ function openProfile(p){
   `;
 
   modal.style.display = "flex";
+  modal.classList.add("active");
 }
 
 function closeProfile(){
   document.getElementById("profileModal").style.display = "none";
+  const modal = document.getElementById("profileModal");
+  modal.style.display = "none";
+  modal.classList.remove("active");
 }
 
 function updateExtra(id,type){
