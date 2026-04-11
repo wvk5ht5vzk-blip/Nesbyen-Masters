@@ -533,7 +533,9 @@ function render(){
   ${i+1}. ${p.name} ${isOpen ? "▲" : "▼"}
 </b> (${sign}${diff})
 
-  <br>🏌️ ${p.longest}m | 🎯 ${p.closest}cm
+<div style="display:${isOpen ? 'block' : 'none'};">
+
+<br> 🏌️ ${p.longest}m | 🎯 ${p.closest}cm
 
   <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
 
