@@ -80,6 +80,7 @@ function createGame(){
   if(!nameInput) return alert("Skriv navn");
 
   state.user = nameInput;
+  localStorage.setItem("user", nameInput); // 🔥 LEGG TIL
 
   const code = Math.floor(1000 + Math.random() * 9000);
 
@@ -92,9 +93,9 @@ function createGame(){
 
     const url = window.location.origin + "?tid=" + doc.id + "&name=" + state.user;
 
-navigator.clipboard.writeText(url);
+    navigator.clipboard.writeText(url);
 
-alert("Spill opprettet!\n\nLink kopiert:\n" + url);
+    alert("Spill opprettet!\n\nLink kopiert:\n" + url);
 
     newRound();
     start();
@@ -108,6 +109,7 @@ function joinGame(){
   if(!nameInput || !codeInput) return alert("Fyll ut navn og kode");
 
   state.user = nameInput;
+  localStorage.setItem("user", nameInput); // 🔥 LEGG TIL
 
   db.collection("tournaments")
     .where("code","==",codeInput)
