@@ -523,11 +523,11 @@ function render(){
       const totalPar = course.pars.reduce((a,b)=>a+b,0);
       const diff = netScore(p) - totalPar;
       const sign = diff>0?"+":"";
-
+      const isOpen = state.openPlayers[i];
       return `
 <div class="card" style="${i===0?'border:2px solid gold':''}">
 
-const isOpen = state.openPlayers[i];
+
 
 <b onclick="togglePlayer('${i}')" style="cursor:pointer;">
   ${i+1}. ${p.name} ${isOpen ? "▲" : "▼"}
