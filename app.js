@@ -768,13 +768,15 @@ function render(){
 // INIT
 // ----------------------
 
-loadLocal();
+window.onload = () => {
+  loadLocal();
 
-document.getElementById("roundModal").style.display = "none";
-document.getElementById("profileModal").style.display = "none";
-document.getElementById("toast").style.display = "none";
+  document.getElementById("roundModal").style.display = "none";
+  document.getElementById("profileModal").style.display = "none";
+  document.getElementById("toast").style.display = "none";
 
-start();
+  start();
+};
 
 window.newRound = newRound;
 window.addCourse = addCourse;
