@@ -65,12 +65,16 @@ function showLogin(){
 
       <input id="name" placeholder="Navn"><br><br>
 
-      <button onclick="createGame()">➕ Nytt spill</button>
-
-      <br><br>
-
-      <input id="code" placeholder="Spillkode">
-      <button onclick="joinGame()">🔑 Bli med</button>
+      ${
+        state.tid 
+        ? `<button onclick="quickJoin()">Bli med i spill</button>`
+        : `
+          <button onclick="createGame()">➕ Nytt spill</button>
+          <br><br>
+          <input id="code" placeholder="Spillkode">
+          <button onclick="joinGame()">🔑 Bli med</button>
+        `
+      }
     </div>
   `;
 }
