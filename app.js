@@ -282,6 +282,15 @@ function netScore(p){
 // EXTRA FEATURES
 // ----------------------
 
+function addEvent(text){
+  db.collection("tournaments").doc(state.tid)
+    .collection("events")
+    .add({
+      text,
+      time: Date.now()
+    });
+}
+
 function openProfile(p){
   const modal = document.getElementById("profileModal");
 
