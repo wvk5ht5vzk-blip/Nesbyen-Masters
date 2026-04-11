@@ -139,11 +139,26 @@ function start(){
 // ----------------------
 // ROUNDS
 // ----------------------
-
 function newRound(){
+
+  console.log("NEW ROUND CLICK");
+
+  if(!state.tid){
+    alert("Ingen spill funnet");
+    return;
+  }
+
   db.collection("tournaments").doc(state.tid)
     .collection("rounds")
-    .add({created: Date.now()});
+    .add({created: Date.now()})
+    .then(()=>{
+      console.log("Runde opprettet");
+      showToast("➕ Ny runde startet!");
+    })
+    .catch(err=>{
+      console.error(err);
+      alert("Feil ved opprettelse av runde");
+    });
 }
 
 function listenRounds(){
@@ -472,7 +487,19 @@ function addCourse(){
 
 function chooseRound(){
 
+  console.log("CHOOSE ROUND CLICK");
+
+  if(!state.tid){
+    alert("Ingen spill funnet");
+    return;
+  }
+
   const modal = document.getElementById("roundModal");
+
+  if(!modal){
+    alert("Finner ikke modal");
+    return;
+  }
 
   db.collection("tournaments").doc(state.tid)
     .collection("rounds")
@@ -513,8 +540,13 @@ function chooseRound(){
         </div>
       `;
 
-      
-modal.style.display = "flex";
+      modal.style.display = "flex";
+
+      console.log("Runder lastet:", rounds.length);
+    })
+    .catch(err=>{
+      console.error(err);
+      alert("Feil ved henting av runder");
     });
 }
 
