@@ -349,8 +349,6 @@ function mulligan(id){
 
   let p = state.players.find(x=>x.id===id);
 
-  // legg til 1 slag (enkelt)
-  p.scores[0] += 1;
 
   db.collection("tournaments").doc(state.tid)
     .collection("rounds").doc(state.roundId)
@@ -377,8 +375,6 @@ function reverseMulligan(id){
 
   let p = state.players.find(x=>x.id===id);
 
-  // legg til 1 slag (enkelt)
-  p.scores[0] += 1;
 
   db.collection("tournaments").doc(state.tid)
     .collection("rounds").doc(state.roundId)
