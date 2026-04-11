@@ -113,22 +113,23 @@ nav{
   left:50%;
   transform:translateX(-50%);
   
-  background:#dc2626;
+  background:#334155;
   color:white;
   padding:14px 18px;
   border-radius:16px;
   font-weight:600;
 
   display:none;
-  z-index:999;
+  z-index:99999;
 
   width:auto;
   max-width:85%;
 
-  
+  display:flex;
   align-items:center;
   gap:10px;
-pointer-events: none;
+
+  pointer-events: auto; /* 🔥 FIX */
 }
 
 /* TOAST BUTTON */
