@@ -126,6 +126,10 @@ function joinGame(){
 // ----------------------
 
 function start(){
+ if(!state.user){
+  showLogin();
+  return;
+} 
   console.log("STATE TID:", state.tid);
 
   // 🔥 stopp hvis ingen spill
