@@ -194,9 +194,9 @@ nav{
   left:50%;
 
   transform: 
-    rotate(calc(var(--i) * 36deg)) 
-    translateY(-105px)
-    rotate(calc(var(--i) * -36deg));
+    rotate(calc(var(--i) * 36deg + 18deg)) 
+    translateY(-102px)
+    rotate(calc((var(--i) * 36deg + 18deg) * -1));
 
   transform-origin: 0 0;
 
