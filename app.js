@@ -463,19 +463,28 @@ function spinWheel(){
 
   const degPerSlice = 360 / wheelItems.length;
 
-  // 🎯 stopp midt i slice
+  // 🎯 midt i slice
   const sliceCenter = index * degPerSlice + degPerSlice / 2;
 
-  // 🔥 masse spins + litt randomness
-  const spins = 360 * (5 + Math.random() * 2); // 5–7 runder
+  // 🔥 spins
+  const spins = 360 * (5 + Math.random() * 2);
 
   const finalDeg = spins + sliceCenter;
 
-  // 🎡 spin
-  wheel.style.transition = "transform 5.5s cubic-bezier(0.1, 0.7, 0.2, 1)";
-  wheel.style.transform = `rotate(-${finalDeg}deg)`;
+  // 🔁 RESET først (VIKTIG!)
+  wheel.style.transition = "none";
+  wheel.style.transform = "rotate(0deg)";
 
-  // ⏳ resultat etter spin
+  // ⏳ liten delay så browser rekker å registrere reset
+  setTimeout(() => {
+
+    // 🎡 spin
+    wheel.style.transition = "transform 5.5s cubic-bezier(0.1, 0.7, 0.2, 1)";
+    wheel.style.transform = `rotate(-${finalDeg}deg)`;
+
+  }, 50);
+
+  // ⏳ vis resultat etter spin
   setTimeout(() => {
 
     let text = "🎡 " + result;
@@ -487,7 +496,7 @@ function spinWheel(){
     showToast(text);
     addEvent(state.user + " spant hjulet → " + result);
 
-  }, 5500);
+  }, 5600);
 }
 
 function showToast(text){
