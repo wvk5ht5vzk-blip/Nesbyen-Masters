@@ -500,6 +500,16 @@ setTimeout(() => {
   }, 5600);
 }
 
+function closeWheel(){
+  const modal = document.getElementById("wheelModal");
+  const wheel = document.getElementById("wheel");
+
+  modal.style.display = "none";
+
+  wheel.style.transition = "none";
+  wheel.style.transform = "rotate(0deg)";
+}
+
 function showToast(text){
 
   const el = document.getElementById("toast");
