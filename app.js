@@ -749,7 +749,7 @@ function render(){
 <button onclick="addCourse()">🏌️ Bane</button>
 <button onclick="chooseRound()">📜 Runder</button>
 <button onclick="shareGame()">🔗 Inviter</button>
-
+<button onclick="setupPush()">🔔 Aktiver varsler</button>
   </div>
 
 </div>
@@ -954,4 +954,4 @@ async function setupPush(){
   });
 }
 
-setupPush();
+
