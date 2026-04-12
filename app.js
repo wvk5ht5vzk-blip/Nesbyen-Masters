@@ -930,7 +930,6 @@ function notify(title, body){
   }
 }
 
-
 async function setupPush(){
   try{
 
@@ -940,13 +939,16 @@ async function setupPush(){
       alert("Du må tillate varsler 😄");
       return;
     }
-    
-    await navigator.serviceWorker.register("firebase-messaging-sw.js");
-    
+
+    // 🔥 REGISTRER SERVICE WORKER RIKTIG
+    const registration = await navigator.serviceWorker.register("firebase-messaging-sw.js");
+
     const messaging = firebase.messaging();
 
+    // 🔥 VIKTIG: send med registration
     const token = await messaging.getToken({
-      vapidKey: "BF4OfwmrOXrgMJuPT49o-nLoXDKRSV3G-zubruRqhkR6In_8D8Ei7lGVqE-EwVD7b58Qv5AUJkvLKl25fKa30UQ"
+      vapidKey: "BF4OfwmrOXrgMJuPT49o-nLoXDKRSV3G-zubruRqhkR6In_8D8Ei7lGVqE-EwVD7b58Qv5AUJkvLKl25fKa30UQ",
+      serviceWorkerRegistration: registration
     });
 
     console.log("TOKEN:", token);
@@ -964,4 +966,3 @@ async function setupPush(){
     alert("ERROR: " + err.message);
   }
 }
-
