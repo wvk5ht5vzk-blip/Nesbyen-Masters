@@ -497,7 +497,7 @@ setTimeout(() => {
 
     showToast(text);
     addEvent(state.user + " spant hjulet → " + result);
-    notify("🎡 HJUL", state.user + " spant hjulet!");
+    notify("🎡 HJUL", state.user + " fikk: " + result);
   }, 5600);
 }
 
