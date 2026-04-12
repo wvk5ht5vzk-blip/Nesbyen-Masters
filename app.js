@@ -455,12 +455,18 @@ function spinWheel(){
 
   const result = wheel[Math.floor(Math.random() * wheel.length)];
 
-  // vis lokalt
-  showToast("🎡 " + result);
+let text = "🎡 " + result;
 
-  // send til alle (live)
-  addEvent(state.user + " spant hjulet → " + result);
+// 🔥 hype på gode outcomes
+if(result.includes("MULLIGAN") || result.includes("-1")){
+  text = "🔥🔥 " + result + " 🔥🔥";
 }
+
+// vis lokalt
+showToast(text);
+
+// send til alle
+addEvent(state.user + " spant hjulet → " + result);
 
 function showToast(text){
 
