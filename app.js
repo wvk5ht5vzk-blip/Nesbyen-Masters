@@ -792,6 +792,8 @@ function render(){
   right:15px;
   bottom:15px;
   background:#dc2626;
+  position:relative;
+  z-index:2;
 " onclick="reverseMulligan('${p.id}')">
   💀
    </button>
@@ -805,6 +807,7 @@ function render(){
     position:absolute;
     right:0px;
     bottom:80px;
+    z-index:1;
 
     width:60px;
     height:60px;
