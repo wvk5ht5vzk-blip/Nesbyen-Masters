@@ -16,3 +16,11 @@ messaging.onBackgroundMessage(function(payload) {
     body: payload.notification.body
   });
 });
+
+self.addEventListener("push", function(event) {
+  const data = event.data?.json() || {};
+
+  self.registration.showNotification(data.title || "Test", {
+    body: data.body || "Push funker 🚀"
+  });
+});
