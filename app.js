@@ -931,4 +931,27 @@ function notify(title, body){
 }
 
 
-Notification.requestPermission();
+async function setupPush(){
+
+  const permission = await Notification.requestPermission();
+
+  if(permission !== "granted"){
+    alert("Du må tillate varsler 😄");
+    return;
+  }
+
+  const messaging = firebase.messaging();
+
+  const token = await messaging.getToken({
+    vapidKey: "BF4OfwmrOXrgMJuPT49o-nLoXDKRSV3G-zubruRqhkR6In_8D8Ei7lGVqE-EwVD7b58Qv5AUJkvLKl25fKa30UQ"
+  });
+
+  console.log("TOKEN:", token);
+
+  await db.collection("tokens").add({
+    token: token,
+    user: state.user
+  });
+}
+
+setupPush();
