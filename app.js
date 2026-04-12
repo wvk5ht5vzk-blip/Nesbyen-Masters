@@ -376,7 +376,15 @@ function listenEvents(){
     });
 }
 
-function openProfile(p){
+function openProfile(id){
+
+  const p = state.players.find(x => x.id === id);
+
+  if(!p){
+    alert("Fant ikke spiller 😬");
+    return;
+  }
+
   const modal = document.getElementById("profileModal");
 
   modal.innerHTML = `
@@ -386,19 +394,18 @@ function openProfile(p){
       <img src="${p.image||''}" 
            class="avatar" 
            style="width:90px;height:90px;cursor:pointer;"
-           onclick="alert('TEST')">
+           onclick="uploadImage('${p.id}')">
 
       <p>📸 Trykk for å endre bilde</p>
 
-      <p>🏌️ Drive: ${p.longest}m</p>
-      <p>🎯 Closest: ${p.closest}cm</p>
+      <p>🏌️ Drive: ${p.longest || 0}m</p>
+      <p>🎯 Closest: ${p.closest || 0}cm</p>
 
       <button onclick="closeProfile()">Lukk</button>
     </div>
   `;
 
   modal.style.display = "flex";
-  modal.classList.add("active");
 }
 
 function closeProfile(){
