@@ -436,7 +436,7 @@ function mulligan(id){
 
 function spinWheel(){
 
-  const wheel = [
+  const wheelItems = [
     "🎉 GRATIS MULLIGAN",
     "➖ -1 SLAG",
 
@@ -453,21 +453,38 @@ function spinWheel(){
     "😈 VELG EN SOM MÅ DRIKKE"
   ];
 
-  const result = wheel[Math.floor(Math.random() * wheel.length)];
+  // 🎯 velg resultat
+  const index = Math.floor(Math.random() * wheelItems.length);
+  const result = wheelItems[index];
 
-let text = "🎡 " + result;
+  // 🔥 åpne modal
+  const modal = document.getElementById("wheelModal");
+  const wheel = document.getElementById("wheel");
 
-// 🔥 hype på gode outcomes
-if(result.includes("MULLIGAN") || result.includes("-1")){
-  text = "🔥🔥 " + result + " 🔥🔥";
-}
+  modal.style.display = "flex";
 
-// vis lokalt
-showToast(text);
+  // 🎡 regn ut rotasjon
+  const degPerSlice = 360 / wheelItems.length;
+  const extraSpins = 360 * 5; // 5 runder
 
-// send til alle
-addEvent(state.user + " spant hjulet → " + result);
+  const finalDeg = extraSpins + (index * degPerSlice);
 
+  // 🎯 spin!
+  wheel.style.transform = `rotate(-${finalDeg}deg)`;
+
+  // ⏳ etter spin → vis resultat
+  setTimeout(() => {
+
+    let text = "🎡 " + result;
+
+    if(result.includes("MULLIGAN") || result.includes("-1")){
+      text = "🔥🔥 " + result + " 🔥🔥";
+    }
+
+    showToast(text);
+    addEvent(state.user + " spant hjulet → " + result);
+
+  }, 5000);
 }
 
 function showToast(text){
