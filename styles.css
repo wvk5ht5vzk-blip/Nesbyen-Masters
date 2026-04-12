@@ -129,7 +129,7 @@ nav{
   align-items:center;
   gap:10px;
 
-  pointer-events: none; /* 🔥 DENNE */
+  pointer-events: auto; /* 🔥 FIX */
 }
 
 /* TOAST BUTTON */
@@ -191,4 +191,3 @@ pointer-events: none;
 
   z-index: 1000;
 }
-
