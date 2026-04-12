@@ -803,7 +803,7 @@ function render(){
   <!-- 🎡 SPIN (flytende over skull) -->
   <button onclick="spinWheel()" style="
     position:absolute;
-    right:15px;
+    right:5px;
     bottom:80px;
 
     width:60px;
