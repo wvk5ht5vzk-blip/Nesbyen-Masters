@@ -798,21 +798,33 @@ function render(){
 
   </div>
 
-  <div style="margin-top:10px; display:flex; gap:10px;">
+ <div style="position:relative; margin-top:10px;">
+
+  <!-- 🎡 SPIN (flytende over skull) -->
+  <button onclick="spinWheel()" style="
+    position:absolute;
+    right:15px;
+    bottom:80px;
+
+    width:60px;
+    height:60px;
+    font-size:22px;
+
+    background:linear-gradient(135deg,#0ea5e9,#22c55e);
+    box-shadow:0 0 15px rgba(34,197,94,0.6);
+    border-radius:16px;
+  ">
+    🎡
+  </button>
+
+  <!-- 🔘 VANLIGE KNAPPER -->
+  <div style="display:flex; gap:10px;">
     <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
     <button onclick="updateExtra('${p.id}','closest')">🎯</button>
     <button onclick="mulligan('${p.id}')">🍺</button>
-    <button onclick="spinWheel()" style="
-  width:60px;
-  height:60px;
-  font-size:22px;
-  background:linear-gradient(135deg,#0ea5e9,#22c55e);
-  box-shadow:0 0 15px rgba(34,197,94,0.6);
-  border-radius:16px;
-">
-  🎡
-</button>
   </div>
+
+</div>
 
 </div>
 `;
