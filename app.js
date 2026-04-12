@@ -470,7 +470,7 @@ function spinWheel(){
   // 🔥 spins
   const spins = 360 * (5 + Math.random() * 2);
 
-  const finalDeg = spins + sliceCenter;
+  const finalDeg = spins + sliceCenter + 90;
 
 // 🔄 reset wheel (uten labels!)
 wheel.style.transition = "none";
