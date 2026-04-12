@@ -940,7 +940,9 @@ async function setupPush(){
       alert("Du må tillate varsler 😄");
       return;
     }
-
+    
+    await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    
     const messaging = firebase.messaging();
 
     const token = await messaging.getToken({
