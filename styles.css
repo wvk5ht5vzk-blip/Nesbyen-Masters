@@ -188,17 +188,31 @@ nav{
 }
 
 
-.label{
-  position:absolute;
-  top:50%;
-  left:50%;
+.label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
 
-  transform: 
-    rotate(calc(var(--i) * 36deg + 18deg)) 
-    translateY(-95px)
-    rotate(calc((var(--i) * 36deg + 18deg) * -1));
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  transform-origin: 0 0;
+  width: 30px;
+  height: 30px;
+  font-size: 22px;
 
-  font-size:20px;
+  transform:
+    translate(-50%, -50%)
+    rotate(calc(var(--i) * 36deg + 18deg))
+    translateY(-140px) /* ← juster etter radius */
+    rotate(calc((var(--i) * 36deg + 18deg) * -1))
+    scale(1.1); /* 🧪 bonus: bedre visuell balanse */
+
+  transform-origin: center;
+}
+
+/* 🧪 ekstra finjustering for emojis */
+.label span {
+  display: inline-block;
+  transform: translateY(1px);
 }
