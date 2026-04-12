@@ -453,26 +453,29 @@ function spinWheel(){
     "😈 VELG EN SOM MÅ DRIKKE"
   ];
 
-  // 🎯 velg resultat
   const index = Math.floor(Math.random() * wheelItems.length);
   const result = wheelItems[index];
 
-  // 🔥 åpne modal
   const modal = document.getElementById("wheelModal");
   const wheel = document.getElementById("wheel");
 
   modal.style.display = "flex";
 
-  // 🎡 regn ut rotasjon
   const degPerSlice = 360 / wheelItems.length;
-  const extraSpins = 360 * 5; // 5 runder
 
-  const finalDeg = extraSpins + (index * degPerSlice);
+  // 🎯 stopp midt i slice
+  const sliceCenter = index * degPerSlice + degPerSlice / 2;
 
-  // 🎯 spin!
+  // 🔥 masse spins + litt randomness
+  const spins = 360 * (5 + Math.random() * 2); // 5–7 runder
+
+  const finalDeg = spins + sliceCenter;
+
+  // 🎡 spin
+  wheel.style.transition = "transform 5.5s cubic-bezier(0.1, 0.7, 0.2, 1)";
   wheel.style.transform = `rotate(-${finalDeg}deg)`;
 
-  // ⏳ etter spin → vis resultat
+  // ⏳ resultat etter spin
   setTimeout(() => {
 
     let text = "🎡 " + result;
@@ -484,7 +487,7 @@ function spinWheel(){
     showToast(text);
     addEvent(state.user + " spant hjulet → " + result);
 
-  }, 5000);
+  }, 5500);
 }
 
 function showToast(text){
