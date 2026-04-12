@@ -1,6 +1,4 @@
-if(!firebase.apps.length){
-  alert("Firebase ikke klar enda!");
-}
+
 
 // STATE
 let state = {
