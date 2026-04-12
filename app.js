@@ -468,6 +468,8 @@ showToast(text);
 // send til alle
 addEvent(state.user + " spant hjulet → " + result);
 
+}
+
 function showToast(text){
 
   const el = document.getElementById("toast");
