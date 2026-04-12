@@ -197,4 +197,6 @@ nav{
 
   transform: rotate(calc(var(--i) * 36deg));
   font-size:22px;
+
+  padding-top:20px; /* 🔥 viktig */
 }
