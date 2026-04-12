@@ -204,7 +204,7 @@ nav{
   transform:
     translate(-50%, -50%)
     rotate(calc(var(--i) * 36deg + 18deg))
-    translateY(-140px) /* ← juster etter radius */
+    translateY(-120px) /* ← juster etter radius */
     rotate(calc((var(--i) * 36deg + 18deg) * -1))
     scale(1.1); /* 🧪 bonus: bedre visuell balanse */
 
