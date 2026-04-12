@@ -195,7 +195,7 @@ nav{
 
   transform: 
     rotate(calc(var(--i) * 36deg + 18deg)) 
-    translateY(-102px)
+    translateY(-98px)
     rotate(calc((var(--i) * 36deg + 18deg) * -1));
 
   transform-origin: 0 0;
