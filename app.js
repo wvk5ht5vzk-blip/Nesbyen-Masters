@@ -941,7 +941,7 @@ async function setupPush(){
     }
 
     // 🔥 REGISTRER SERVICE WORKER RIKTIG
-    const registration = await navigator.serviceWorker.register("firebase-messaging-sw.js");
+    const registration = await navigator.serviceWorker.register("./firebase-messaging-sw.js");
 
     const messaging = firebase.messaging();
 
