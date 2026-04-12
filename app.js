@@ -748,7 +748,7 @@ function render(){
 <button onclick="addCourse()">🏌️ Bane</button>
 <button onclick="chooseRound()">📜 Runder</button>
 <button onclick="shareGame()">🔗 Inviter</button>
-<button onclick="spinWheel()">🎡 Spin</button>
+
   </div>
 
 </div>
@@ -802,6 +802,7 @@ function render(){
     <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
     <button onclick="updateExtra('${p.id}','closest')">🎯</button>
     <button onclick="mulligan('${p.id}')">🍺</button>
+    <button onclick="spinWheel()">🎡</button>
   </div>
 
 </div>
