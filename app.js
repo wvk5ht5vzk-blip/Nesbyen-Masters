@@ -430,7 +430,10 @@ function chulligan(){
 
   // 🔥 send til alle
   addEvent(state.user + " tok en CHULLIGAN 🍺🔥");
+  notify("CHULLIGAN 🍺", state.user + " tok en chulligan!");
+
 }
+
 
 function spinWheel(){
 
@@ -494,7 +497,7 @@ setTimeout(() => {
 
     showToast(text);
     addEvent(state.user + " spant hjulet → " + result);
-
+    notify("🎡 HJUL", state.user + " spant hjulet!");
   }, 5600);
 }
 
@@ -921,4 +924,11 @@ window.chooseRound = chooseRound;
 window.shareGame = shareGame;
 window.uploadImage = uploadImage;
 
+function notify(title, body){
+  if(Notification.permission === "granted"){
+    new Notification(title, { body });
+  }
+}
 
+
+Notification.requestPermission();
