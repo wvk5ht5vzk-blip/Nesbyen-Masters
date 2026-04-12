@@ -468,7 +468,7 @@ function spinWheel(){
   const sliceCenter = index * degPerSlice + degPerSlice / 2;
 
   // 🔥 spins
-  const spins = 360 * (5 + Math.random() * 2);
+  const spins = 360 * (5 + Math.floor(Math.random() * 3));
 
   const finalDeg = spins + sliceCenter + 90;
 
