@@ -922,20 +922,3 @@ window.shareGame = shareGame;
 window.uploadImage = uploadImage;
 
 
-async function initNotifications(){
-
-  const permission = await Notification.requestPermission();
-
-  if(permission !== "granted"){
-    alert("Du må tillate varsler 😄");
-    return;
-  }
-
-  const token = await getToken(messaging, {
-    vapidKey: "BF4OfwmrOXrgMJuPT49o-nLoXDKRSV3G-zubruRqhkR6In_8D8Ei7lGVqE-EwVD7b58Qv5AUJkvLKl25fKa30UQ"
-  });
-
-  console.log("TOKEN:", token);
-}
-
-initNotifications();
