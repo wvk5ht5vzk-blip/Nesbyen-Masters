@@ -434,6 +434,34 @@ function mulligan(id){
   addEvent("🍻 " + p.name + " tok en mulligan!");
 }
 
+function spinWheel(){
+
+  const wheel = [
+    "🎉 GRATIS MULLIGAN",
+    "➖ -1 SLAG",
+
+    "🍺 CHUGG 🍺",
+    "🍺 CHUGG 🍺",
+
+    "🥃 SHOT 🥃",
+    "🥃 SHOT 🥃",
+
+    "🍻 ALLE DRIKKER 🍻",
+    "🍻 ALLE DRIKKER 🍻",
+
+    "😈 VELG EN SOM MÅ DRIKKE",
+    "😈 VELG EN SOM MÅ DRIKKE"
+  ];
+
+  const result = wheel[Math.floor(Math.random() * wheel.length)];
+
+  // vis lokalt
+  showToast("🎡 " + result);
+
+  // send til alle (live)
+  addEvent(state.user + " spant hjulet → " + result);
+}
+
 function showToast(text){
 
   const el = document.getElementById("toast");
@@ -672,6 +700,7 @@ function render(){
 <button onclick="addCourse()">🏌️ Bane</button>
 <button onclick="chooseRound()">📜 Runder</button>
 <button onclick="shareGame()">🔗 Inviter</button>
+<button onclick="spinWheel()">🎡 Spin</button>
   </div>
 
 </div>
