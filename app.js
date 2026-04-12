@@ -458,7 +458,8 @@ function spinWheel(){
 
   const modal = document.getElementById("wheelModal");
   const wheel = document.getElementById("wheel");
-
+  const labels = document.getElementById("wheelLabels");
+  
   modal.style.display = "flex";
 
   const degPerSlice = 360 / wheelItems.length;
@@ -472,8 +473,11 @@ function spinWheel(){
   const finalDeg = spins + sliceCenter;
 
   // 🔁 RESET først (VIKTIG!)
-  wheel.style.transition = "none";
-  wheel.style.transform = "rotate(0deg)";
+   wheel.style.transition = "none";
+   labels.style.transition = "none";
+
+   wheel.style.transform = "rotate(0deg)";
+   labels.style.transform = "rotate(0deg)";
 
   // ⏳ liten delay så browser rekker å registrere reset
   setTimeout(() => {
@@ -481,6 +485,7 @@ function spinWheel(){
     // 🎡 spin
     wheel.style.transition = "transform 5.5s cubic-bezier(0.1, 0.7, 0.2, 1)";
     wheel.style.transform = `rotate(-${finalDeg}deg)`;
+    labels.style.transform = `rotate(-${finalDeg}deg)`;
 
   }, 50);
 
