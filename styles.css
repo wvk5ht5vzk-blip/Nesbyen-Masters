@@ -194,9 +194,10 @@ nav{
   left:50%;
 
   transform: 
-    rotate(calc(var(--i) * 34deg)) 
-    translateY(-90px) 
-    translate(-50%, -50%);
+    translate(-50%, -50%)
+    rotate(calc(var(--i) * 36deg)) 
+    translateY(-105px)
+    rotate(calc(var(--i) * -36deg));
 
   font-size:20px;
 }
