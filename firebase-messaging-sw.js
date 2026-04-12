@@ -12,9 +12,14 @@ firebase.initializeApp({
 const messaging = firebase.messaging();
 
 messaging.onBackgroundMessage(function(payload) {
-  self.registration.showNotification(payload.notification.title, {
-    body: payload.notification.body
-  });
+  console.log("PAYLOAD:", payload);
+
+  self.registration.showNotification(
+    payload.data?.title || payload.notification?.title,
+    {
+      body: payload.data?.body || payload.notification?.body
+    }
+  );
 });
 
 self.addEventListener("push", function(event) {
