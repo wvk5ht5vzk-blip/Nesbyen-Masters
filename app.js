@@ -380,7 +380,7 @@ function openProfile(p){
   const modal = document.getElementById("profileModal");
 
   modal.innerHTML = `
-    <div class="card" style="width:80%; text-align:center;">
+    <div class="card" style="width:80%; text-align:center; position:relative; z-index:1001;">
       <h2>${p.name}</h2>
 
       <img src="${p.image||''}" 
