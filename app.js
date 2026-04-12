@@ -941,7 +941,7 @@ async function setupPush(){
       return;
     }
     
-    await navigator.serviceWorker.register("/firebase-messaging-sw.js");
+    await navigator.serviceWorker.register("firebase-messaging-sw.js");
     
     const messaging = firebase.messaging();
 
