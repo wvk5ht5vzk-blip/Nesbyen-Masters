@@ -198,6 +198,9 @@ nav{
   align-items:flex-start;
 
   transform: rotate(calc(var(--i) * 36deg));
+  transform-origin: center;
+
   font-size:22px;
-  padding-top:30px;
+
+  padding-top:15px;
 }
