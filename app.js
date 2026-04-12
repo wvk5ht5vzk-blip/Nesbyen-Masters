@@ -423,15 +423,13 @@ function updateExtra(id,type){
     .update({[type]:val});
 }
 
-function mulligan(id){
-
-  let p = state.players.find(x=>x.id===id);
+function chulligan(){
 
   // 🔥 vis lokalt
-  showToast("🍻 " + p.name + " tok en mulligan!");
+  showToast("🍺🔥 " + state.user + " tok en CHULLIGAN!");
 
   // 🔥 send til alle
-  addEvent("🍻 " + p.name + " tok en mulligan!");
+  addEvent(state.user + " tok en CHULLIGAN 🍺🔥");
 }
 
 function spinWheel(){
