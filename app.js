@@ -527,18 +527,18 @@ el.innerHTML = `
   // 🔥 fjern gamle klasser
   el.className = "";
 
-  // 🟢 Mulligan = grønn
-  if(text.includes("🍻")){
-    el.style.background = "#22c55e";
-  }
-  // 🔴 Reverse = rød
-  else if(text.includes("💀")){
-    el.style.background = "#ef4444";
-  }
-  // fallback
-  else{
-    el.style.background = "#334155";
-  }
+// 🟢 CHULLIGAN = grønn
+if(text.includes("CHULLIGAN")){
+  el.style.background = "#22c55e";
+}
+// 🔴 Reverse = rød
+else if(text.includes("💀")){
+  el.style.background = "#ef4444";
+}
+// fallback
+else{
+  el.style.background = "#334155";
+}
 
   el.style.display = "block";
 }
@@ -821,7 +821,7 @@ function render(){
   <div style="display:flex; gap:10px;">
     <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
     <button onclick="updateExtra('${p.id}','closest')">🎯</button>
-    <button onclick="mulligan('${p.id}')">🍺</button>
+    <button onclick="chulligan()">🍺</button>
   </div>
 
 </div>
