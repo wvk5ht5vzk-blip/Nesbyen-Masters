@@ -688,7 +688,10 @@ function render(){
 </div>
 
 <div style="margin-top:10px; display:flex; align-items:center;">
-  <img src="${p.image||''}" class="avatar">
+  <img src="${p.image||''}" 
+     class="avatar"
+     style="cursor:pointer;"
+     onclick="openProfile('${p.id}')">
 </div>
 <div style="font-size:20px; font-weight:bold;">
   ${sign}${diff}
