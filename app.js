@@ -802,7 +802,16 @@ function render(){
     <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
     <button onclick="updateExtra('${p.id}','closest')">🎯</button>
     <button onclick="mulligan('${p.id}')">🍺</button>
-    <button onclick="spinWheel()">🎡</button>
+    <button onclick="spinWheel()" style="
+  width:60px;
+  height:60px;
+  font-size:22px;
+  background:linear-gradient(135deg,#0ea5e9,#22c55e);
+  box-shadow:0 0 15px rgba(34,197,94,0.6);
+  border-radius:16px;
+">
+  🎡
+</button>
   </div>
 
 </div>
