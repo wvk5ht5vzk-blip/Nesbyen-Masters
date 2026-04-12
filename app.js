@@ -472,22 +472,18 @@ function spinWheel(){
 
   const finalDeg = spins + sliceCenter;
 
-  // 🔁 RESET først (VIKTIG!)
-   wheel.style.transition = "none";
-   labels.style.transition = "none";
+// 🔄 reset wheel (uten labels!)
+wheel.style.transition = "none";
+wheel.style.transform = "rotate(0deg)";
 
-   wheel.style.transform = "rotate(0deg)";
-   labels.style.transform = "rotate(0deg)";
+// ⏳ liten delay så reset faktisk skjer
+setTimeout(() => {
 
-  // ⏳ liten delay så browser rekker å registrere reset
-  setTimeout(() => {
+  // 🎡 smooth spin med slowdown
+  wheel.style.transition = "transform 5.5s cubic-bezier(0.1, 0.7, 0.2, 1)";
+  wheel.style.transform = `rotate(-${finalDeg}deg)`;
 
-    // 🎡 spin
-    wheel.style.transition = "transform 5.5s cubic-bezier(0.1, 0.7, 0.2, 1)";
-    wheel.style.transform = `rotate(-${finalDeg}deg)`;
-    labels.style.transform = `rotate(-${finalDeg}deg)`;
-
-  }, 50);
+}, 50);
 
   // ⏳ vis resultat etter spin
   setTimeout(() => {
