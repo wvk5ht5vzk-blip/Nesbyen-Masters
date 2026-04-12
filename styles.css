@@ -178,7 +178,7 @@ nav{
 .slice{
   position:absolute;
   width:50%;
-  height:50%;
+  height:25%;
   top:50%;
   left:50%;
   transform-origin:0% 0%;
