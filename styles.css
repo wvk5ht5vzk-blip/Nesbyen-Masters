@@ -181,7 +181,7 @@ nav{
   height:50%;
   top:50%;
   left:50%;
-  transform-origin:0% 0%;
+  transform-origin:0% 100%;
   transform: rotate(calc(var(--i) * 36deg)) skewY(-50deg);
   background:#16a34a;
   display:flex;
