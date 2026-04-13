@@ -9,23 +9,36 @@ firebase.initializeApp({
   appId: "1:733141987995:web:XXXXX"
 });
 
-const messaging = firebase.messaging();
-
-messaging.onBackgroundMessage(function(payload) {
-  console.log("PAYLOAD:", payload);
-
-  self.registration.showNotification(
-    payload.data?.title || payload.notification?.title,
-    {
-      body: payload.data?.body || payload.notification?.body
-    }
-  );
-});
+// 🔥 DROPP messaging.onBackgroundMessage helt
 
 self.addEventListener("push", function(event) {
-  const data = event.data?.json() || {};
 
-  self.registration.showNotification(data.title || "Test", {
-    body: data.body || "Push funker 🚀"
-  });
+  console.log("RAW PUSH:", event);
+
+  let data = {};
+
+  try {
+    data = event.data.json();
+  } catch(e) {
+    console.log("No JSON payload");
+  }
+
+  console.log("PARSED:", data);
+
+  const title =
+    data.notification?.title ||
+    data.data?.title ||
+    "Nesbyen Masters";
+
+  const body =
+    data.notification?.body ||
+    data.data?.body ||
+    "Ny hendelse";
+
+  event.waitUntil(
+    self.registration.showNotification(title, {
+      body: body,
+      icon: "/icon..PNG"
+    })
+  );
 });
