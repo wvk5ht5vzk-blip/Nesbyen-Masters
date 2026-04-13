@@ -967,16 +967,23 @@ async function setupPush(){
 }
 
 async function sendNotification() {
-  await fetch("https://sendnotificationeu-x3yitk2fxa-ew.a.run.app", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json"
-    },
-    body: JSON.stringify({
-      title: "Hei 👋",
-      body: "Dette er en test 🚀"
-    })
-  });
+  try {
+    const res = await fetch("https://sendnotificationeu-x3yitk2fxa-ew.a.run.app", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        title: "Hei 👋",
+        body: "Dette er en test 🚀"
+      })
+    });
+
+    console.log("Sendt!", await res.text());
+
+  } catch (error) {
+    console.error("Feil:", error);
+  }
 }
 
   await fetch("https://eolbiocnm2q3hoy.m.pipedream.net", {
