@@ -749,7 +749,7 @@ function render(){
 <button onclick="chooseRound()">📜 Runder</button>
 <button onclick="shareGame()">🔗 Inviter</button>
 <button onclick="setupPush()">🔔 Aktiver varsler</button>
-   <button onclick="sendNotification()">Send push 🚀</button>
+<button onclick="alert('FUNKA')">Send push 🚀</button>
   </div>
 
 </div>
@@ -923,7 +923,7 @@ window.addCourse = addCourse;
 window.chooseRound = chooseRound;
 window.shareGame = shareGame;
 window.uploadImage = uploadImage;
-window.sendNotification = sendNotification;
+
 
 function notify(title, body){
   if(Notification.permission === "granted"){
@@ -988,3 +988,4 @@ async function sendNotification() {
   }
 }
 
+window.sendNotification = sendNotification;
