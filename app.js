@@ -774,6 +774,7 @@ function render(){
 <button onclick="chooseRound()">📜 Runder</button>
 <button onclick="shareGame()">🔗 Inviter</button>
 <button onclick="setupPush()">🔔 Aktiver varsler</button>
+  <button onclick="sendTestPush()">🔔</button>
   </div>
 
 </div>
