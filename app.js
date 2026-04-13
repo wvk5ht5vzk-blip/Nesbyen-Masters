@@ -345,7 +345,8 @@ function addEvent(text){
     .collection("events")
     .add({
       text,
-      time: Date.now()
+      time: Date.now(),
+      user: state.user
     });
 }
 
