@@ -955,10 +955,10 @@ async function setupPush(){
     console.log("TOKEN:", token);
     alert("TOKEN: " + token);
 
-    await db.collection("tokens").add({
-      token: token,
-      user: state.user
-    });
+    await db.collection("tokens").doc(token).set({
+  token: token,
+  user: state.user
+});
 
     alert("Lagret i Firebase!");
 
