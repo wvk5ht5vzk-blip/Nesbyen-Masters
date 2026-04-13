@@ -966,17 +966,18 @@ async function setupPush(){
   }
 }
 
-async function sendPushViaWebhook(title, body){
-
-  const snap = await db.collection("tokens").get();
-
-  const tokens = [];
-
-  snap.forEach(doc=>{
-    if(doc.data().user !== state.user){
-      tokens.push(doc.data().token);
-    }
+async function sendNotification() {
+  await fetch("https://sendnotificationeu-x3yitk2fxa-ew.a.run.app", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      title: "Hei 👋",
+      body: "Dette er en test 🚀"
+    })
   });
+}
 
   await fetch("https://eolbiocnm2q3hoy.m.pipedream.net", {
     method: "POST",
