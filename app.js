@@ -426,13 +426,11 @@ function updateExtra(id,type){
 
 function chulligan(){
 
-  // 🔥 vis lokalt
   showToast("🍺🔥 " + state.user + " tok en CHULLIGAN!");
 
-  // 🔥 send til alle
   addEvent(state.user + " tok en CHULLIGAN 🍺🔥");
-  notify("CHULLIGAN 🍺", state.user + " tok en chulligan!");
 
+  sendPushViaWebhook("🍺 CHULLIGAN", state.user + " tok en chulligan!");
 }
 
 
@@ -498,7 +496,7 @@ setTimeout(() => {
 
     showToast(text);
     addEvent(state.user + " spant hjulet → " + result);
-    notify("🎡 HJUL", state.user + " fikk: " + result);
+    sendPushViaWebhook("🎡 HJUL", state.user + " fikk: " + result);
   }, 5600);
 }
 
@@ -555,16 +553,16 @@ function reverseMulligan(id){
 
   let p = state.players.find(x=>x.id===id);
 
-
   db.collection("tournaments").doc(state.tid)
     .collection("rounds").doc(state.roundId)
     .collection("players").doc(id)
     .update({scores:p.scores});
 
-  // 🔥 NY TEKST
   showToast("💀 " + p.name + " fikk en REVERSE MULLIGAN!");
 
   addEvent(state.user + " ga " + p.name + " reverse mulligan 🍺");
+
+  sendPushViaWebhook("💀 REVERSE", p.name + " fikk reverse mulligan!");
 }
 
 // ----------------------
@@ -966,4 +964,30 @@ async function setupPush(){
     console.error(err);
     alert("ERROR: " + err.message);
   }
+}
+
+async function sendPushViaWebhook(title, body){
+
+  const snap = await db.collection("tokens").get();
+
+  const tokens = [];
+
+  snap.forEach(doc=>{
+    if(doc.data().user !== state.user){
+      tokens.push(doc.data().token);
+    }
+  });
+
+  await fetch("https://eolbiocnm2q3hoy.m.pipedream.net", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      title,
+      body,
+      tokens
+    })
+  });
+
 }
