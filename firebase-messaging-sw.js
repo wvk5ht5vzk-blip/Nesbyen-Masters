@@ -2,11 +2,11 @@ importScripts("https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js
 importScripts("https://www.gstatic.com/firebasejs/10.12.0/firebase-messaging-compat.js");
 
 firebase.initializeApp({
-  apiKey: "AIzaSyDDrqLTUImklgFF1W59aWaNo1yg7GBmjo",
+  apiKey: "BF4OfwmrOXrgMJuPT49o-nLoXDKRSV3G-zubruRqhkR6In_8D8Ei7lGVqE-EwVD7b58Qv5AUJkvLKl25fKa30UQ",
   authDomain: "nesbyen-masters-v2.firebaseapp.com",
   projectId: "nesbyen-masters-v2",
   messagingSenderId: "733141987995",
-  appId: "1:733141987995:web:XXXXX"
+  appId: "1:733141987995:web:835ca47d74f244d4220c3e"
 });
 
 // 🔥 DROPP messaging.onBackgroundMessage helt
