@@ -339,6 +339,30 @@ function netScore(p){
 // ----------------------
 // EXTRA FEATURES
 // ----------------------
+async function sendTestPush() {
+  const token = "PASTE_TOKEN_HER";
+
+  await fetch("https://fcm.googleapis.com/fcm/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": "key=SERVER_KEY_HER"
+    },
+    body: JSON.stringify({
+      to: token,
+      notification: {
+        title: "Test 🔔",
+        body: "Dette funker nå!"
+      },
+      data: {
+        title: "Test 🔔",
+        body: "Dette funker nå!"
+      }
+    })
+  });
+
+  alert("Sendt!");
+}
 
 function addEvent(text){
   db.collection("tournaments").doc(state.tid)
