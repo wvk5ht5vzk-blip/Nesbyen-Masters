@@ -425,16 +425,12 @@ function updateExtra(id,type){
 
 function chulligan(){
 
-  // 🔥 vis lokalt (kun for deg selv)
+  // 🔥 vis lokalt
   showToast("🍺🔥 " + state.user + " tok en CHULLIGAN!");
 
-  // 🔥 lagre event (trigger for push til andre)
-  db.collection("events").add({
-    type: "chulligan",
-    user: state.user,
-    text: state.user + " tok en CHULLIGAN 🍺🔥",
-    createdAt: new Date()
-  });
+  // 🔥 send til alle
+  addEvent(state.user + " tok en CHULLIGAN 🍺🔥");
+  notify("CHULLIGAN 🍺", state.user + " tok en chulligan!");
 
 }
 
@@ -463,6 +459,7 @@ function spinWheel(){
 
   const modal = document.getElementById("wheelModal");
   const wheel = document.getElementById("wheel");
+  const labels = document.getElementById("wheelLabels");
   
   modal.style.display = "flex";
 
@@ -474,16 +471,19 @@ function spinWheel(){
   // 🔥 spins
   const spins = 360 * (5 + Math.floor(Math.random() * 3));
 
-  const finalDeg = spins + sliceCenter;
+  const finalDeg = spins + sliceCenter + 0;
 
-// 🔄 reset wheel
+// 🔄 reset wheel (uten labels!)
 wheel.style.transition = "none";
 wheel.style.transform = "rotate(0deg)";
 
-// ⏳ delay før spin
+// ⏳ liten delay så reset faktisk skjer
 setTimeout(() => {
+
+  // 🎡 smooth spin med slowdown
   wheel.style.transition = "transform 5.5s cubic-bezier(0.1, 0.7, 0.2, 1)";
   wheel.style.transform = `rotate(-${finalDeg}deg)`;
+
 }, 50);
 
   // ⏳ vis resultat etter spin
@@ -495,18 +495,9 @@ setTimeout(() => {
       text = "🔥🔥 " + result + " 🔥🔥";
     }
 
-    // 🔥 vis lokalt
     showToast(text);
-
-    // 🔥 lagre event (trigger push til andre)
-    db.collection("events").add({
-      type: "wheel",
-      user: state.user,
-      result: result,
-      text: state.user + " spant hjulet → " + result,
-      createdAt: new Date()
-    });
-
+    addEvent(state.user + " spant hjulet → " + result);
+    notify("🎡 HJUL", state.user + " fikk: " + result);
   }, 5600);
 }
 
@@ -561,26 +552,18 @@ function closeToast(){
 
 function reverseMulligan(id){
 
-  let p = state.players.find(x => x.id === id);
+  let p = state.players.find(x=>x.id===id);
 
-  // 🔥 oppdater score (som før)
+
   db.collection("tournaments").doc(state.tid)
     .collection("rounds").doc(state.roundId)
     .collection("players").doc(id)
-    .update({ scores: p.scores });
+    .update({scores:p.scores});
 
-  // 🔥 vis lokalt
+  // 🔥 NY TEKST
   showToast("💀 " + p.name + " fikk en REVERSE MULLIGAN!");
 
-  // 🔥 lagre event (trigger push til andre)
-  db.collection("events").add({
-    type: "reverse",
-    from: state.user,
-    to: p.name,
-    text: state.user + " ga " + p.name + " reverse mulligan 💀",
-    createdAt: new Date()
-  });
-
+  addEvent(state.user + " ga " + p.name + " reverse mulligan 🍺");
 }
 
 // ----------------------
