@@ -37,12 +37,13 @@ function loadLocal(){
   const urlName = params.get("name");
 
   // 🔥 TID (turnering)
-  if(urlTid){
-    state.tid = urlTid;
-    localStorage.setItem("tid", urlTid);
-  }else{
-    state.tid = localStorage.getItem("tid");
-  }
+if(urlTid && !localStorage.getItem("tid")){
+  // 🔥 kun første gang via invitasjon
+  state.tid = urlTid;
+  localStorage.setItem("tid", urlTid);
+}else{
+  state.tid = localStorage.getItem("tid");
+}
 
   // 🔥 USER
   state.user = localStorage.getItem("user");
