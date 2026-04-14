@@ -692,7 +692,7 @@ function createCourse(){
 
   const newCourse = {
     name,
-    pars: pars.split(",").map(x=>parseInt(x)),
+    pars: pars.split(",").map(x=>parseInt(x.trim())).filter(x=>!isNaN(x)),
     created: Date.now()
   };
 
@@ -1274,7 +1274,9 @@ window.chooseTournament = chooseTournament;
 window.selectTournament = selectTournament;
 window.createNewTournament = createNewTournament;
 window.deleteTournament = deleteTournament;
-
+window.createCourse = createCourse;
+window.selectCourse = selectCourse;
+window.deleteCourse = deleteCourse;
 
 function notify(title, body){
   if(Notification.permission === "granted"){
