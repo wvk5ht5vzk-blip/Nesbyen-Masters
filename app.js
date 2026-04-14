@@ -718,14 +718,25 @@ function chooseTournament(){
           </div>
 
           ${tournaments.map(t=>`
-            <div style="
-              padding:10px;
-              border-bottom:1px solid #333;
-              cursor:pointer;
-            " onclick="selectTournament('${t.id}')">
-              ${t.name || "Uten navn"}
-            </div>
-          `).join("")}
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:10px;
+    border-bottom:1px solid #333;
+  ">
+
+    <div onclick="selectTournament('${t.id}')" style="cursor:pointer;">
+      ${t.name || "Uten navn"}
+    </div>
+
+    <button style="background:#dc2626"
+      onclick="deleteTournament('${t.id}')">
+      🗑️
+    </button>
+
+  </div>
+`).join("")}
 
           <button onclick="closeRoundModal()">Lukk</button>
         </div>
@@ -775,6 +786,17 @@ function createNewTournament(){
     render();
     listenRounds();
   });
+}
+
+function deleteTournament(id){
+
+  if(!confirm("Slette denne turneringen?")) return;
+
+  db.collection("tournaments").doc(id).delete();
+
+  showToast("🗑️ Turnering slettet");
+
+  chooseTournament(); // refresh liste
 }
 
 function selectRound(id){
@@ -1015,6 +1037,8 @@ window.uploadImage = uploadImage;
 window.chooseTournament = chooseTournament;
 window.selectTournament = selectTournament;
 window.createNewTournament = createNewTournament;
+window.deleteTournament = deleteTournament;
+
 
 function notify(title, body){
   if(Notification.permission === "granted"){
