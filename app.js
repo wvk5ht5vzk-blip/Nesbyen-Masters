@@ -230,11 +230,18 @@ function listenRounds(){
       rounds.sort((a,b)=>a.created-b.created);
 
       if(rounds.length){
-        state.roundId = rounds[rounds.length-1].id;
-        listenPlayers();
-      }
-    });
+
+  const savedRound = localStorage.getItem("roundId_" + state.tid);
+
+  if(savedRound){
+    state.roundId = savedRound;
+  }else{
+    state.roundId = rounds[rounds.length-1].id;
+  }
+
+  listenPlayers();
 }
+
 
 // ----------------------
 // PLAYERS
