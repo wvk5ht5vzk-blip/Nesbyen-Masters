@@ -435,7 +435,7 @@ function chulligan(){
 
   addEvent(state.user + " tok en CHULLIGAN 🍺🔥");
 
-  sendPushViaWebhook("🍺 CHULLIGAN", state.user + " tok en chulligan!");
+  sendPush("🍺 CHULLIGAN", state.user + " tok en chulligan!");
 }
 
 
@@ -501,7 +501,7 @@ setTimeout(() => {
 
     showToast(text);
     addEvent(state.user + " spant hjulet → " + result);
-    sendPushViaWebhook("🎡 HJUL", state.user + " fikk: " + result);
+    sendPush("🎡 HJUL", state.user + " fikk: " + result);
   }, 5600);
 }
 
@@ -567,7 +567,7 @@ function reverseMulligan(id){
 
   addEvent(state.user + " ga " + p.name + " reverse mulligan 🍺");
 
-  sendPushViaWebhook("💀 REVERSE", p.name + " fikk reverse mulligan!");
+  sendPush("💀 REVERSE", p.name + " fikk reverse mulligan!");
 }
 
 // ----------------------
