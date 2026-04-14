@@ -991,6 +991,7 @@ window.chooseRound = chooseRound;
 window.shareGame = shareGame;
 window.uploadImage = uploadImage;
 window.chooseTournament = chooseTournament;
+window.selectTournament = selectTournament;
 
 function notify(title, body){
   if(Notification.permission === "granted"){
