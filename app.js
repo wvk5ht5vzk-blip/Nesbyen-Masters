@@ -199,17 +199,8 @@ function start(){
 
   login.innerHTML = "";
 
-  db.collection("tournaments").doc(state.tid)
-    .onSnapshot(doc=>{
-      const data = doc.data();
-
-      if(data && data.course){
-        course = data.course;
-        render();
-      }
-    });
-
   listenRounds();
+  loadCourse();
 }
 // ----------------------
 // ROUNDS
@@ -784,6 +775,70 @@ function createCourse(){
     .catch(err=>{
       console.error(err);
       alert("Feil ved henting av runder");
+    });
+}
+
+function selectCourse(id){
+
+  state.courseId = id;
+
+  localStorage.setItem("courseId_" + state.tid, id);
+
+  db.collection("tournaments").doc(state.tid)
+    .collection("courses").doc(id)
+    .get()
+    .then(doc=>{
+      const data = doc.data();
+
+      if(data){
+        course = data;
+        render();
+      }
+    });
+
+  closeRoundModal();
+}
+
+function deleteCourse(id){
+
+  if(!confirm("Slette denne banen?")) return;
+
+  db.collection("tournaments").doc(state.tid)
+    .collection("courses").doc(id)
+    .delete();
+
+  showToast("🗑️ Bane slettet");
+
+  chooseCourse(); // refresh liste
+}
+
+function loadCourse(){
+
+  if(!state.tid) return;
+
+  db.collection("tournaments").doc(state.tid)
+    .collection("courses")
+    .get()
+    .then(snap=>{
+
+      let courses = [];
+      snap.forEach(d=>courses.push({id:d.id,...d.data()}));
+
+      if(!courses.length) return;
+
+      const saved = localStorage.getItem("courseId_" + state.tid);
+
+      const exists = courses.find(c => c.id === saved);
+
+      if(saved && exists){
+        state.courseId = saved;
+        course = exists;
+      }else{
+        state.courseId = courses[0].id;
+        course = courses[0];
+      }
+
+      render();
     });
 }
 
