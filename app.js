@@ -846,9 +846,27 @@ function deleteTournament(id){
 }
 
 function selectRound(id){
+
   state.roundId = id;
 
   localStorage.setItem("roundId_" + state.tid, id);
+
+  // 🔥 hent runder og sett riktig nummer
+  db.collection("tournaments").doc(state.tid)
+    .collection("rounds")
+    .get()
+    .then(snap=>{
+
+      let rounds = [];
+      snap.forEach(d=>rounds.push({id:d.id,...d.data()}));
+
+      rounds.sort((a,b)=>a.created-b.created);
+
+      const index = rounds.findIndex(r => r.id === id);
+      state.currentRoundNumber = index !== -1 ? index + 1 : null;
+
+      render();
+    });
 
   closeRoundModal();
   listenPlayers();
