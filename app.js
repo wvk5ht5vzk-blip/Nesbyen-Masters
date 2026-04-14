@@ -60,22 +60,20 @@ function loadLocal(){
 }
 
   // 🔥 HENT TURNERINGSNAVN
-  if(state.tid){
-   db.collection("tournaments").doc(state.tid)
-  .get()
-  .then(doc=>{
-    const data = doc.data();
+if(state.tid){
+  db.collection("tournaments").doc(state.tid)
+    .get()
+    .then(doc=>{
+      const data = doc.data();
 
-    if(data){
-      state.tournamentName = data.name || "Turnering";
-      render();
-    }
-  });
-
-  // 🔥 NØD-FIX
-  if(!state.tid){
-    alert("Åpne spillet via invitasjonslink først 🔗");
-  }
+      if(data){
+        state.tournamentName = data.name || "Turnering";
+        render();
+      }
+    });
+} else {
+  alert("Åpne spillet via invitasjonslink først 🔗");
+}
 
   console.log("TID:", state.tid);
   console.log("ROUND:", state.roundId);
