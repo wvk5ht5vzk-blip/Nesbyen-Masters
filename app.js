@@ -77,22 +77,6 @@ function loadLocal(){
   console.log("TID:", state.tid);
   console.log("ROUND:", state.roundId);
 }
-  
-// 🔥 USER
-state.user = localStorage.getItem("user");
-
-if(!state.user && urlName){
-  state.user = urlName;
-  localStorage.setItem("user", urlName);
-}
-
-  // 🔥 NØD-FIX
-  if(!state.tid){
-    alert("Åpne spillet via invitasjonslink først 🔗");
-  }
-
-  console.log("TID etter load:", state.tid);
-}
 
 // ----------------------
 // LOGIN
