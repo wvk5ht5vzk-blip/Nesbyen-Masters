@@ -7,13 +7,15 @@ body{
 }
 
 /* HEADER */
-header{
-  text-align:center;
-  padding:15px;
-  font-weight:800;
-  font-size:20px;
+header {
+  text-align: center;
+  font-size: 20px;
+  letter-spacing: 4px;
+  font-weight: 600;
 
+  color: #d4af37; /* 🟨 gull */
 
+  padding: 12px 0;
 }
 
 /* CARD */
