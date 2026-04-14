@@ -745,7 +745,7 @@ function render(){
   html += `
 <div style="padding:10px; text-align:center;">
 
-<h3 onclick="openTournamentModal()" style="cursor:pointer;">
+<h3 "openTournamentModal()" style="cursor:pointer;">
   🏌️ ${state.tournamentName} ▾
 </h3>
 
