@@ -494,7 +494,7 @@ setTimeout(() => {
   // ⏳ vis resultat etter spin
   setTimeout(() => {
 
-    let text = "🎡 " + result;
+    let text = "🎰 " + result;
 
     if(result.includes("MULLIGAN") || result.includes("-1")){
       text = "🔥🔥 " + result + " 🔥🔥";
@@ -502,7 +502,7 @@ setTimeout(() => {
 
     showToast(text);
     addEvent(state.user + " spant hjulet → " + result);
-    sendPush("🎡 HJUL", state.user + " fikk: " + result);
+    sendPush("🎰 HJUL", state.user + " fikk: " + result);
   }, 5600);
 }
 
@@ -913,7 +913,7 @@ function render(){
 
  <div style="position:relative; margin-top:10px;">
 
-  <!-- 🎡 SPIN (flytende over skull) -->
+  <!-- 🎰 SPIN (flytende over skull) -->
   <button onclick="spinWheel()" style="
     position:absolute;
     right:0px;
@@ -928,7 +928,7 @@ function render(){
     box-shadow:0 0 15px rgba(34,197,94,0.6);
     border-radius:16px;
   ">
-    🎡
+    🎰
   </button>
 
   <!-- 🔘 VANLIGE KNAPPER -->
