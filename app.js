@@ -13,7 +13,7 @@ let state = {
   players: [],
   screen: "leaderboard",
   selectedPlayer: null,
-  openPlayers: {}
+  openPlayers: {},
   tournamentName: "Nesbyen Masters",
 };
 
