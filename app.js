@@ -249,7 +249,10 @@ function listenRounds(){
         }else{
           state.roundId = rounds[rounds.length-1].id;
         }
-
+      
+        const index = rounds.findIndex(r => r.id === state.roundId);
+       state.currentRoundNumber = index !== -1 ? index + 1 : null;
+       
         listenPlayers();
 
       } else {
