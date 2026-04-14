@@ -59,15 +59,16 @@ function loadLocal(){
 
   // 🔥 HENT TURNERINGSNAVN
   if(state.tid){
-    db.collection("tournaments").doc(state.tid).get().then(doc=>{
-      const data = doc.data();
+   db.collection("tournaments").doc(state.tid)
+  .get()
+  .then(doc=>{
+    const data = doc.data();
 
-      if(data){
-        state.tournamentName = data.name || "Turnering";
-        render();
-      }
-    });
-  }
+    if(data){
+      state.tournamentName = data.name || "Turnering";
+      render();
+    }
+  });
 
   // 🔥 NØD-FIX
   if(!state.tid){
