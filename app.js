@@ -702,6 +702,15 @@ function chooseRound(){
         <div class="card" style="width:85%; max-height:80%; overflow:auto;">
           <h3>📜 Runder</h3>
 
+        <div style="
+         padding:10px;       
+         border-bottom:1px solid #333;
+         cursor:pointer;
+         font-weight:bold;
+         " onclick="newRound()">
+        ➕ Ny runde
+       </div>
+
           ${rounds.map((r,i)=>`
             <div style="
               display:flex;
@@ -923,7 +932,6 @@ function render(){
 </h3>
 
 <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
-<button onclick="newRound()">➕ Ny runde</button>
 <button onclick="addCourse()">🏌️ Bane</button>
 <button onclick="chooseRound()">
   📜 ${state.currentRoundNumber ? "Runde " + state.currentRoundNumber : "Velg runde"}
