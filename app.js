@@ -755,6 +755,28 @@ function selectTournament(id){
   listenRounds(); // 🔥 last nye data
 }
 
+function createNewTournament(){
+
+  const name = prompt("Navn på turnering");
+
+  if(!name) return;
+
+  db.collection("tournaments").add({
+    name: name,
+    created: Date.now()
+  }).then(doc=>{
+
+    state.tid = doc.id;
+    state.tournamentName = name;
+
+    localStorage.setItem("tid", doc.id);
+
+    closeRoundModal();
+    render();
+    listenRounds();
+  });
+}
+
 function selectRound(id){
   state.roundId = id;
   closeRoundModal();
@@ -992,6 +1014,7 @@ window.shareGame = shareGame;
 window.uploadImage = uploadImage;
 window.chooseTournament = chooseTournament;
 window.selectTournament = selectTournament;
+window.createNewTournament = createNewTournament;
 
 function notify(title, body){
   if(Notification.permission === "granted"){
