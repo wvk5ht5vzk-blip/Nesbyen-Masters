@@ -36,7 +36,7 @@ function loadLocal(){
   const urlTid = params.get("tid");
   const urlName = params.get("name");
 
-  // 🔥 TID
+  // 🔥 TID (turnering)
   if(urlTid){
     state.tid = urlTid;
     localStorage.setItem("tid", urlTid);
@@ -44,14 +44,38 @@ function loadLocal(){
     state.tid = localStorage.getItem("tid");
   }
 
-if(state.tid){
-  db.collection("tournaments").doc(state.tid).get().then(doc=>{
-    const data = doc.data();
-    if(data){
-      state.tournamentName = data.name || "Turnering";
-      render();
-    }
-  });
+  // 🔥 USER
+  state.user = localStorage.getItem("user");
+
+  if(!state.user && urlName){
+    state.user = urlName;
+    localStorage.setItem("user", urlName);
+  }
+
+  // 🔥 RUNDE (per turnering)
+  if(state.tid){
+    state.roundId = localStorage.getItem("roundId_" + state.tid);
+  }
+
+  // 🔥 HENT TURNERINGSNAVN
+  if(state.tid){
+    db.collection("tournaments").doc(state.tid).get().then(doc=>{
+      const data = doc.data();
+
+      if(data){
+        state.tournamentName = data.name || "Turnering";
+        render();
+      }
+    });
+  }
+
+  // 🔥 NØD-FIX
+  if(!state.tid){
+    alert("Åpne spillet via invitasjonslink først 🔗");
+  }
+
+  console.log("TID:", state.tid);
+  console.log("ROUND:", state.roundId);
 }
   
 // 🔥 USER
@@ -812,9 +836,8 @@ function deleteTournament(id){
 
 function selectRound(id){
   state.roundId = id;
-  closeRoundModal();
-  listenPlayers();
-}
+
+  localStorage.setItem("roundId_" + state.tid, id);
 
 function closeRoundModal(){
   const modal = document.getElementById("roundModal");
