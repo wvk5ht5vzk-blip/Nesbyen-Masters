@@ -44,6 +44,16 @@ function loadLocal(){
     state.tid = localStorage.getItem("tid");
   }
 
+if(state.tid){
+  db.collection("tournaments").doc(state.tid).get().then(doc=>{
+    const data = doc.data();
+    if(data){
+      state.tournamentName = data.name || "Turnering";
+      render();
+    }
+  });
+}
+  
 // 🔥 USER
 state.user = localStorage.getItem("user");
 
