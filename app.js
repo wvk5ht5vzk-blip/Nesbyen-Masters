@@ -760,6 +760,7 @@ function selectTournament(id){
 
 state.players = [];
 state.roundId = null;
+render();
   
   state.tid = id;
 
