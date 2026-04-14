@@ -14,7 +14,8 @@ let state = {
   screen: "leaderboard",
   selectedPlayer: null,
   openPlayers: {},
-  tournamentName: ""
+  tournamentName: "",
+  currentRoundNumber: null,
 };
 
 const fileInput = document.getElementById("fileInput");
@@ -253,6 +254,8 @@ function listenRounds(){
 
       } else {
         state.roundId = null;
+      const index = rounds.findIndex(r => r.id === state.roundId);
+      state.currentRoundNumber = index !== -1 ? index + 1 : null;
       }
 
     }); // ✅ DENNE manglet!
@@ -904,7 +907,9 @@ function render(){
 <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
 <button onclick="newRound()">➕ Ny runde</button>
 <button onclick="addCourse()">🏌️ Bane</button>
-<button onclick="chooseRound()">📜 Runder</button>
+<button onclick="chooseRound()">
+  📜 ${state.currentRoundNumber ? "Runde " + state.currentRoundNumber : "Velg runde"}
+</button>
 <button onclick="shareGame()">🔗 Inviter</button>
 <button onclick="setupPush()">🔔 Aktiver varsler</button>
   </div>
