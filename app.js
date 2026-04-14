@@ -790,21 +790,22 @@ function selectTournament(id){
 
   state.tid = id;
 
-  // 🔥 reset runde
-  state.roundId = null;
-  localStorage.removeItem("roundId");
-
+  // 🔥 lagre turnering
   localStorage.setItem("tid", id);
+
+  // 🔥 reset runde riktig (per turnering)
+  state.roundId = null;
 
   db.collection("tournaments").doc(id).get().then(doc=>{
     const data = doc.data();
+
     state.tournamentName = data?.name || "Turnering";
+
     render();
+    closeRoundModal();
+
+    listenRounds();
   });
-
-  closeRoundModal();
-
-  listenRounds();
 }
 
 function createNewTournament(){
