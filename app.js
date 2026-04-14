@@ -758,6 +758,9 @@ function chooseTournament(){
 
 function selectTournament(id){
 
+state.players = [];
+state.roundId = null;
+  
   state.tid = id;
 
   localStorage.setItem("tid", id);
