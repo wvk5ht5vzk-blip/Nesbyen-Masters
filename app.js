@@ -176,19 +176,15 @@ function quickJoin(){
 
 function start(){
 
-  // 🔥 HENT FRA LOCALSTORAGE IGJEN (sikker reset)
   state.tid = localStorage.getItem("tid");
 
-  if(!state.tid){
+  if(!state.user){
     showLogin();
     return;
   }
- 
-  console.log("STATE TID:", state.tid);
 
-  // 🔥 stopp hvis ingen spill
   if(!state.tid){
-    alert("Mangler spill-ID – åpne via link igjen");
+    showLogin();
     return;
   }
 
