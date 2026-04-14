@@ -10,6 +10,7 @@ let state = {
   user: null,
   tid: null,
   roundId: null,
+  courseId: null,
   players: [],
   screen: "leaderboard",
   selectedPlayer: null,
