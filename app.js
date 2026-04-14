@@ -693,6 +693,48 @@ function chooseRound(){
     });
 }
 
+function chooseTournament(){
+
+  const modal = document.getElementById("roundModal"); // vi gjenbruker denne
+
+  db.collection("tournaments")
+    .get()
+    .then(snap=>{
+
+      let tournaments = [];
+      snap.forEach(d=>tournaments.push({id:d.id,...d.data()}));
+
+      modal.innerHTML = `
+        <div class="card" style="width:85%; max-height:80%; overflow:auto;">
+          <h3>🏆 Turneringer</h3>
+
+          <div style="
+            padding:10px;
+            border-bottom:1px solid #333;
+            cursor:pointer;
+            font-weight:bold;
+          " onclick="createNewTournament()">
+            ➕ Ny turnering
+          </div>
+
+          ${tournaments.map(t=>`
+            <div style="
+              padding:10px;
+              border-bottom:1px solid #333;
+              cursor:pointer;
+            " onclick="selectTournament('${t.id}')">
+              ${t.name || "Uten navn"}
+            </div>
+          `).join("")}
+
+          <button onclick="closeRoundModal()">Lukk</button>
+        </div>
+      `;
+
+      modal.style.display = "flex";
+    });
+}
+
 function selectRound(id){
   state.roundId = id;
   closeRoundModal();
