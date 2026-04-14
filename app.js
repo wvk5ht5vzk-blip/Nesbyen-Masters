@@ -62,6 +62,13 @@ if(urlTid && !localStorage.getItem("tid")){
   state.roundId = null;
 }
 
+// 🔥 HUSK VALGT BANE
+if(state.tid){
+  state.courseId = localStorage.getItem("courseId_" + state.tid) || null;
+}else{
+  state.courseId = null;
+}
+  
   // 🔥 HENT TURNERINGSNAVN
 if(state.tid){
   db.collection("tournaments").doc(state.tid)
