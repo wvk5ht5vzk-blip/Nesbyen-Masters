@@ -1,9 +1,28 @@
 body{
   margin:0;
   font-family:'Inter',sans-serif;
-  background:#020617;
+
+  background: radial-gradient(circle at top, #0a0a0a, #000000 70%);
   color:white;
+
   padding-bottom: 120px;
+  min-height:100vh;
+}
+
+/* 🔥 MYSTISK GLOW */
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  background: radial-gradient(circle at 20% 10%, rgba(212,175,55,0.08), transparent 40%);
+  pointer-events:none;
+  z-index:0;
+}
+
+/* COLORS */
+:root{
+  --gold:#d4af37;
+  --gold-glow:rgba(212,175,55,0.4);
 }
 
 /* HEADER */
@@ -13,16 +32,20 @@ header {
   letter-spacing: 6px;
   font-weight: 600;
 
-  color: #d4af37;
+  color: var(--gold);
 
-  text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+  text-shadow: 0 0 10px var(--gold-glow);
 
   padding: 12px 0;
+  position:relative;
+  z-index:1;
 }
 
 /* CARD */
 .card{
-  background:#0f172a;
+  background: rgba(20,20,20,0.7);
+  backdrop-filter: blur(12px);
+
   margin:12px;
   padding:16px;
   border-radius:18px;
@@ -31,23 +54,40 @@ header {
   flex-direction:column;
   gap:12px;
 
-  box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  border:1px solid rgba(255,255,255,0.05);
+
+  box-shadow:
+    0 4px 30px rgba(0,0,0,0.8),
+    0 0 10px rgba(212,175,55,0.05);
+
+  position:relative;
+  z-index:1;
 }
 
 /* BUTTON */
 button{
-  background:#16a34a;
-  border:none;
+  background: linear-gradient(135deg,#111,#1a1a1a);
+  border:1px solid rgba(255,255,255,0.1);
+
   padding:10px 14px;
   border-radius:12px;
+
   color:white;
   font-weight:600;
-  
+
   margin:2px;
 
   display:inline-flex;
   align-items:center;
   justify-content:center;
+
+  cursor:pointer;
+  transition:0.2s ease;
+}
+
+button:hover{
+  transform:scale(1.05);
+  box-shadow:0 0 10px var(--gold-glow);
 }
 
 /* SMALL BUTTONS (icons) */
@@ -77,8 +117,13 @@ nav{
   width:100%;
   display:flex;
   justify-content:space-around;
-  background:#020617;
+
+  background: rgba(10,10,10,0.9);
+  backdrop-filter: blur(10px);
+
   padding:10px;
+
+  border-top:1px solid rgba(255,255,255,0.05);
 }
 
 /* AVATAR */
@@ -88,13 +133,18 @@ nav{
   border-radius:50%;
   object-fit:cover;
   margin-left:5px;
-  border:2px solid #16a34a;
-  box-shadow:0 0 10px rgba(22,163,74,0.4);
+
+  border:2px solid var(--gold);
+
+  box-shadow:
+    0 0 12px rgba(212,175,55,0.6),
+    0 0 20px rgba(0,0,0,0.8);
 }
 
 /* SCORE BOX */
 .score{
-  background:#111;
+  background: rgba(15,15,15,0.8);
+
   padding:8px;
   border-radius:10px;
   margin:4px 0;
@@ -102,6 +152,8 @@ nav{
   display:flex;
   justify-content:space-between;
   align-items:center;
+
+  border:1px solid rgba(255,255,255,0.05);
 }
 
 /* FEED */
@@ -118,7 +170,7 @@ nav{
   left:50%;
   transform:translateX(-50%);
   
-  background:#334155;
+  background:#111827;
   color:white;
   padding:14px 18px;
   border-radius:16px;
@@ -134,7 +186,13 @@ nav{
   align-items:center;
   gap:10px;
 
-  pointer-events: auto; /* 🔥 FIX */
+  border:1px solid rgba(255,255,255,0.1);
+
+  box-shadow:
+    0 0 20px rgba(0,0,0,0.8),
+    0 0 10px var(--gold-glow);
+
+  pointer-events: auto;
 }
 
 /* TOAST BUTTON */
@@ -146,23 +204,24 @@ nav{
   border-radius:8px;
 }
 
-
+/* PROFILE MODAL */
 #profileModal{
   position:fixed;
   top:0;
   left:0;
   width:100%;
   height:100%;
-  background:rgba(0,0,0,0.85);
+
+  background:rgba(0,0,0,0.9);
 
   display:none;
   justify-content:center;
   align-items:center;
 
   z-index:1000;
-
 }
 
+/* ROUND MODAL */
 #roundModal {
   position: fixed;
   top: 0;
@@ -170,18 +229,16 @@ nav{
   width: 100%;
   height: 100%;
 
-  background: rgba(0,0,0,0.85);
+  background: rgba(0,0,0,0.9);
 
-  display: none; /* 🔥 viktig */
+  display: none;
   justify-content: center;
   align-items: center;
 
   z-index: 1000;
 }
 
- font-size:18px;
-}
-
+/* WHEEL LABELS */
 #wheelLabels{
   position:absolute;
   top:0;
@@ -191,7 +248,7 @@ nav{
   pointer-events:none;
 }
 
-
+/* LABEL */
 .label {
   position: absolute;
   top: 50%;
@@ -208,14 +265,14 @@ nav{
   transform:
     translate(-50%, -50%)
     rotate(calc(var(--i) * 36deg + 18deg))
-    translateY(-120px) /* ← juster etter radius */
+    translateY(-120px)
     rotate(calc((var(--i) * 36deg + 18deg) * -1))
-    scale(1.1); /* 🧪 bonus: bedre visuell balanse */
+    scale(1.1);
 
   transform-origin: center;
 }
 
-/* 🧪 ekstra finjustering for emojis */
+/* LABEL FIX */
 .label span {
   display: inline-block;
   transform: translateY(1px);
