@@ -757,6 +757,67 @@ function chooseRound(){
     });
 }
 
+function chooseCourse(){
+
+  if(!state.tid){
+    alert("Ingen turnering valgt");
+    return;
+  }
+
+  const modal = document.getElementById("roundModal"); // gjenbruker samme modal
+
+  db.collection("tournaments").doc(state.tid)
+    .collection("courses")
+    .get()
+    .then(snap=>{
+
+      let courses = [];
+      snap.forEach(d=>courses.push({id:d.id,...d.data()}));
+
+      courses.sort((a,b)=>a.created-b.created);
+
+      modal.innerHTML = `
+        <div class="card" style="width:85%; max-height:80%; overflow:auto;">
+          <h3>🏌️ Baner</h3>
+
+          <div style="
+            padding:10px;
+            border-bottom:1px solid #333;
+            cursor:pointer;
+            font-weight:bold;
+          " onclick="createCourse()">
+            ➕ Ny bane
+          </div>
+
+          ${courses.map(c=>`
+            <div style="
+              display:flex;
+              justify-content:space-between;
+              align-items:center;
+              padding:10px;
+              border-bottom:1px solid #333;
+            ">
+
+              <div onclick="selectCourse('${c.id}')" style="cursor:pointer;">
+                ${c.name || "Uten navn"}
+              </div>
+
+              <button style="background:#dc2626"
+                onclick="deleteCourse('${c.id}')">
+                🗑️
+              </button>
+
+            </div>
+          `).join("")}
+
+          <button onclick="closeRoundModal()">Lukk</button>
+        </div>
+      `;
+
+      modal.style.display = "flex";
+    });
+}
+
 function chooseTournament(){
 
   const modal = document.getElementById("roundModal"); // vi gjenbruker denne
