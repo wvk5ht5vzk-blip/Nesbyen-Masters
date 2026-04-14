@@ -1004,7 +1004,9 @@ function render(){
 </h3>
 
 <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
-<button onclick="addCourse()">🏌️ Bane</button>
+<button onclick="chooseCourse()">
+  🏌️ ${course.name || "Velg bane"} ▾
+</button>
 <button onclick="chooseRound()">
   📜 ${state.currentRoundNumber ? "Runde " + state.currentRoundNumber : "Velg runde"}
 </button>
