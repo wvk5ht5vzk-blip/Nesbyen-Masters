@@ -758,26 +758,23 @@ function chooseTournament(){
 
 function selectTournament(id){
 
-state.players = [];
-state.roundId = null;
-render();
-  
   state.tid = id;
+
+  // 🔥 reset runde
+  state.roundId = null;
+  localStorage.removeItem("roundId");
 
   localStorage.setItem("tid", id);
 
-  // hent navn
   db.collection("tournaments").doc(id).get().then(doc=>{
     const data = doc.data();
-
     state.tournamentName = data?.name || "Turnering";
-
     render();
   });
 
   closeRoundModal();
 
-  listenRounds(); // 🔥 last nye data
+  listenRounds();
 }
 
 function createNewTournament(){
