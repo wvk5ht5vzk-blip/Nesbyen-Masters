@@ -225,7 +225,8 @@ function newRound(){
 }
 
 function listenRounds(){
- if(!state.tid) return;
+  if(!state.tid) return;
+
   db.collection("tournaments").doc(state.tid)
     .collection("rounds")
     .onSnapshot(snap=>{
@@ -234,23 +235,24 @@ function listenRounds(){
       snap.forEach(d=>rounds.push({id:d.id,...d.data()}));
       rounds.sort((a,b)=>a.created-b.created);
 
-     if(rounds.length){
+      if(rounds.length){
 
-  const savedRound = localStorage.getItem("roundId_" + state.tid);
+        const savedRound = localStorage.getItem("roundId_" + state.tid);
+        const exists = rounds.find(r => r.id === savedRound);
 
-  const exists = rounds.find(r => r.id === savedRound);
+        if(savedRound && exists){
+          state.roundId = savedRound;
+        }else{
+          state.roundId = rounds[rounds.length-1].id;
+        }
 
-  if(savedRound && exists){
-    state.roundId = savedRound;
-  }else{
-    state.roundId = rounds[rounds.length-1].id;
-  }
+        listenPlayers();
 
-  listenPlayers();
+      } else {
+        state.roundId = null;
+      }
 
-}else{
-  // 🔥 hvis ingen runder finnes
-  state.roundId = null;
+    }); // ✅ DENNE manglet!
 }
 
 
@@ -841,6 +843,10 @@ function selectRound(id){
 
   localStorage.setItem("roundId_" + state.tid, id);
 
+  closeRoundModal();
+  listenPlayers();
+}
+  
 function closeRoundModal(){
   const modal = document.getElementById("roundModal");
   modal.style.display = "none";
