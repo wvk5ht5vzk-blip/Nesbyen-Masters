@@ -682,37 +682,7 @@ function chooseRound(){
     alert("Ingen spill funnet");
     return;
   }
-
-function createCourse(){
-
-  const name = prompt("Banenavn");
-  const pars = prompt("Pars (4,4,3...)");
-
-  if(!name || !pars) return;
-
-  const newCourse = {
-    name,
-    pars: pars.split(",").map(x=>parseInt(x.trim())).filter(x=>!isNaN(x)),
-    created: Date.now()
-  };
-
-  db.collection("tournaments").doc(state.tid)
-    .collection("courses")
-    .add(newCourse)
-    .then(doc=>{
-
-      state.courseId = doc.id;
-      course = newCourse;
-
-      localStorage.setItem("courseId_" + state.tid, doc.id);
-
-      closeRoundModal();
-      render();
-
-      showToast("🏌️ Bane lagret!");
-    });
-}
-  
+ 
   const modal = document.getElementById("roundModal");
 
   if(!modal){
@@ -839,6 +809,36 @@ function loadCourse(){
       }
 
       render();
+    });
+}
+
+function createCourse(){
+
+  const name = prompt("Banenavn");
+  const pars = prompt("Pars (4,4,3...)");
+
+  if(!name || !pars) return;
+
+  const newCourse = {
+    name,
+    pars: pars.split(",").map(x=>parseInt(x.trim())).filter(x=>!isNaN(x)),
+    created: Date.now()
+  };
+
+  db.collection("tournaments").doc(state.tid)
+    .collection("courses")
+    .add(newCourse)
+    .then(doc=>{
+
+      state.courseId = doc.id;
+      course = newCourse;
+
+      localStorage.setItem("courseId_" + state.tid, doc.id);
+
+      closeRoundModal();
+      render();
+
+      showToast("🏌️ Bane lagret!");
     });
 }
 
