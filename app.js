@@ -174,10 +174,14 @@ function quickJoin(){
 // ----------------------
 
 function start(){
-if(!state.tid){
-  showLogin();
-  return;
-}
+
+  // 🔥 HENT FRA LOCALSTORAGE IGJEN (sikker reset)
+  state.tid = localStorage.getItem("tid");
+
+  if(!state.tid){
+    showLogin();
+    return;
+  }
  
   console.log("STATE TID:", state.tid);
 
