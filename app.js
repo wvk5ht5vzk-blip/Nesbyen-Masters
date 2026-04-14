@@ -14,6 +14,7 @@ let state = {
   screen: "leaderboard",
   selectedPlayer: null,
   openPlayers: {}
+  tournamentName: "Nesbyen Masters",
 };
 
 const fileInput = document.getElementById("fileInput");
@@ -744,9 +745,9 @@ function render(){
   html += `
 <div style="padding:10px; text-align:center;">
 
-  <h3>
-    🏌️ ${course.name}
-  </h3>
+<h3 onclick="openTournamentModal()" style="cursor:pointer;">
+  🏌️ ${state.tournamentName} ▾
+</h3>
 
 <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
 <button onclick="newRound()">➕ Ny runde</button>
