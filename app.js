@@ -98,24 +98,59 @@ if(state.tid){
 // ----------------------
 
 function showLogin(){
+
   login.innerHTML = `
-    <div class="card">
-      <h2>Nesbyen Masters</h2>
+    <div style="
+      position:fixed;
+      top:0;
+      left:0;
+      width:100%;
+      height:100%;
+      background:rgba(0,0,0,0.95);
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      z-index:9999;
+    ">
 
-      <input id="name" placeholder="Navn"><br><br>
+      <div class="card" style="text-align:center; width:80%;">
 
-      ${
-        state.tid 
-        ? `<button onclick="quickJoin()">Bli med i spill</button>`
-        : `
-          <button onclick="createGame()">➕ Nytt spill</button>
-          <br><br>
-          <input id="code" placeholder="Spillkode">
-          <button onclick="joinGame()">🔑 Bli med</button>
-        `
-      }
+        <h2 class="gold">BLACKBOX</h2>
+
+        <p>Skriv inn navn for å starte</p>
+
+        <input id="name" placeholder="Navn" style="
+          padding:10px;
+          border-radius:10px;
+          border:none;
+          width:80%;
+        ">
+
+        <br><br>
+
+        <button onclick="saveUser()">Start</button>
+
+      </div>
+
     </div>
   `;
+}
+
+function saveUser(){
+
+  const name = document.getElementById("name").value;
+
+  if(!name){
+    alert("Skriv navn 😄");
+    return;
+  }
+
+  state.user = name;
+  localStorage.setItem("user", name);
+
+  login.innerHTML = "";
+
+  start(); // 🔥 starter app igjen
 }
 
 function createGame(){
