@@ -14,7 +14,7 @@ let state = {
   screen: "leaderboard",
   selectedPlayer: null,
   openPlayers: {},
-  tournamentName: "Nesbyen Masters",
+  tournamentName: ""
 };
 
 const fileInput = document.getElementById("fileInput");
@@ -68,11 +68,15 @@ if(state.tid){
 
       if(data){
         state.tournamentName = data.name || "Turnering";
-        render();
+      }else{
+        state.tournamentName = "Velg turnering";
       }
+
+      render();
     });
-} else {
-  alert("Åpne spillet via invitasjonslink først 🔗");
+}else{
+  state.tournamentName = "Velg turnering";
+  render();
 }
 
   console.log("TID:", state.tid);
@@ -892,7 +896,7 @@ function render(){
 <div style="padding:10px; text-align:center;">
 
 <h3 onclick="chooseTournament()" style="cursor:pointer;">
-  🏌️ ${state.tournamentName} ▾
+  🏌️ ${state.tournamentName || "Velg turnering"} ▾
 </h3>
 
 <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
