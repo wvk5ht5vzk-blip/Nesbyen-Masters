@@ -975,24 +975,23 @@ async function setupPush(){
   }
 }
 
-async function sendNotification() {
-  try {
-    const res = await fetch("https://sendnotificationeu-x3yitk2fxa-ew.a.run.app", {
+async function sendPush(title, body){
+
+  try{
+    await fetch("https://sendnotificationeu-x3yitk2fxa-ew.a.run.app", {
       method: "POST",
       headers: {
         "Content-Type": "application/json"
       },
       body: JSON.stringify({
-        title: "Hei 👋",
-        body: "Dette er en test 🚀"
+        title,
+        body,
+        userId: userId,
+        tid: state.tid
       })
     });
-
-    console.log("Sendt!", await res.text());
-
-  } catch (error) {
-    console.error("Feil:", error);
+  }catch(err){
+    console.error("Push error:", err);
   }
-}
 
-window.sendNotification = sendNotification;
+}
