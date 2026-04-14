@@ -54,8 +54,10 @@ function loadLocal(){
 
   // 🔥 RUNDE (per turnering)
   if(state.tid){
-    state.roundId = localStorage.getItem("roundId_" + state.tid);
-  }
+  state.roundId = localStorage.getItem("roundId_" + state.tid) || null;
+}else{
+  state.roundId = null;
+}
 
   // 🔥 HENT TURNERINGSNAVN
   if(state.tid){
@@ -170,10 +172,11 @@ function quickJoin(){
 // ----------------------
 
 function start(){
- if(!state.user){
+if(!state.tid){
   showLogin();
   return;
-} 
+}
+ 
   console.log("STATE TID:", state.tid);
 
   // 🔥 stopp hvis ingen spill
@@ -222,6 +225,7 @@ function newRound(){
 }
 
 function listenRounds(){
+ if(!state.tid) return;
   db.collection("tournaments").doc(state.tid)
     .collection("rounds")
     .onSnapshot(snap=>{
