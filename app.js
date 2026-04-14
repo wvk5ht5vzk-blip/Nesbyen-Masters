@@ -735,6 +735,26 @@ function chooseTournament(){
     });
 }
 
+function selectTournament(id){
+
+  state.tid = id;
+
+  localStorage.setItem("tid", id);
+
+  // hent navn
+  db.collection("tournaments").doc(id).get().then(doc=>{
+    const data = doc.data();
+
+    state.tournamentName = data?.name || "Turnering";
+
+    render();
+  });
+
+  closeRoundModal();
+
+  listenRounds(); // 🔥 last nye data
+}
+
 function selectRound(id){
   state.roundId = id;
   closeRoundModal();
