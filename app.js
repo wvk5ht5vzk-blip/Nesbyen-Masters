@@ -209,8 +209,13 @@ function quickJoin(){
     return;
   }
 
-  state.user = nameInput;
-  localStorage.setItem("user", nameInput);
+  // 🔥 TRIM + sikker lagring
+  const cleanName = nameInput.trim();
+
+  state.user = cleanName;
+  localStorage.setItem("user", cleanName);
+
+  console.log("USER SET:", cleanName); // debug
 
   start();
 }
@@ -219,7 +224,7 @@ function quickJoin(){
 // ----------------------
 
 function start(){
-
+  state.user = localStorage.getItem("user");
   state.tid = localStorage.getItem("tid");
 
   if(!state.user){
