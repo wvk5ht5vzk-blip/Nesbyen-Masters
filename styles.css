@@ -255,3 +255,15 @@ nav{
   display: inline-block;
   transform: translateY(1px);
 }
+
+body::after{
+  content:"";
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  width:120px;
+  height:120px;
+  background:url('93CCF690-56FC-4034-A088-82E828307728.png') no-repeat center/contain;
+  opacity:0.04;
+  pointer-events:none;
+}
