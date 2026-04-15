@@ -5,7 +5,7 @@ body{
   background: radial-gradient(circle at top, #0b1a35, #020617 70%);
   color:white;
   padding-top: env(safe-area-inset-top);
-  padding-bottom:120px;
+  padding-bottom:140px;
   min-height:100vh;
 }
 
@@ -116,16 +116,20 @@ button[style*="#dc2626"]{
 nav{
   position:fixed;
   bottom:0;
+  left:0;
+
   width:100%;
   display:flex;
   justify-content:space-around;
 
-  background: rgba(2,6,23,0.9);
-  backdrop-filter: blur(10px);
+  background: rgba(10,10,10,0.95);
+  backdrop-filter: blur(12px);
 
-  padding:10px;
+  padding:12px 10px;
 
   border-top:1px solid rgba(255,255,255,0.05);
+
+  z-index:9999; /* 🔥 VIKTIG */
 }
 
 /* AVATAR */
