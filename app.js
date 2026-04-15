@@ -115,7 +115,7 @@ function showLogin(){
 
       <div class="card" style="text-align:center; width:80%;">
 
-        <h2 class="gold">BLACKBOX</h2>
+        <h2 class="gold">Birdies & Beer 🍺</h2>
 
         <p>Skriv inn navn for å starte</p>
 
