@@ -1118,6 +1118,9 @@ function render(){
 
   html += `
 <div style="padding:10px; text-align:center;">
+<div style="text-align:center; margin-top:10px;">
+  <img src="93CCF690-56FC-4034-A088-82E828307728.png" style="width:90px;">
+</div>
 
 <h3 onclick="chooseTournament()" style="cursor:pointer;">
   🏌️ ${state.tournamentName || "Velg turnering"} ▾
