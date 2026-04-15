@@ -315,19 +315,25 @@ function listenPlayers(){
     .onSnapshot(snap=>{
       state.players = [];
 
-      snap.forEach(d=>{
-        let p = d.data();
+     snap.forEach(d=>{
+  let p = d.data();
 
-        state.players.push({
-          id: d.id,
-          name: p.name || "Spiller",
-          hcp: p.hcp || 0,
-          scores: p.scores || Array(18).fill(0),
-          image: p.image ?? state.players.find(x => x.id === d.id)?.image ?? "",
-          longest: p.longest || 0,
-          closest: p.closest || 0
-        });
-      });
+  // 🔥 finn eksisterende spiller (fra før render)
+  const existing = state.players.find(x => x.id === d.id);
+
+  state.players.push({
+    id: d.id,
+    name: p.name || "Spiller",
+    hcp: p.hcp || 0,
+    scores: p.scores || Array(18).fill(0),
+
+    // 🔥 MAGIEN
+    image: p.image || existing?.image || "",
+
+    longest: p.longest || 0,
+    closest: p.closest || 0
+  });
+});
 
 const params = new URLSearchParams(window.location.search);
 const urlName = params.get("name");
