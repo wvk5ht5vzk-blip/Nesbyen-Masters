@@ -668,11 +668,21 @@ fileInput.addEventListener("change", e=>{
   const reader = new FileReader();
 
   reader.onload = ()=>{
-    db.collection("tournaments").doc(state.tid)
-      .collection("rounds").doc(state.roundId)
-      .collection("players").doc(state.selectedPlayer)
-      .update({image:reader.result});
-  };
+  const img = reader.result;
+
+  // 🔥 vis bildet med en gang (lokalt)
+  const player = state.players.find(p => p.id === state.selectedPlayer);
+  if(player){
+    player.image = img;
+    render();
+  }
+
+  // 🔥 lagre i Firestore
+  db.collection("tournaments").doc(state.tid)
+    .collection("rounds").doc(state.roundId)
+    .collection("players").doc(state.selectedPlayer)
+    .update({image: img});
+};
 
   reader.readAsDataURL(file);
 });
