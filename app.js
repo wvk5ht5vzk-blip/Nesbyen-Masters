@@ -323,7 +323,7 @@ function listenPlayers(){
           name: p.name || "Spiller",
           hcp: p.hcp || 0,
           scores: p.scores || Array(18).fill(0),
-          image: p.image || "",
+          image: p.image ?? state.players.find(x => x.id === d.id)?.image ?? "",
           longest: p.longest || 0,
           closest: p.closest || 0
         });
