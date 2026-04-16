@@ -519,7 +519,7 @@ sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
 
   const text = "🍺 Sisteplass: " + loser.name + " → SHOT!";
 
-  showToast(text);
+  
   addEvent(text);
 
   sendPush("🍺 LAST PLACE", text);
