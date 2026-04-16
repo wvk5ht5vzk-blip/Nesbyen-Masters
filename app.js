@@ -278,29 +278,36 @@ function listenRounds(){
       snap.forEach(d=>rounds.push({id:d.id,...d.data()}));
       rounds.sort((a,b)=>a.created-b.created);
 
-      if(rounds.length){
+      // 🔥 INGEN RUNDER → lag en
+      if(!rounds.length){
 
-        const savedRound = localStorage.getItem("roundId_" + state.tid);
-        const exists = rounds.find(r => r.id === savedRound);
+        console.log("Ingen runder → lager ny");
 
-        if(savedRound && exists){
-          state.roundId = savedRound;
-        }else{
-          state.roundId = rounds[rounds.length-1].id;
-        }
-      
-        const index = rounds.findIndex(r => r.id === state.roundId);
-       state.currentRoundNumber = index !== -1 ? index + 1 : null;
-       
-        listenPlayers();
+        db.collection("tournaments").doc(state.tid)
+          .collection("rounds")
+          .add({
+            created: Date.now()
+          });
 
-      } else {
-        state.roundId = null;
-      const index = rounds.findIndex(r => r.id === state.roundId);
-      state.currentRoundNumber = index !== -1 ? index + 1 : null;
+        return;
       }
 
-    }); // ✅ DENNE manglet!
+      // ✅ VANLIG FLOW
+      const savedRound = localStorage.getItem("roundId_" + state.tid);
+      const exists = rounds.find(r => r.id === savedRound);
+
+      if(savedRound && exists){
+        state.roundId = savedRound;
+      } else {
+        state.roundId = rounds[rounds.length-1].id;
+      }
+
+      const index = rounds.findIndex(r => r.id === state.roundId);
+      state.currentRoundNumber = index !== -1 ? index + 1 : null;
+
+      listenPlayers();
+
+    });
 }
 
 
