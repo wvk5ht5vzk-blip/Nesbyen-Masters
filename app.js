@@ -1291,70 +1291,65 @@ function render(){
     }).join("");
   }
 
-  // SCORE
-  if(state.screen==="score"){
+// SCORE
+if(state.screen==="score"){
   html += state.players.map(p=>`
     <div class="card">
 
       <h3 onclick="togglePlayer('${p.id}')" style="cursor:pointer;">
-  ${p.name} ${state.openPlayers[p.id] === false ? "▼" : "▲"}
-</h3>
+        ${p.name} ${state.openPlayers[p.id] === false ? "▼" : "▲"}
+      </h3>
 
       ${state.openPlayers[p.id] !== false ? p.scores.map((s,i)=>{
-  const diff = s - course.pars[i];
-  const sign = diff>0?"+":"";
+        const diff = s - course.pars[i];
+        const sign = diff>0?"+":"";
+        const color = diff < 0 ? "#22c55e" : diff > 0 ? "#ef4444" : "#fff";
 
-  const color = diff < 0 ? "#22c55e" : diff > 0 ? "#ef4444" : "#fff";
+        return `
+        <div id="hole-${p.id}-${i}" class="score" style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+        ">
 
-  return `
-  <div class="score" style="
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-  ">
+          <div>
+            Hull ${i+1} ${p.lockedHoles?.[i] ? "🔒" : ""} (par ${course.pars[i]})
+          </div>
 
-    <div>
-      Hull ${i+1} ${p.lockedHoles?.[i] ? "🔒" : ""} (par ${course.pars[i]})
-    </div>
+          <div style="display:flex; align-items:center; gap:12px;">
+            
+            <button 
+              onclick="updateScore('${p.id}',${i},-1)"
+              ${p.lockedHoles?.[i] ? "disabled" : ""}
+            >➖</button>
 
-    <div style="display:flex; align-items:center; gap:12px;">
-  
-  <button 
-    onclick="updateScore('${p.id}',${i},-1)"
-    ${p.lockedHoles?.[i] ? "disabled" : ""}
-  >➖</button>
+            <span style="
+              font-size:20px;
+              font-weight:bold;
+              color:${color};
+              min-width:24px;
+              text-align:center;
+            ">
+              ${s}
+            </span>
 
-  <span>${s}</span>
+            <button 
+              onclick="updateScore('${p.id}',${i},1)"
+              ${p.lockedHoles?.[i] ? "disabled" : ""}
+            >➕</button>
 
-  <button 
-    onclick="updateScore('${p.id}',${i},1)"
-    ${p.lockedHoles?.[i] ? "disabled" : ""}
-  >➕</button>
+            <button 
+              onclick="lockHole('${p.id}', ${i})"
+              style="background:${p.lockedHoles?.[i] ? '#f59e0b' : '#22c55e'}"
+            >
+              ${p.lockedHoles?.[i] ? "🔒" : "🔓"}
+            </button>
 
-  <button onclick="lockHole('${p.id}', ${i})">
-    ${p.lockedHoles?.[i] ? "🔒" : "🔓"}
-  </button>
+          </div>
 
-</div>
-
-      <span style="
-        font-size:20px;
-        font-weight:bold;
-        color:${color};
-        min-width:24px;
-        text-align:center;
-      ">
-        ${s}
-      </span>
-
-      <button onclick="updateScore('${p.id}',${i},1)">➕</button>
-    </div>
-
-  </div>
-  `;
-}).join("") : ""}
-
-      
+        </div>
+        `;
+      }).join("") : ""}
 
     </div>
   `).join("");
