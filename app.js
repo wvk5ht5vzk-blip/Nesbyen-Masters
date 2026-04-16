@@ -1016,20 +1016,28 @@ function selectTournament(id){
 
   state.tid = id;
 
-  // 🔥 lagre turnering
   localStorage.setItem("tid", id);
 
-  // 🔥 reset runde riktig (per turnering)
+  // 🔥 RESET ALT SOM HØRER TIL GAMMEL TURNERING
   state.roundId = null;
+  state.players = [];
+  state.currentRoundNumber = null;
+
+  localStorage.removeItem("roundId_" + id); // 🔥 viktig
+
+  // 🔥 TØM UI med en gang
+  render();
 
   db.collection("tournaments").doc(id).get().then(doc=>{
     const data = doc.data();
 
     state.tournamentName = data?.name || "Turnering";
 
-    render();
+    localStorage.setItem("tournamentName", state.tournamentName);
+
     closeRoundModal();
 
+    // 🔥 START NY LYTTER
     listenRounds();
   });
 }
