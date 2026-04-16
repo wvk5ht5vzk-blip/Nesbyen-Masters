@@ -482,6 +482,11 @@ setTimeout(()=>{
     next.scrollIntoView({ behavior: "smooth", block: "center" });
   }
 }, 300);
+
+ if(hole === 17){
+  showToast("🏁 Ferdig runde!");
+  } 
+}  
 // ----------------------
 // EXTRA FEATURES
 // ----------------------
