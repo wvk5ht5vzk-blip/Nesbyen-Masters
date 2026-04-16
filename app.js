@@ -476,7 +476,12 @@ function lockHole(playerId, hole){
       lockedHoles: p.lockedHoles
     });
 }
-
+setTimeout(()=>{
+  const next = document.getElementById(`hole-${playerId}-${hole+1}`);
+  if(next){
+    next.scrollIntoView({ behavior: "smooth", block: "center" });
+  }
+}, 300);
 // ----------------------
 // EXTRA FEATURES
 // ----------------------
