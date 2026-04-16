@@ -505,7 +505,8 @@ sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
      if(hole === 8){
 
   const allLocked = state.players.every(pl => pl.lockedHoles?.[8]);
-
+ if(state.hole9Done) return;
+state.hole9Done = true;
  if(allLocked){
 
   // 🔥 sorter spillere etter score (høyest = dårligst)
