@@ -504,32 +504,34 @@ sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
     if(hole === 17){
       showToast("🏁 Ferdig runde!");
     }
-     if(hole === 8){
 
-  const allLocked = state.players.every(pl => pl.lockedHoles?.[8]);
- if(state.hole9Done) return;
-state.hole9Done = true;
- if(allLocked){
+    if(hole === 8){
 
-  // 🔥 sorter spillere etter score (høyest = dårligst)
-  let sorted = [...state.players].sort((a,b)=>{
-    const totalA = a.scores.reduce((sum,s)=>sum+s,0);
-    const totalB = b.scores.reduce((sum,s)=>sum+s,0);
-    return totalB - totalA;
-  });
+  setTimeout(()=>{
 
-  const loser = sorted[0];
+    const allLocked = state.players.every(pl => pl.lockedHoles?.[8]);
 
-  const text = "🍺 Sisteplass: " + loser.name + " → SHOT!";
+    if(allLocked){
 
-  
-  addEvent(text);
+      if(state.hole9Done) return;
+      state.hole9Done = true;
 
-  sendPush("🍺 LAST PLACE", text);
-} 
+      // 🔥 sorter spillere etter score (høyest = dårligst)
+      let sorted = [...state.players].sort((a,b)=>{
+        const totalA = a.scores.reduce((sum,s)=>sum+s,0);
+        const totalB = b.scores.reduce((sum,s)=>sum+s,0);
+        return totalB - totalA;
+      });
 
+      const loser = sorted[0];
+      const text = "🍺 Sisteplass: " + loser.name + " → SHOT!";
+
+      addEvent(text);
+      sendPush("🍺 LAST PLACE", text);
+    }
+
+  }, 300);
 }
-  }
 
   // 🔥 lagre uansett (både lock og unlock)
   db.collection("tournaments").doc(state.tid)
