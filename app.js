@@ -441,6 +441,42 @@ function netScore(p){
   return p.scores.reduce((sum,s,i)=>sum+(s-h[i]),0);
 }
 
+
+function lockHole(playerId, hole){
+
+  const p = state.players.find(x=>x.id===playerId);
+
+  if(!p.lockedHoles){
+    p.lockedHoles = Array(18).fill(false);
+  }
+
+  p.lockedHoles[hole] = true;
+
+  const score = p.scores[hole];
+  const par = course.pars[hole];
+  const diff = score - par;
+
+  let text = "";
+
+  if(diff === 1) text = "🍺 Bogey!";
+  else if(diff === 2) text = "🍺🍺 Double bogey!";
+  else if(diff >= 3) text = "💀 TRIPLE! CHUGG!";
+  else if(diff === -1) text = "🎉 Birdie! Gi bort en slurk";
+  else if(diff <= -2) text = "🔥 Eagle! Del ut 2 slurker";
+  else text = "😎 Par";
+
+  showToast(text);
+  addEvent(p.name + " → " + text);
+
+  // 🔥 lagre i Firebase
+  db.collection("tournaments").doc(state.tid)
+    .collection("rounds").doc(state.roundId)
+    .collection("players").doc(playerId)
+    .update({
+      lockedHoles: p.lockedHoles
+    });
+}
+
 // ----------------------
 // EXTRA FEATURES
 // ----------------------
@@ -1351,6 +1387,8 @@ window.deleteTournament = deleteTournament;
 window.createCourse = createCourse;
 window.selectCourse = selectCourse;
 window.deleteCourse = deleteCourse;
+window.lockHole = lockHole;
+
 
 function notify(title, body){
   if(Notification.permission === "granted"){
