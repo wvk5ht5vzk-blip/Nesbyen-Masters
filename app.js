@@ -502,8 +502,8 @@ sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
     }, 300);
 
     if(hole === 17){
-      showToast("🏁 Ferdig runde!");
-    }
+  sendPush("🏁 Ferdig runde!", p.name + " er ferdig!");
+}
 
     if(hole === 8){
 
@@ -531,8 +531,9 @@ sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
     }
 
   }, 300);
-}
-
+  }
+  
+  }
   // 🔥 lagre uansett (både lock og unlock)
   db.collection("tournaments").doc(state.tid)
     .collection("rounds").doc(state.roundId)
