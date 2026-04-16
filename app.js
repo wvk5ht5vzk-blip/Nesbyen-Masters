@@ -503,7 +503,13 @@ sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
       showToast("🏁 Ferdig runde!");
     }
      if(hole === 8){
-  console.log("Hull 9 event!");
+
+  const allLocked = state.players.every(pl => pl.lockedHoles?.[8]);
+
+  if(allLocked){
+    console.log("ALLE har låst hull 9!");
+  }
+
 }
   }
 
