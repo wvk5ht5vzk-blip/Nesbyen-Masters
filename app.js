@@ -1140,7 +1140,7 @@ function render(){
   html += `
 <div style="padding:10px; text-align:center;">
 <div style="text-align:center; margin-top:10px;">
-  <img src="E8053741-68F9-44DC-B374-D98DCA0410A8.png" style="width:90px;">
+<img src="E8053741-68F9-44DC-B374-D98DCA0410A8.png" class="logo">
 </div>
 
 <h3 onclick="chooseTournament()" style="cursor:pointer;">
