@@ -474,6 +474,9 @@ function lockHole(playerId, hole){
     else text = "😎 Par";
 
     showToast(text);
+   if(diff >= 3 || diff <= -1){
+  sendPush("🏌️ Score update", p.name + " – Hull " + (hole+1) + " → " + text);
+}
     if(diff >= 3){
   setTimeout(()=>{
     spinWheel();
