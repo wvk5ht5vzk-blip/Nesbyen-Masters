@@ -475,7 +475,13 @@ function lockHole(playerId, hole){
 
     showToast(text);
    if(diff >= 3 || diff <= -1){
-  sendPush("🏌️ Score update", p.name + " – Hull " + (hole+1) + " → " + text);
+  let title = "🏌️ Score";
+
+if(diff >= 3) title = "💀 TRIPLE!";
+else if(diff <= -2) title = "🔥 EAGLE!";
+else if(diff === -1) title = "🎉 BIRDIE!";
+
+sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
 }
     if(diff >= 3){
   setTimeout(()=>{
