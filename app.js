@@ -450,25 +450,42 @@ function lockHole(playerId, hole){
     p.lockedHoles = Array(18).fill(false);
   }
 
-  p.lockedHoles[hole] = true;
+  // 🔄 TOGGLE
+  p.lockedHoles[hole] = !p.lockedHoles[hole];
 
-  const score = p.scores[hole];
-  const par = course.pars[hole];
-  const diff = score - par;
+  // 👉 hvis vi låser (ikke unlock), kjør logikk
+  if(p.lockedHoles[hole]){
 
-  let text = "";
+    const score = p.scores[hole];
+    const par = course.pars[hole];
+    const diff = score - par;
 
-  if(diff === 1) text = "🍺 Bogey!";
-  else if(diff === 2) text = "🍺🍺 Double bogey!";
-  else if(diff >= 3) text = "💀 TRIPLE! CHUGG!";
-  else if(diff === -1) text = "🎉 Birdie! Gi bort en slurk";
-  else if(diff <= -2) text = "🔥 Eagle! Del ut 2 slurker";
-  else text = "😎 Par";
+    let text = "";
 
-  showToast(text);
-  addEvent(p.name + " → " + text);
+    if(diff === 1) text = "🍺 Bogey!";
+    else if(diff === 2) text = "🍺🍺 Double bogey!";
+    else if(diff >= 3) text = "💀 TRIPLE! CHUGG!";
+    else if(diff === -1) text = "🎉 Birdie! Gi bort en slurk";
+    else if(diff <= -2) text = "🔥 Eagle! Del ut 2 slurker";
+    else text = "😎 Par";
 
-  // 🔥 lagre i Firebase
+    showToast(text);
+    addEvent(p.name + " → " + text);
+
+    // 🔥 scroll kun når vi låser
+    setTimeout(()=>{
+      const next = document.getElementById(`hole-${playerId}-${hole+1}`);
+      if(next){
+        next.scrollIntoView({ behavior: "smooth", block: "center" });
+      }
+    }, 300);
+
+    if(hole === 17){
+      showToast("🏁 Ferdig runde!");
+    }
+  }
+
+  // 🔥 lagre uansett (både lock og unlock)
   db.collection("tournaments").doc(state.tid)
     .collection("rounds").doc(state.roundId)
     .collection("players").doc(playerId)
@@ -476,17 +493,8 @@ function lockHole(playerId, hole){
       lockedHoles: p.lockedHoles
     });
 
-setTimeout(()=>{
-  const next = document.getElementById(`hole-${playerId}-${hole+1}`);
-  if(next){
-    next.scrollIntoView({ behavior: "smooth", block: "center" });
-  }
-}, 300);
-
- if(hole === 17){
-  showToast("🏁 Ferdig runde!");
-  } 
-}  
+  render(); // 🔥 viktig!
+}
 // ----------------------
 // EXTRA FEATURES
 // ----------------------
