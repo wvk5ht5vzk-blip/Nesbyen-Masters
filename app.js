@@ -1314,11 +1314,28 @@ function render(){
   ">
 
     <div>
-      Hull ${i+1} (par ${course.pars[i]}): ${sign}${diff}
+      Hull ${i+1} ${p.lockedHoles?.[i] ? "🔒" : ""} (par ${course.pars[i]})
     </div>
 
     <div style="display:flex; align-items:center; gap:12px;">
-      <button onclick="updateScore('${p.id}',${i},-1)">➖</button>
+  
+  <button 
+    onclick="updateScore('${p.id}',${i},-1)"
+    ${p.lockedHoles?.[i] ? "disabled" : ""}
+  >➖</button>
+
+  <span>${s}</span>
+
+  <button 
+    onclick="updateScore('${p.id}',${i},1)"
+    ${p.lockedHoles?.[i] ? "disabled" : ""}
+  >➕</button>
+
+  <button onclick="lockHole('${p.id}', ${i})">
+    ${p.lockedHoles?.[i] ? "🔒" : "🔓"}
+  </button>
+
+</div>
 
       <span style="
         font-size:20px;
