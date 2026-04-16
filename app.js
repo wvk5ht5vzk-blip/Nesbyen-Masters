@@ -473,7 +473,7 @@ function lockHole(playerId, hole){
     else if(diff <= -2) text = "🔥 Eagle! Del ut 2 slurker";
     else text = "😎 Par";
 
-    showToast(text);
+    
    if(diff >= 3 || diff <= -1){
   let title = "🏌️ Score";
 
