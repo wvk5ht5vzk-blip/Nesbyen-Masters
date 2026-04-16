@@ -506,9 +506,24 @@ sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
 
   const allLocked = state.players.every(pl => pl.lockedHoles?.[8]);
 
-  if(allLocked){
-    console.log("ALLE har låst hull 9!");
-  }
+ if(allLocked){
+
+  // 🔥 sorter spillere etter score (høyest = dårligst)
+  let sorted = [...state.players].sort((a,b)=>{
+    const totalA = a.scores.reduce((sum,s)=>sum+s,0);
+    const totalB = b.scores.reduce((sum,s)=>sum+s,0);
+    return totalB - totalA;
+  });
+
+  const loser = sorted[0];
+
+  const text = "🍺 Sisteplass: " + loser.name + " → SHOT!";
+
+  showToast(text);
+  addEvent(text);
+
+  sendPush("🍺 LAST PLACE", text);
+} 
 
 }
   }
