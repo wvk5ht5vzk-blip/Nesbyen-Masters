@@ -475,7 +475,7 @@ function lockHole(playerId, hole){
     .update({
       lockedHoles: p.lockedHoles
     });
-}
+
 setTimeout(()=>{
   const next = document.getElementById(`hole-${playerId}-${hole+1}`);
   if(next){
