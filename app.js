@@ -472,7 +472,8 @@ function lockHole(playerId, hole){
     else text = "😎 Par";
 
     showToast(text);
-    addEvent(p.name + " → " + text);
+    const holeNumber = hole + 1;
+    addEvent(`${p.name} – Hull ${holeNumber} → ${text}`);
 
     // 🔥 scroll kun når vi låser
     setTimeout(()=>{
