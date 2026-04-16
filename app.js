@@ -1314,53 +1314,95 @@ if(state.screen==="score"){
   html += state.players.map(p=>`
     <div class="card">
 
-      <h3 onclick="togglePlayer('${p.id}')" style="cursor:pointer;">
-        ${p.name} ${state.openPlayers[p.id] === false ? "▼" : "▲"}
+      <h3 onclick="togglePlayer('${p.id}')" style="
+        cursor:pointer;
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+      ">
+        <span>${p.name}</span>
+        <span style="opacity:0.6;">
+          ${state.openPlayers[p.id] === false ? "▼" : "▲"}
+        </span>
       </h3>
 
       ${state.openPlayers[p.id] !== false ? p.scores.map((s,i)=>{
         const diff = s - course.pars[i];
         const sign = diff>0?"+":"";
-        const color = diff < 0 ? "#22c55e" : diff > 0 ? "#ef4444" : "#fff";
+
+        const color =
+          diff < 0 ? "#22c55e" :
+          diff > 0 ? "#ef4444" :
+          "#e5e7eb";
+
+        const locked = p.lockedHoles?.[i];
 
         return `
         <div id="hole-${p.id}-${i}" class="score" style="
           display:flex;
           justify-content:space-between;
           align-items:center;
+          padding:10px;
+          border-radius:12px;
+          margin-bottom:6px;
+
+          background:${locked ? "rgba(255,255,255,0.03)" : "transparent"};
+          opacity:${locked ? 0.5 : 1};
+          transition:0.2s;
         ">
 
-          <div>
-            Hull ${i+1} ${p.lockedHoles?.[i] ? "🔒" : ""} (par ${course.pars[i]})
+          <!-- LEFT SIDE -->
+          <div style="font-size:14px;">
+            <div>
+              Hull ${i+1} 
+              ${locked ? "🔒" : ""}
+            </div>
+            <div style="opacity:0.6;">
+              Par ${course.pars[i]}
+            </div>
           </div>
 
-          <div style="display:flex; align-items:center; gap:12px;">
-            
+          <!-- RIGHT SIDE -->
+          <div style="display:flex; align-items:center; gap:10px;">
+
             <button 
               onclick="updateScore('${p.id}',${i},-1)"
-              ${p.lockedHoles?.[i] ? "disabled" : ""}
+              ${locked ? "disabled" : ""}
+              style="opacity:${locked ? 0.3 : 1}"
             >➖</button>
 
-            <span style="
+            <div style="
               font-size:20px;
               font-weight:bold;
               color:${color};
-              min-width:24px;
+              min-width:28px;
               text-align:center;
             ">
               ${s}
-            </span>
+            </div>
 
             <button 
               onclick="updateScore('${p.id}',${i},1)"
-              ${p.lockedHoles?.[i] ? "disabled" : ""}
+              ${locked ? "disabled" : ""}
+              style="opacity:${locked ? 0.3 : 1}"
             >➕</button>
 
             <button 
               onclick="lockHole('${p.id}', ${i})"
-              style="background:${p.lockedHoles?.[i] ? '#f59e0b' : '#22c55e'}"
+              style="
+                background:${locked ? '#ef4444' : '#22c55e'};
+                color:white;
+                border-radius:10px;
+                width:44px;
+                height:44px;
+                font-size:18px;
+                box-shadow:${locked 
+                  ? "0 0 10px rgba(239,68,68,0.6)" 
+                  : "0 0 10px rgba(34,197,94,0.6)"};
+                transition:0.2s;
+              "
             >
-              ${p.lockedHoles?.[i] ? "🔒" : "🔓"}
+              ${locked ? "🔒" : "🔓"}
             </button>
 
           </div>
