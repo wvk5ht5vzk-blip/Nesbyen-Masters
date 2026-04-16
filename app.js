@@ -337,6 +337,8 @@ function listenPlayers(){
     // 🔥 MAGIEN
     image: p.image || existing?.image || "",
 
+    lockedHoles: p.lockedHoles || existing?.lockedHoles || Array(18).fill(false),
+    
     longest: p.longest || 0,
     closest: p.closest || 0
   });
