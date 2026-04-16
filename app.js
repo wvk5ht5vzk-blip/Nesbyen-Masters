@@ -466,7 +466,9 @@ function lockHole(playerId, hole){
 
     if(diff === 1) text = "🍺 Bogey!";
     else if(diff === 2) text = "🍺🍺 Double bogey!";
-    else if(diff >= 3) text = "💀 TRIPLE! CHUGG!";
+    else if(diff >= 3){
+  text = "💀 TRIPLE! CHUGG!";
+}
     else if(diff === -1) text = "🎉 Birdie! Gi bort en slurk";
     else if(diff <= -2) text = "🔥 Eagle! Del ut 2 slurker";
     else text = "😎 Par";
