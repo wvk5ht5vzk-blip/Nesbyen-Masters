@@ -474,6 +474,11 @@ function lockHole(playerId, hole){
     else text = "😎 Par";
 
     showToast(text);
+    if(diff >= 3){
+  setTimeout(()=>{
+    spinWheel();
+  }, 1200);
+}
     const holeNumber = hole + 1;
     addEvent(`${p.name} – Hull ${holeNumber} → ${text}`);
 
