@@ -502,6 +502,9 @@ sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
     if(hole === 17){
       showToast("🏁 Ferdig runde!");
     }
+     if(hole === 8){
+  console.log("Hull 9 event!");
+}
   }
 
   // 🔥 lagre uansett (både lock og unlock)
