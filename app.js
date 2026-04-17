@@ -389,6 +389,7 @@ function addPlayer(){
     .collection("rounds").doc(state.roundId)
     .collection("players")
     .add({
+    userId: state.userId,
       name,
       hcp,
       scores: Array(18).fill(0),
