@@ -233,9 +233,11 @@ function start(){
   }
 
   if(!state.tid){
-    showLogin();
-    return;
-  }
+  // 🔥 la appen starte uten turnering
+  login.innerHTML = "";
+  render();
+  return;
+}
 
   login.innerHTML = "";
 
