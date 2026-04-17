@@ -406,6 +406,31 @@ console.log("ROUND:", state.roundId);
 }); 
 }
 
+function joinRound(){
+
+  const exists = state.players.find(p => p.userId === state.userId);
+
+  if(exists){
+    alert("Du er allerede med 😄");
+    return;
+  }
+
+  db.collection("tournaments").doc(state.tid)
+    .collection("rounds").doc(state.roundId)
+    .collection("players")
+    .add({
+      userId: state.userId,
+      name: state.user,
+      hcp: 0,
+      scores: Array(18).fill(0),
+      image: "",
+      longest: 0,
+      closest: 0
+    });
+
+  showToast("🙋‍♂️ Du ble med!");
+}
+
 function deletePlayer(id){
   db.collection("tournaments").doc(state.tid)
     .collection("rounds").doc(state.roundId)
