@@ -4,7 +4,7 @@ if(!userId){
   userId = crypto.randomUUID();
   localStorage.setItem("userId", userId);
 }
-state.userId = userId;
+
 // STATE
 let state = {
   user: null,
@@ -331,7 +331,6 @@ function listenPlayers(){
   const existing = state.players.find(x => x.id === d.id);
 
   state.players.push({
-    userId: p.userId || null,
     id: d.id,
     name: p.name || "Spiller",
     hcp: p.hcp || 0,
@@ -347,24 +346,26 @@ function listenPlayers(){
   });
 });
 
-   // const exists = state.players.find(p => p.userId && p.userId === state.userId);
+const params = new URLSearchParams(window.location.search);
+const urlName = params.get("name");
 
-// if(!exists && state.user){
-//   db.collection("tournaments").doc(state.tid)
-//     .collection("rounds").doc(state.roundId)
-//     .collection("players")
-//     .add({...});
-// }
-      userId: state.userId, // 🔥 viktig
-      name: state.user,
-      hcp: 0,
-      scores: Array(18).fill(0),
-      image: "",
-      longest: 0,
-      closest: 0
-    });
+if(urlName){
 
-}
+  const exists = state.players.find(p => p.name === urlName);
+
+  if(!exists){
+    db.collection("tournaments").doc(state.tid)
+      .collection("rounds").doc(state.roundId)
+      .collection("players")
+      .add({
+        name: urlName,
+        hcp: 0,
+        scores: Array(18).fill(0),
+        image: "",
+        longest: 0,
+        closest: 0
+      });
+  }
 
 }
 
@@ -379,13 +380,6 @@ if(!state.eventsStarted){
 }
 
 function addPlayer(){
- const exists = state.players.find(p => p.userId === state.userId);
-
-if(exists){
-  alert("Du er allerede med i runden 😄");
-  return;
-} 
-  
   const name = prompt("Navn");
   if(!name) return;
 
@@ -395,7 +389,6 @@ if(exists){
     .collection("rounds").doc(state.roundId)
     .collection("players")
     .add({
-    userId: state.userId,
       name,
       hcp,
       scores: Array(18).fill(0),
