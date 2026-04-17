@@ -331,6 +331,7 @@ function listenPlayers(){
   const existing = state.players.find(x => x.id === d.id);
 
   state.players.push({
+    userId: p.userId || null,
     id: d.id,
     name: p.name || "Spiller",
     hcp: p.hcp || 0,
@@ -346,7 +347,7 @@ function listenPlayers(){
   });
 });
 
-const exists = state.players.find(p => p.userId === state.userId);
+const exists = state.players.find(p => p.userId && p.userId === state.userId);
 
 if(!exists && state.user){
 
