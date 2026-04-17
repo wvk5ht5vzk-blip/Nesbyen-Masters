@@ -347,14 +347,14 @@ function listenPlayers(){
   });
 });
 
-const exists = state.players.find(p => p.userId && p.userId === state.userId);
+   // const exists = state.players.find(p => p.userId && p.userId === state.userId);
 
-if(!exists && state.user){
-
-  db.collection("tournaments").doc(state.tid)
-    .collection("rounds").doc(state.roundId)
-    .collection("players")
-    .add({
+// if(!exists && state.user){
+//   db.collection("tournaments").doc(state.tid)
+//     .collection("rounds").doc(state.roundId)
+//     .collection("players")
+//     .add({...});
+// }
       userId: state.userId, // 🔥 viktig
       name: state.user,
       hcp: 0,
