@@ -382,6 +382,10 @@ if(!state.eventsStarted){
 }
 
 function addPlayer(){
+ console.log("ADD PLAYER CLICK");
+console.log("TID:", state.tid);
+console.log("ROUND:", state.roundId); 
+  
   const name = prompt("Navn");
   if(!name) return;
 
