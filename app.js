@@ -4,7 +4,7 @@ if(!userId){
   userId = crypto.randomUUID();
   localStorage.setItem("userId", userId);
 }
-
+state.userId = userId;
 // STATE
 let state = {
   user: null,
