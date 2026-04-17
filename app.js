@@ -388,14 +388,15 @@ function addPlayer(){
   db.collection("tournaments").doc(state.tid)
     .collection("rounds").doc(state.roundId)
     .collection("players")
-    .add({
-      name,
-      hcp,
-      scores: Array(18).fill(0),
-      image: "",
-      longest: 0,
-      closest: 0
-    });
+  .add({
+  userId: state.userId, // 🔥 NY
+  name,
+  hcp,
+  scores: Array(18).fill(0),
+  image: "",
+  longest: 0,
+  closest: 0
+}); 
 }
 
 function deletePlayer(id){
