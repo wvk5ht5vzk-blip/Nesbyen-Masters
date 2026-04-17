@@ -349,28 +349,6 @@ function listenPlayers(){
   });
 });
 
-const params = new URLSearchParams(window.location.search);
-const urlName = params.get("name");
-
-if(urlName){
-
-  const exists = state.players.find(p => p.name === urlName);
-
-  if(!exists){
-    db.collection("tournaments").doc(state.tid)
-      .collection("rounds").doc(state.roundId)
-      .collection("players")
-      .add({
-        name: urlName,
-        hcp: 0,
-        scores: Array(18).fill(0),
-        image: "",
-        longest: 0,
-        closest: 0
-      });
-  }
-
-}
 
 render();
 
