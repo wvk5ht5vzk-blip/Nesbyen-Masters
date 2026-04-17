@@ -380,6 +380,13 @@ if(!state.eventsStarted){
 }
 
 function addPlayer(){
+ const exists = state.players.find(p => p.userId === state.userId);
+
+if(exists){
+  alert("Du er allerede med i runden 😄");
+  return;
+} 
+  
   const name = prompt("Navn");
   if(!name) return;
 
