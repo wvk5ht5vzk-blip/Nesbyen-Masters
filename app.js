@@ -19,6 +19,7 @@ let state = {
   currentRoundNumber: null,
 };
 
+state.userId = userId;
 const fileInput = document.getElementById("fileInput");
 
 // COURSE (default)
