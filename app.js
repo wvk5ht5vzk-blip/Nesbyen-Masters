@@ -1616,7 +1616,7 @@ let teamList = Object.values(teams).map(team=>{
   let score = 0;
 
   try{
-    score = netScore(p);
+    score = netScoreTeam(team);
   }catch(e){
     console.log("team netScore error", team);
     score = 0;
@@ -1624,7 +1624,7 @@ let teamList = Object.values(teams).map(team=>{
 
   return {
     name: team.name || "Lag",
-    hcp: team.hcp || 0,
+    hcp: team.hcp || team.players[0]?.teamHcp || 0,
     score: score,
     players: team.players,
     isTeam: true
