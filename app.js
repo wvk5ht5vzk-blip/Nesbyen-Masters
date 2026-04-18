@@ -2084,24 +2084,36 @@ ${team.players.map(p=>`
 });
 
   // 🟢 SOLO SPILLERE
-  solo.forEach(p=>{
-    html += `
-      <div class="card" style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-      ">
+solo.forEach(p=>{
+  html += `
+    <div class="card" style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    ">
 
-        <div>
-          ${p.name}
-          <div style="opacity:0.6; font-size:12px;">
-            HCP ${p.hcp}
-          </div>
+      <div>
+        ${p.name}
+        <div style="opacity:0.6; font-size:12px;">
+          HCP ${p.hcp}
         </div>
+      </div>
+
+      <div style="display:flex; gap:8px;">
+
+        ${
+          p.userId === state.userId
+          ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
+          : ""
+        }
+
+        <button onclick="deletePlayer('${p.id}')">🗑️</button>
 
       </div>
-    `;
-  });
+
+    </div>
+  `;
+});
 }
 
   app.innerHTML = html;
