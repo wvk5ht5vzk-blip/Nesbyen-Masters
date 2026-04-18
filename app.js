@@ -1683,18 +1683,29 @@ if(state.screen==="players"){
         <b>🏷️ ${team.name} (HCP ${team.hcp})</b>
 
         ${team.players.map(p=>`
-          <div style="
-            display:flex;
-            justify-content:space-between;
-            margin-top:6px;
-          ">
-            <span>${p.name}</span>
-          </div>
-        `).join("")}
+  <div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:6px;
+  ">
 
-      </div>
-    `;
-  });
+    <span>${p.name}</span>
+
+    <button onclick="removeFromTeam('${p.id}')" style="
+      background:#ef4444;
+      font-size:12px;
+      padding:4px 8px;
+    ">
+      ❌
+    </button>
+
+ </div>
+      `).join("")}
+
+    </div>
+  `;
+});
 
   // 🟢 SOLO SPILLERE
   solo.forEach(p=>{
@@ -1828,4 +1839,19 @@ async function sendPush(title, body){
     console.error("Push error:", err);
   }
 
+}
+
+function removeFromTeam(playerId){
+
+  db.collection("tournaments").doc(state.tid)
+    .collection("rounds").doc(state.roundId)
+    .collection("players").doc(playerId)
+    .update({
+      teamId: null,
+      teamName: null,
+      teamHcp: 0,
+      teamScores: Array(18).fill(0)
+    });
+
+  showToast("❌ Fjernet fra lag");
 }
