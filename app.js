@@ -960,6 +960,36 @@ setTimeout(() => {
   }, 5600);
 }
 
+function updateTeamScore(teamId, hole, val){
+  const players = state.players.filter(p => p.teamId === teamId);
+
+  players.forEach(p=>{
+    let scores = p.scores || Array(18).fill(0);
+
+    scores[hole] += val;
+    if(scores[hole] < 0) scores[hole] = 0;
+
+    db.collection("tournaments").doc(state.tid)
+      .collection("rounds").doc(state.roundId)
+      .collection("players").doc(p.id)
+      .update({scores});
+  });
+}
+
+function lockTeamHole(teamId, hole){
+  const players = state.players.filter(p => p.teamId === teamId);
+
+  players.forEach(p=>{
+    let locked = p.lockedHoles || Array(18).fill(false);
+    locked[hole] = !locked[hole];
+
+    db.collection("tournaments").doc(state.tid)
+      .collection("rounds").doc(state.roundId)
+      .collection("players").doc(p.id)
+      .update({lockedHoles: locked});
+  });
+}
+
 function closeWheel(){
   const modal = document.getElementById("wheelModal");
   const wheel = document.getElementById("wheel");
