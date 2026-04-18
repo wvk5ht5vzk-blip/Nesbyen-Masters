@@ -660,7 +660,9 @@ function openTeams(){
 
   modal.style.display = "flex";
 
+  if(!state.selectedTeam){
   state.selectedTeam = [];
+}
 }
 
 function saveTeam(){
