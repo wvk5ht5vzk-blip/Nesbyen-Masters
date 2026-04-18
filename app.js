@@ -1418,7 +1418,9 @@ function togglePlayer(id){
 // ----------------------
 
 function render(){
-console.log("RENDER START");
+  console.log("RENDER START");
+
+  try {
   let html = "";
 
   // LEADERBOARD
@@ -1738,6 +1740,12 @@ solo.forEach(p=>{
   }
 }
 
+  } catch(e){
+    console.error("❌ RENDER CRASH:", e);
+    alert("Render error: " + e.message);
+  }
+}
+  
 function toggleTeam(id){
 
   if(!state.selectedTeam) state.selectedTeam = [];
