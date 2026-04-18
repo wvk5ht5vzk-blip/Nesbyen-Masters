@@ -1598,11 +1598,12 @@ let solo = [];
 state.players.forEach(p=>{
   if(p.teamId){
     if(!teams[p.teamId]){
-      teams[p.teamId] = {
-        name: p.teamName || "Lag",
-        hcp: p.teamHcp || 0,
-        players: []
-      };
+     teams[p.teamId] = {
+  id: p.teamId, // 🔥 DENNE ER VIKTIG
+  name: p.teamName || "Lag",
+  hcp: p.teamHcp || 0,
+  players: []
+}; 
     }
     teams[p.teamId].players.push(p);
   }else{
