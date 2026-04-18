@@ -1624,11 +1624,54 @@ html += sorted.map((item,i)=>{
         ${item.score}
       </div>
 
-      ${item.players.map(p=>`
-        <div style="opacity:0.7; font-size:14px;">
-         ${p.name || "Spiller"} (${netScore(p)})
-        </div>
-      `).join("")}
+    ${item.players.map(p=>{
+
+  const totalPar = course.pars.reduce((a,b)=>a+b,0);
+  const diff = netScore(p) - totalPar;
+  const sign = diff>0?"+":"";
+  const gross = p.scores.reduce((sum,s)=>sum+s,0);
+
+  return `
+  <div class="card" style="
+    margin-top:10px;
+    background:rgba(255,255,255,0.03);
+  ">
+
+    <div style="display:flex; justify-content:space-between;">
+      <b>${p.name} (HCP ${p.hcp})</b>
+      <span>⛳ ${gross}</span>
+    </div>
+
+    <div style="font-size:18px; font-weight:bold;">
+      ${sign}${diff}
+    </div>
+
+    <div style="margin-top:5px;">
+      <img src="${p.image||''}" 
+        class="avatar"
+        style="cursor:pointer;"
+        onclick="openProfile('${p.id}')">
+    </div>
+
+    <br>🏌️ ${p.longest}m | 🎯 ${p.closest}cm
+
+    <button style="
+      background:#dc2626;
+      margin-top:8px;
+    " onclick="reverseMulligan('${p.id}')">
+      💀
+    </button>
+
+    <div style="display:flex; gap:10px; margin-top:8px;">
+      <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
+      <button onclick="updateExtra('${p.id}','closest')">🎯</button>
+      <button onclick="chulligan()">🍺</button>
+      <button onclick="spinWheel()">🎰</button>
+    </div>
+
+  </div>
+  `;
+}).join("")}  
 
     </div>
     `;
