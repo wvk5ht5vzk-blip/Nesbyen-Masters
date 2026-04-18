@@ -1627,7 +1627,27 @@ if(state.screen==="score"){
   `).join("");
 }
   // PLAYERS
-if(state.screen==="players"){
+let teams = {};
+let solo = [];
+
+state.players.forEach(p=>{
+  if(p.teamId){
+
+    if(!teams[p.teamId]){
+      teams[p.teamId] = {
+        name: p.teamName || "Lag",
+        hcp: p.teamHcp || 0,
+        players: []
+      };
+    }
+
+    teams[p.teamId].players.push(p);
+
+  }else{
+    solo.push(p);
+  }
+});
+  if(state.screen==="players"){
  let teams = {};
 let solo = [];
 
