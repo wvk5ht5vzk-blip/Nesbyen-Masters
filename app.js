@@ -1559,9 +1559,14 @@ let teamList = Object.values(teams).map(team=>{
     let best = Infinity;
 
     team.players.forEach(p=>{
-      const score = p.scores[i] - Math.floor(p.hcp/18);
-      if(score < best) best = score;
-    });
+
+  const scores = p.scores || Array(18).fill(0);
+  const hcp = p.hcp || 0;
+
+  const score = scores[i] - Math.floor(hcp/18);
+
+  if(score < best) best = score;
+});
 
     totalScore += best;
   }
@@ -1605,7 +1610,7 @@ html += sorted.map((item,i)=>{
 
       ${item.players.map(p=>`
         <div style="opacity:0.7; font-size:14px;">
-          ${p.name} (${netScore(p)})
+         ${p.name || "Spiller"} (${netScore(p)})
         </div>
       `).join("")}
 
