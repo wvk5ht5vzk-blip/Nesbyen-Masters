@@ -2118,7 +2118,8 @@ window.createCourse = createCourse;
 window.selectCourse = selectCourse;
 window.deleteCourse = deleteCourse;
 window.lockHole = lockHole;
-
+window.updateTeamScore = updateTeamScore;
+window.lockTeamHole = lockTeamHole;
 
 function notify(title, body){
   if(Notification.permission === "granted"){
