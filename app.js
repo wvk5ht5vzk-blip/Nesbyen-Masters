@@ -1475,18 +1475,40 @@ if(state.screen==="score"){
   `).join("");
 }
   // PLAYERS
-  if(state.screen==="players"){
-    html = `
-      <button onclick="joinRound()">🙋‍♂️ Bli med</button>
+if(state.screen==="players"){
+  html = `
+    <button onclick="addPlayer()">+ spiller</button>
 
-      ${state.players.map(p=>`
-        <div class="card">
+    ${state.players.map(p=>`
+      <div class="card" style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+      ">
+
+        <div>
           ${p.name}
-          <button onclick="deletePlayer('${p.id}')">🗑️</button>
+          <div style="opacity:0.6; font-size:12px;">
+            HCP ${p.hcp}
+          </div>
         </div>
-      `).join("")}
-    `;
-  }
+
+        <div style="display:flex; gap:10px;">
+
+          ${
+            p.userId === userId
+            ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
+            : ""
+          }
+
+          <button onclick="deletePlayer('${p.id}')">🗑️</button>
+
+        </div>
+
+      </div>
+    `).join("")}
+  `;
+}
 
   app.innerHTML = html;
 
