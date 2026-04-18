@@ -679,8 +679,11 @@ function saveTeam(){
       .collection("rounds").doc(state.roundId)
       .collection("players").doc(id)
       .update({
-        teamId: teamId
-      });
+  teamId: teamId,
+  teamName: "DITT NAVN HER",   // midlertidig
+  teamHcp: 0,                 // midlertidig
+  teamScores: Array(18).fill(0)
+});
   });
 
   showToast("👥 Lag opprettet!");
