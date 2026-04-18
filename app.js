@@ -810,6 +810,54 @@ function addEvent(text){
     });
 }
 
+function setTeamScore(teamId, hole, score){
+
+  const teamPlayers = state.players.filter(p => p.teamId === teamId);
+
+  // 🔄 1. Oppdater alle i laget
+  teamPlayers.forEach(p=>{
+
+    let scores = p.scores || Array(18).fill(0);
+    scores[hole] = score;
+
+    db.collection("tournaments").doc(state.tid)
+      .collection("rounds").doc(state.roundId)
+      .collection("players").doc(p.id)
+      .update({scores});
+  });
+
+  // 🧠 2. Regn ut diff
+  const par = course.pars[hole];
+  const diff = score - par;
+
+  let text = "";
+
+  if(diff === -1) text = "🎉 Birdie!";
+  else if(diff <= -2) text = "🔥 Eagle!";
+  else if(diff >= 3) text = "💀 TRIPLE! SPIN THE WHEEL!";
+
+  // ❌ ikke send noe hvis ikke relevant
+  if(diff !== -1 && diff > -2 && diff < 3) return;
+
+  const teamName = teamPlayers[0]?.teamName || "Lag";
+
+  // 🔥 3. SEND PUSH (til alle foreløpig)
+  sendPush(
+    "🏷️ " + teamName,
+    `Hull ${hole+1} → ${text}`
+  );
+
+  // 📝 4. EVENT
+  addEvent(`${teamName} – Hull ${hole+1} → ${text}`);
+
+  // 🎰 5. SPIN hvis triple
+  if(diff >= 3){
+    setTimeout(()=>{
+      spinWheel();
+    }, 1200);
+  }
+}
+
 function listenEvents(){
 
   let initialized = false;
@@ -2192,6 +2240,7 @@ window.updateTeamScore = updateTeamScore;
 window.lockTeamHole = lockTeamHole;
 window.toggleTeam = toggleTeam;
 window.toggleTeamCollapse = toggleTeamCollapse;
+window.setTeamScore = setTeamScore;
 
 function notify(title, body){
   if(Notification.permission === "granted"){
