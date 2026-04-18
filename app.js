@@ -1586,30 +1586,25 @@ state.players.forEach(p=>{
   }
 });
 
-// 🔥 2. BEST BALL score
 let teamList = Object.values(teams).map(team=>{
 
-  let totalScore = 0;
+  // 🔥 bruk første spiller som "representant"
+  const p = team.players[0];
 
-  for(let i=0;i<18;i++){
-    let best = Infinity;
+  let score = 0;
 
-    team.players.forEach(p=>{
-
-  const scores = p.scores || Array(18).fill(0);
-  const hcp = p.hcp || 0;
-
-  const score = scores[i] - Math.floor(hcp/18);
-
-  if(score < best) best = score;
-});
-
-    totalScore += best;
+  try{
+    score = netScore(p);
+  }catch(e){
+    console.log("team netScore error", team);
+    score = 0;
   }
 
   return {
-    ...team,
-    score: totalScore,
+    name: team.name || "Lag",
+    hcp: team.hcp || 0,
+    score: score,
+    players: team.players,
     isTeam: true
   };
 });
