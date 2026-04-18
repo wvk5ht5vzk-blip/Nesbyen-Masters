@@ -1502,6 +1502,12 @@ function togglePlayer(id){
 
 function render(){
 
+state.players = state.players.map(p => ({
+  ...p,
+  scores: p.scores || Array(18).fill(0),
+  hcp: p.hcp || 0
+}));
+  
   let html = "";
 
   // LEADERBOARD
