@@ -1679,7 +1679,7 @@ Object.values(teams).forEach(team=>{
           <div style="display:flex; gap:8px;">
 
             ${
-              p.userId === userId
+              p.userId === state.userId
               ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
               : ""
             }
@@ -1715,7 +1715,7 @@ solo.forEach(p=>{
       <div style="display:flex; gap:10px;">
 
         ${
-          p.userId === userId
+         p.userId === state.userId 
           ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
           : ""
         }
