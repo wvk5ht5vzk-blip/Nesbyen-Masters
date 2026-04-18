@@ -624,22 +624,31 @@ function openTeams(){
 
       <h2>👥 Velg lag</h2>
 
-      ${state.players.map(p=>`
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          padding:10px;
-          border-bottom:1px solid #333;
-        ">
+ ${state.players.map(p=>{
 
-          <span>${p.name}</span>
+  const selected = state.selectedTeam?.includes(p.id);
 
-          <button onclick="toggleTeam('${p.id}')">
-            Velg
-          </button>
+  return `
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      padding:10px;
+      border-bottom:1px solid #333;
+    ">
 
-        </div>
-      `).join("")}
+      <span>${p.name}</span>
+
+      <button onclick="toggleTeam('${p.id}')"
+        style="
+          background:${selected ? '#22c55e' : '#16a34a'};
+        "
+      >
+        ${selected ? "✅ Lagt til" : "Velg"}
+      </button>
+
+    </div>
+  `;
+}).join("")}
 
       <br>
 
@@ -652,19 +661,6 @@ function openTeams(){
   modal.style.display = "flex";
 
   state.selectedTeam = [];
-}
-
-function toggleTeam(id){
-
-  if(!state.selectedTeam) state.selectedTeam = [];
-
-  if(state.selectedTeam.includes(id)){
-    state.selectedTeam = state.selectedTeam.filter(x => x !== id);
-  }else{
-    state.selectedTeam.push(id);
-  }
-
-  console.log("Team:", state.selectedTeam);
 }
 
 function saveTeam(){
@@ -1664,6 +1660,19 @@ if(state.screen==="players"){
   app.innerHTML = html;
 
 
+}
+
+function toggleTeam(id){
+
+  if(!state.selectedTeam) state.selectedTeam = [];
+
+  if(state.selectedTeam.includes(id)){
+    state.selectedTeam = state.selectedTeam.filter(x => x !== id);
+  }else{
+    state.selectedTeam.push(id);
+  }
+
+  openTeams(); // 🔥 redraw modal
 }
 
 // ----------------------
