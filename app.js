@@ -757,6 +757,28 @@ function saveTeam(){
   closeProfile();
 }
 
+function saveTeamEdit(teamId){
+
+  const newName = document.getElementById("teamNameInput").value.trim();
+  const newHcp = parseInt(document.getElementById("teamHcpInput").value) || 0;
+
+  const teamPlayers = state.players.filter(p => p.teamId === teamId);
+
+  teamPlayers.forEach(p=>{
+    db.collection("tournaments").doc(state.tid)
+      .collection("rounds").doc(state.roundId)
+      .collection("players").doc(p.id)
+      .update({
+        teamName: newName,
+        teamHcp: newHcp
+      });
+  });
+
+  showToast("💾 Lag oppdatert!");
+  closeProfile();
+}
+
+
 function savePlayerEdit(playerId){
 
   const newName = document.getElementById("editName").value.trim();
