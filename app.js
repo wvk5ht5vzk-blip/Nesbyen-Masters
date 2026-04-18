@@ -1412,7 +1412,7 @@ function togglePlayer(id){
 // ----------------------
 
 function render(){
-
+console.log("RENDER START");
   let html = "";
 
   // LEADERBOARD
