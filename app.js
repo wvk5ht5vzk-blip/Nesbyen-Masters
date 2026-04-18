@@ -978,7 +978,7 @@ function updateTeamScore(teamId, hole, val){
 
 function netScoreTeam(team){
 
-  const p = team.players[0]; // bruker score fra én spiller
+  const p = team.players[0];
 
   const hcp = team.hcp || 0;
 
@@ -995,7 +995,9 @@ function netScoreTeam(team){
     total += score;
   }
 
-  return total;
+  const totalPar = course.pars.reduce((a,b)=>a+b,0);
+
+  return total - totalPar; // 🔥 DETTE VAR DET SOM MANGLA
 }
 
 function lockTeamHole(teamId, hole){
