@@ -1743,11 +1743,7 @@ solo.forEach(p=>{
   }
 }
 
-  } catch(e){
-    console.error("❌ RENDER CRASH:", e);
-    alert("Render error: " + e.message);
-  }
-}
+ 
   
 function toggleTeam(id){
 
