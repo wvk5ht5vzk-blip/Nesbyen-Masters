@@ -228,8 +228,6 @@ function start(){
   state.user = localStorage.getItem("user");
   state.tid = localStorage.getItem("tid");
 
-state.screen = "players";
-  
   if(!state.user){
     showLogin();
     return;
@@ -327,44 +325,37 @@ function listenPlayers(){
     .collection("rounds").doc(state.roundId)
     .collection("players")
     .onSnapshot(snap=>{
-
       state.players = [];
 
-      snap.forEach(d=>{
-        let p = d.data();
+     snap.forEach(d=>{
+  let p = d.data();
 
-        const existing = state.players.find(x => x.id === d.id);
+  // 🔥 finn eksisterende spiller (fra før render)
+  const existing = state.players.find(x => x.id === d.id);
 
-        state.players.push({
-          id: d.id,
-          userId: p.userId || null,
+ state.players.push({
+  id: d.id,
+  userId: p.userId || null, // 🔥 LEGG TIL DENNE
+  name: p.name || "Spiller",
+  hcp: p.hcp || 0,
+  scores: p.scores || Array(18).fill(0),
 
-          name: p.name || "Spiller",
-          hcp: p.hcp || 0,
-          scores: p.scores || Array(18).fill(0),
+  image: p.image || existing?.image || "",
+  lockedHoles: p.lockedHoles || existing?.lockedHoles || Array(18).fill(false),
+  
+  longest: p.longest || 0,
+  closest: p.closest || 0
+}); 
+});
 
-          // 🔥 TEAM
-          teamId: p.teamId || null,
-          teamName: p.teamName || null,
-          teamHcp: p.teamHcp || 0,
-          teamScores: p.teamScores || Array(18).fill(0),
 
-          image: p.image || existing?.image || "",
-          lockedHoles: p.lockedHoles || existing?.lockedHoles || Array(18).fill(false),
+render();
 
-          longest: p.longest || 0,
-          closest: p.closest || 0
-        });
-      });
-
-      // ✅ RENDER KUN ÉN GANG
-      render();
-
-      // 🔥 start events
-      if(!state.eventsStarted){
-        state.eventsStarted = true;
-        listenEvents();
-      }
+// 🔥 start events når alt er klart
+if(!state.eventsStarted){
+  state.eventsStarted = true;
+  listenEvents();
+}
     });
 }
 
@@ -1421,9 +1412,7 @@ function togglePlayer(id){
 // ----------------------
 
 function render(){
-  console.log("RENDER START");
 
-  try {
   let html = "";
 
   // LEADERBOARD
@@ -1638,12 +1627,11 @@ if(state.screen==="score"){
   `).join("");
 }
   // PLAYERS
-
-  if(state.screen==="players"){
+if(state.screen==="players"){
  let teams = {};
 let solo = [];
 
-(state.players || []).forEach(p=>{
+state.players.forEach(p=>{
   if(p.teamId){
 
     if(!teams[p.teamId]){
@@ -1660,91 +1648,45 @@ let solo = [];
     solo.push(p);
   }
 }); 
-html = `
-  <button onclick="joinRound()">🙋‍♂️ Bli med</button>
-  <button onclick="openTeams()">👥 Lagspill</button>
-`;
+  html = `
+    <button onclick="joinRound()">🙋‍♂️ Bli med</button>
+   <button onclick="openTeams()">👥 Lagspill</button>
+    ${state.players.map(p=>`
+      <div class="card" style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+      ">
 
-// 🟢 TEAM (lag)
-Object.values(teams).forEach(team=>{
-  html += `
-    <div class="card">
-
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <b>🏷️ ${team.name} (HCP ${team.hcp})</b>
-      </div>
-
-      ${(team.players || []).map(p=>`
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          align-items:center;
-          margin-top:6px;
-          padding-left:10px;
-        ">
-
-          <div style="opacity:0.9;">
-            ${p.name}
+        <div>
+          ${p.name}
+          <div style="opacity:0.6; font-size:12px;">
+            HCP ${p.hcp}
           </div>
+        </div>
 
-          <div style="display:flex; gap:8px;">
+        <div style="display:flex; gap:10px;">
 
-            ${
-              p.userId === state.userId
-              ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
-              : ""
-            }
+          ${
+            p.userId === userId
+            ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
+            : ""
+          }
 
-            <button onclick="deletePlayer('${p.id}')">🗑️</button>
-
-          </div>
+          <button onclick="deletePlayer('${p.id}')">🗑️</button>
 
         </div>
-      `).join("")}
-
-    </div>
-  `;
-});
-
-
-// 🟢 SOLO spillere
-solo.forEach(p=>{
-  html += `
-    <div class="card" style="
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-    ">
-
-      <div>
-        ${p.name}
-        <div style="opacity:0.6; font-size:12px;">
-          HCP ${p.hcp}
-        </div>
-      </div>
-
-      <div style="display:flex; gap:10px;">
-
-        ${
-         p.userId === state.userId 
-          ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
-          : ""
-        }
-
-        <button onclick="deletePlayer('${p.id}')">🗑️</button>
 
       </div>
-
-    </div>
+    `).join("")}
   `;
-});
- 
-  app.innerHTML = html;
-  }
 }
 
- 
-  
+  app.innerHTML = html;
+
+
+}
+
 function toggleTeam(id){
 
   if(!state.selectedTeam) state.selectedTeam = [];
