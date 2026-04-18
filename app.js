@@ -2087,7 +2087,7 @@ ${team.players.map(p=>`
 
   </div>
 `).join("")}        
- 
+ }
 
   // 🟢 SOLO SPILLERE
   solo.forEach(p=>{
