@@ -1663,7 +1663,7 @@ html += sorted.map((item,i)=>{
   // 🟢 TEAM
  if(item.isTeam){
 
-  const teamId = item.id || item.teamId;
+  const teamId = item.id;
   const isOpen = state.openTeams?.[teamId] !== false;
 
   return `
