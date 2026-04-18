@@ -615,6 +615,27 @@ function openEditPlayer(playerId){
   modal.style.display = "flex";
 }
 
+function savePlayerEdit(playerId){
+
+  const newName = document.getElementById("editName").value.trim();
+  const newHcp = parseInt(document.getElementById("editHcp").value) || 0;
+
+  if(!newName){
+    alert("Skriv navn 😄");
+    return;
+  }
+
+  db.collection("tournaments").doc(state.tid)
+    .collection("rounds").doc(state.roundId)
+    .collection("players").doc(playerId)
+    .update({
+      name: newName,
+      hcp: newHcp
+    });
+
+  closeProfile(); // 🔥 lukker modal
+}
+
 function addEvent(text){
   db.collection("tournaments").doc(state.tid)
     .collection("events")
