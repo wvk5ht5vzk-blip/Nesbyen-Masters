@@ -615,6 +615,45 @@ function openEditPlayer(playerId){
   modal.style.display = "flex";
 }
 
+function openTeams(){
+
+  const modal = document.getElementById("profileModal");
+
+  modal.innerHTML = `
+    <div class="card" style="width:85%; max-height:80%; overflow:auto;">
+
+      <h2>👥 Velg lag</h2>
+
+      ${state.players.map(p=>`
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          padding:10px;
+          border-bottom:1px solid #333;
+        ">
+
+          <span>${p.name}</span>
+
+          <button onclick="toggleTeam('${p.id}')">
+            Velg
+          </button>
+
+        </div>
+      `).join("")}
+
+      <br>
+
+      <button onclick="saveTeam()">💾 Lag lag</button>
+      <button onclick="closeProfile()">❌ Lukk</button>
+
+    </div>
+  `;
+
+  modal.style.display = "flex";
+
+  state.selectedTeam = [];
+}
+
 function savePlayerEdit(playerId){
 
   const newName = document.getElementById("editName").value.trim();
