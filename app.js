@@ -671,6 +671,53 @@ function openTeams(){
 }
 }
 
+function editTeam(teamId){
+
+  const teamPlayers = state.players.filter(p => p.teamId === teamId);
+
+  if(!teamPlayers.length) return;
+
+  const currentName = teamPlayers[0].teamName || "";
+  const currentHcp = teamPlayers[0].teamHcp || 0;
+
+  const modal = document.getElementById("profileModal");
+
+  modal.innerHTML = `
+    <div class="card" style="width:80%; text-align:center;">
+
+      <h2>🏷️ Rediger lag</h2>
+
+      <input 
+        id="teamNameInput"
+        value="${currentName}"
+        placeholder="Lag navn"
+        style="padding:10px; border-radius:10px; border:none; width:80%; margin-bottom:10px;"
+      >
+
+      <input 
+        id="teamHcpInput"
+        type="number"
+        value="${currentHcp}"
+        placeholder="Lag HCP"
+        style="padding:10px; border-radius:10px; border:none; width:80%;"
+      >
+
+      <br><br>
+
+      <button onclick="saveTeamEdit('${teamId}')">
+        💾 Lagre
+      </button>
+
+      <br><br>
+
+      <button onclick="closeProfile()">❌ Lukk</button>
+
+    </div>
+  `;
+
+  modal.style.display = "flex";
+}
+
 function saveTeam(){
 
   if(!state.selectedTeam || state.selectedTeam.length < 2){
