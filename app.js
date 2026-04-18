@@ -335,14 +335,20 @@ function listenPlayers(){
 
  state.players.push({
   id: d.id,
-  userId: p.userId || null, // 🔥 LEGG TIL DENNE
+  userId: p.userId || null,
+
   name: p.name || "Spiller",
   hcp: p.hcp || 0,
   scores: p.scores || Array(18).fill(0),
 
+  // 🔥 LEGG TIL DISSE
+  teamId: p.teamId || null,
+  teamName: p.teamName || null,
+  teamHcp: p.teamHcp || 0,
+
   image: p.image || existing?.image || "",
   lockedHoles: p.lockedHoles || existing?.lockedHoles || Array(18).fill(false),
-  
+
   longest: p.longest || 0,
   closest: p.closest || 0
 }); 
