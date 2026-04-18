@@ -1555,7 +1555,7 @@ if(state.screen==="score"){
 if(state.screen==="players"){
   html = `
     <button onclick="joinRound()">🙋‍♂️ Bli med</button>
-
+   <button onclick="openTeams()">👥 Lagspill</button>
     ${state.players.map(p=>`
       <div class="card" style="
         display:flex;
