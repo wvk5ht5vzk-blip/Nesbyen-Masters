@@ -327,43 +327,44 @@ function listenPlayers(){
     .collection("rounds").doc(state.roundId)
     .collection("players")
     .onSnapshot(snap=>{
+
       state.players = [];
 
-     snap.forEach(d=>{
-  let p = d.data();
+      snap.forEach(d=>{
+        let p = d.data();
 
-  // 🔥 finn eksisterende spiller (fra før render)
-  const existing = state.players.find(x => x.id === d.id);
+        const existing = state.players.find(x => x.id === d.id);
 
- state.players.push({
-  id: d.id,
-  userId: p.userId || null,
+        state.players.push({
+          id: d.id,
+          userId: p.userId || null,
 
-  name: p.name || "Spiller",
-  hcp: p.hcp || 0,
-  scores: p.scores || Array(18).fill(0),
+          name: p.name || "Spiller",
+          hcp: p.hcp || 0,
+          scores: p.scores || Array(18).fill(0),
 
-  // 🔥 TEAM (DETTE MANGLER!)
-  teamId: p.teamId || null,
-  teamName: p.teamName || null,
-  teamHcp: p.teamHcp || 0,
-  teamScores: p.teamScores || Array(18).fill(0),
+          // 🔥 TEAM
+          teamId: p.teamId || null,
+          teamName: p.teamName || null,
+          teamHcp: p.teamHcp || 0,
+          teamScores: p.teamScores || Array(18).fill(0),
 
-  image: p.image || existing?.image || "",
-  lockedHoles: p.lockedHoles || existing?.lockedHoles || Array(18).fill(false),
+          image: p.image || existing?.image || "",
+          lockedHoles: p.lockedHoles || existing?.lockedHoles || Array(18).fill(false),
 
-  longest: p.longest || 0,
-  closest: p.closest || 0
-});
-});
+          longest: p.longest || 0,
+          closest: p.closest || 0
+        });
+      });
 
-render();
+      // ✅ RENDER KUN ÉN GANG
+      render();
 
-// 🔥 start events når alt er klart
-if(!state.eventsStarted){
-  state.eventsStarted = true;
-  listenEvents();
-}
+      // 🔥 start events
+      if(!state.eventsStarted){
+        state.eventsStarted = true;
+        listenEvents();
+      }
     });
 }
 
