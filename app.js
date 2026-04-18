@@ -1586,9 +1586,19 @@ let teamList = Object.values(teams).map(team=>{
 
 // 🔥 3. solo spillere
 let soloList = solo.map(p=>{
+
+  let score = 0;
+
+  try{
+    score = netScore(p);
+  }catch(e){
+    console.log("netScore crash på:", p);
+    score = 0;
+  }
+
   return {
     player: p,
-    score: netScore(p),
+    score: score,
     isSolo: true
   };
 });
