@@ -1729,7 +1729,7 @@ solo.forEach(p=>{
 });
  
   app.innerHTML = html;
-
+  }
 }
 
 function toggleTeam(id){
