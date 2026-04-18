@@ -559,6 +559,63 @@ sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
 // EXTRA FEATURES
 // ----------------------
 
+function openEditPlayer(playerId){
+
+  const p = state.players.find(x => x.id === playerId);
+
+  if(!p) return;
+
+  const modal = document.getElementById("profileModal");
+
+  modal.innerHTML = `
+    <div class="card" style="width:80%; text-align:center;">
+
+      <h2>⚙️ Rediger spiller</h2>
+
+      <input 
+        id="editName"
+        value="${p.name}"
+        placeholder="Navn"
+        style="
+          padding:10px;
+          border-radius:10px;
+          border:none;
+          width:80%;
+          margin-bottom:10px;
+        "
+      >
+
+      <input 
+        id="editHcp"
+        type="number"
+        value="${p.hcp}"
+        placeholder="HCP"
+        style="
+          padding:10px;
+          border-radius:10px;
+          border:none;
+          width:80%;
+        "
+      >
+
+      <br><br>
+
+      <button onclick="savePlayerEdit('${p.id}')">
+        💾 Lagre
+      </button>
+
+      <br><br>
+
+      <button onclick="closeProfile()">
+        ❌ Avbryt
+      </button>
+
+    </div>
+  `;
+
+  modal.style.display = "flex";
+}
+
 function addEvent(text){
   db.collection("tournaments").doc(state.tid)
     .collection("events")
