@@ -1642,7 +1642,7 @@ if(state.screen==="score"){
  let teams = {};
 let solo = [];
 
-state.players.forEach(p=>{
+(state.players || []).forEach(p=>{
   if(p.teamId){
 
     if(!teams[p.teamId]){
