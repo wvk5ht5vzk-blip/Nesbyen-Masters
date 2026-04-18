@@ -228,6 +228,8 @@ function start(){
   state.user = localStorage.getItem("user");
   state.tid = localStorage.getItem("tid");
 
+state.screen = "players";
+  
   if(!state.user){
     showLogin();
     return;
