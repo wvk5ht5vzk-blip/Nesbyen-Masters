@@ -1628,30 +1628,57 @@ if(state.screen==="score"){
 }
   // PLAYERS
 if(state.screen==="players"){
- let teams = {};
-let solo = [];
 
-state.players.forEach(p=>{
-  if(p.teamId){
+  let teams = {};
+  let solo = [];
 
-    if(!teams[p.teamId]){
-      teams[p.teamId] = {
-        name: p.teamName || "Lag",
-        hcp: p.teamHcp || 0,
-        players: []
-      };
+  state.players.forEach(p=>{
+    if(p.teamId){
+
+      if(!teams[p.teamId]){
+        teams[p.teamId] = {
+          name: p.teamName || "Lag",
+          hcp: p.teamHcp || 0,
+          players: []
+        };
+      }
+
+      teams[p.teamId].players.push(p);
+
+    } else {
+      solo.push(p);
     }
+  });
 
-    teams[p.teamId].players.push(p);
-
-  }else{
-    solo.push(p);
-  }
-}); 
   html = `
     <button onclick="joinRound()">🙋‍♂️ Bli med</button>
-   <button onclick="openTeams()">👥 Lagspill</button>
-    ${state.players.map(p=>`
+    <button onclick="openTeams()">👥 Lagspill</button>
+  `;
+
+  // 🟢 VIS LAG
+  Object.values(teams).forEach(team=>{
+    html += `
+      <div class="card">
+
+        <b>🏷️ ${team.name} (HCP ${team.hcp})</b>
+
+        ${team.players.map(p=>`
+          <div style="
+            display:flex;
+            justify-content:space-between;
+            margin-top:6px;
+          ">
+            <span>${p.name}</span>
+          </div>
+        `).join("")}
+
+      </div>
+    `;
+  });
+
+  // 🟢 SOLO SPILLERE
+  solo.forEach(p=>{
+    html += `
       <div class="card" style="
         display:flex;
         justify-content:space-between;
@@ -1665,21 +1692,9 @@ state.players.forEach(p=>{
           </div>
         </div>
 
-        <div style="display:flex; gap:10px;">
-
-          ${
-            p.userId === userId
-            ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
-            : ""
-          }
-
-          <button onclick="deletePlayer('${p.id}')">🗑️</button>
-
-        </div>
-
       </div>
-    `).join("")}
-  `;
+    `;
+  });
 }
 
   app.innerHTML = html;
