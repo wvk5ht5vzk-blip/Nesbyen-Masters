@@ -680,16 +680,30 @@ function saveTeam(){
 
   const teamId = Date.now().toString();
 
+  // 🔥 1. fjern ALLE gamle lag først
+  state.players.forEach(p=>{
+    if(p.teamId){
+      db.collection("tournaments").doc(state.tid)
+        .collection("rounds").doc(state.roundId)
+        .collection("players").doc(p.id)
+        .update({
+          teamId: null,
+          teamName: null,
+          teamHcp: 0
+        });
+    }
+  });
+
+  // 🔥 2. legg til nye lag
   state.selectedTeam.forEach(id=>{
     db.collection("tournaments").doc(state.tid)
       .collection("rounds").doc(state.roundId)
       .collection("players").doc(id)
       .update({
-  teamId: teamId,
-  teamName: "DITT NAVN HER",   // midlertidig
-  teamHcp: 0,                 // midlertidig
-  teamScores: Array(18).fill(0)
-});
+        teamId: teamId,
+        teamName: "DITT NAVN HER",
+        teamHcp: 0
+      });
   });
 
   showToast("👥 Lag opprettet!");
