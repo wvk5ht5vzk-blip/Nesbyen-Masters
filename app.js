@@ -654,6 +654,41 @@ function openTeams(){
   state.selectedTeam = [];
 }
 
+function toggleTeam(id){
+
+  if(!state.selectedTeam) state.selectedTeam = [];
+
+  if(state.selectedTeam.includes(id)){
+    state.selectedTeam = state.selectedTeam.filter(x => x !== id);
+  }else{
+    state.selectedTeam.push(id);
+  }
+
+  console.log("Team:", state.selectedTeam);
+}
+
+function saveTeam(){
+
+  if(!state.selectedTeam || state.selectedTeam.length < 2){
+    alert("Velg minst 2 spillere");
+    return;
+  }
+
+  const teamId = Date.now().toString();
+
+  state.selectedTeam.forEach(id=>{
+    db.collection("tournaments").doc(state.tid)
+      .collection("rounds").doc(state.roundId)
+      .collection("players").doc(id)
+      .update({
+        teamId: teamId
+      });
+  });
+
+  showToast("👥 Lag opprettet!");
+  closeProfile();
+}
+
 function savePlayerEdit(playerId){
 
   const newName = document.getElementById("editName").value.trim();
