@@ -333,20 +333,19 @@ function listenPlayers(){
   // 🔥 finn eksisterende spiller (fra før render)
   const existing = state.players.find(x => x.id === d.id);
 
-  state.players.push({
-    id: d.id,
-    name: p.name || "Spiller",
-    hcp: p.hcp || 0,
-    scores: p.scores || Array(18).fill(0),
+ state.players.push({
+  id: d.id,
+  userId: p.userId || null, // 🔥 LEGG TIL DENNE
+  name: p.name || "Spiller",
+  hcp: p.hcp || 0,
+  scores: p.scores || Array(18).fill(0),
 
-    // 🔥 MAGIEN
-    image: p.image || existing?.image || "",
-
-    lockedHoles: p.lockedHoles || existing?.lockedHoles || Array(18).fill(false),
-    
-    longest: p.longest || 0,
-    closest: p.closest || 0
-  });
+  image: p.image || existing?.image || "",
+  lockedHoles: p.lockedHoles || existing?.lockedHoles || Array(18).fill(false),
+  
+  longest: p.longest || 0,
+  closest: p.closest || 0
+}); 
 });
 
 
