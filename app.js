@@ -355,7 +355,7 @@ function listenPlayers(){
   longest: p.longest || 0,
   closest: p.closest || 0
 });
-
+});
 
 render();
 
