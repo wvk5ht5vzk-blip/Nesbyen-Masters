@@ -1531,85 +1531,155 @@ function render(){
 </div>
 `;
 
-    let sorted = [...state.players].sort((a,b)=>netScore(a)-netScore(b));
+// 🔥 1. bygg lag
+let teams = {};
+let solo = [];
 
-    html += sorted.map((p,i)=>{
+state.players.forEach(p=>{
+  if(p.teamId){
+    if(!teams[p.teamId]){
+      teams[p.teamId] = {
+        name: p.teamName || "Lag",
+        hcp: p.teamHcp || 0,
+        players: []
+      };
+    }
+    teams[p.teamId].players.push(p);
+  }else{
+    solo.push(p);
+  }
+});
 
-      const totalPar = course.pars.reduce((a,b)=>a+b,0);
-      const diff = netScore(p) - totalPar;
-      const sign = diff>0?"+":"";
-      const gross = p.scores.reduce((sum,s)=>sum+s,0);
-      
-      return `
+// 🔥 2. BEST BALL score
+let teamList = Object.values(teams).map(team=>{
+
+  let totalScore = 0;
+
+  for(let i=0;i<18;i++){
+    let best = Infinity;
+
+    team.players.forEach(p=>{
+      const score = p.scores[i] - Math.floor(p.hcp/18);
+      if(score < best) best = score;
+    });
+
+    totalScore += best;
+  }
+
+  return {
+    ...team,
+    score: totalScore,
+    isTeam: true
+  };
+});
+
+// 🔥 3. solo spillere
+let soloList = solo.map(p=>{
+  return {
+    player: p,
+    score: netScore(p),
+    isSolo: true
+  };
+});
+
+// 🔥 4. sorter
+let sorted = [...teamList, ...soloList]
+  .sort((a,b)=>a.score - b.score);
+
+// 🔥 5. render
+html += sorted.map((item,i)=>{
+
+  // 🟢 TEAM
+  if(item.isTeam){
+    return `
+    <div class="card" style="position:relative; ${i===0?'border:2px solid gold':''}">
+
+      <div style="display:flex; justify-content:space-between;">
+        <b>${i+1}. 🏷️ ${item.name} (HCP ${item.hcp})</b>
+        <span>👥 ${item.players.length}</span>
+      </div>
+
+      <div style="font-size:22px; font-weight:bold; margin-top:5px;">
+        ${item.score}
+      </div>
+
+      ${item.players.map(p=>`
+        <div style="opacity:0.7; font-size:14px;">
+          ${p.name} (${netScore(p)})
+        </div>
+      `).join("")}
+
+    </div>
+    `;
+  }
+
+  // 🔵 SOLO (FULL original UI)
+  const p = item.player;
+
+  const totalPar = course.pars.reduce((a,b)=>a+b,0);
+  const diff = netScore(p) - totalPar;
+  const sign = diff>0?"+":"";
+  const gross = p.scores.reduce((sum,s)=>sum+s,0);
+
+  return `
 <div class="card" style="position:relative; ${i===0?'border:2px solid gold':''}">
 
-<div style="display:flex; justify-content:space-between; align-items:center;">
-  <b>${i+1}. ${p.name} (HCP ${p.hcp})</b>
-  <span>⛳ ${gross}</span>
-</div>
+  <div style="display:flex; justify-content:space-between; align-items:center;">
+    <b>${i+1}. ${p.name} (HCP ${p.hcp})</b>
+    <span>⛳ ${gross}</span>
+  </div>
 
-<div style="margin-top:10px; display:flex; align-items:center;">
-  <img src="${p.image||''}" 
-     class="avatar"
-     style="cursor:pointer;"
-     onclick="openProfile('${p.id}')">
-</div>
-<div style="font-size:20px; font-weight:bold;">
-  ${sign}${diff}
-</div>
+  <div style="margin-top:10px;">
+    <img src="${p.image||''}" 
+      class="avatar"
+      style="cursor:pointer;"
+      onclick="openProfile('${p.id}')">
+  </div>
+
+  <div style="font-size:20px; font-weight:bold;">
+    ${sign}${diff}
+  </div>
 
   <br>🏌️ ${p.longest}m | 🎯 ${p.closest}cm
 
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-
-
-
-    <button style="
-  position:absolute;
-  right:15px;
-  bottom:15px;
-  background:#dc2626;
-  z-index:2;
-" onclick="reverseMulligan('${p.id}')">
-  💀
-   </button>
-
-  </div>
-
- <div style="position:relative; margin-top:10px;">
-
-  <!-- 🎰 SPIN (flytende over skull) -->
-  <button onclick="spinWheel()" style="
+  <button style="
     position:absolute;
-    right:0px;
-    bottom:80px;
-    z-index:1;
-
-    width:60px;
-    height:60px;
-    font-size:22px;
-
-    background:linear-gradient(135deg,#0ea5e9,#22c55e);
-    box-shadow:0 0 15px rgba(34,197,94,0.6);
-    border-radius:16px;
-  ">
-    🎰
+    right:15px;
+    bottom:15px;
+    background:#dc2626;
+    z-index:2;
+  " onclick="reverseMulligan('${p.id}')">
+    💀
   </button>
 
-  <!-- 🔘 VANLIGE KNAPPER -->
-  <div style="display:flex; gap:10px;">
-    <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
-    <button onclick="updateExtra('${p.id}','closest')">🎯</button>
-    <button onclick="chulligan()">🍺</button>
-  </div>
+  <div style="position:relative; margin-top:10px;">
 
-</div>
+    <button onclick="spinWheel()" style="
+      position:absolute;
+      right:0px;
+      bottom:80px;
+      z-index:1;
+      width:60px;
+      height:60px;
+      font-size:22px;
+      background:linear-gradient(135deg,#0ea5e9,#22c55e);
+      box-shadow:0 0 15px rgba(34,197,94,0.6);
+      border-radius:16px;
+    ">
+      🎰
+    </button>
+
+    <div style="display:flex; gap:10px;">
+      <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
+      <button onclick="updateExtra('${p.id}','closest')">🎯</button>
+      <button onclick="chulligan()">🍺</button>
+    </div>
+
+  </div>
 
 </div>
 `;
-    }).join("");
-  }
-
+}).join("");
 // SCORE
 if(state.screen==="score"){
   html += state.players.map(p=>`
