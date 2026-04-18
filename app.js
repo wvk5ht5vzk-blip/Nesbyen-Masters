@@ -2149,6 +2149,17 @@ function toggleTeam(id){
   openTeams(); // 🔥 redraw modal
 }
 
+function toggleTeamCollapse(teamId){
+
+  if(!state.openTeams) state.openTeams = {};
+
+  state.openTeams[teamId] = !state.openTeams[teamId];
+
+  render();
+}
+
+window.toggleTeamCollapse = toggleTeamCollapse;
+
 // ----------------------
 // INIT
 // ----------------------
