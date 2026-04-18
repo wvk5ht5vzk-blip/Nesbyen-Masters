@@ -2054,40 +2054,30 @@ ${team.players.map(p=>`
     margin-top:6px;
   ">
 
-    <div style="
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      width:100%;
-    ">
+    <span>${p.name}</span>
 
-      <span>${p.name}</span>
+    <div style="display:flex; gap:6px;">
 
-      <div style="display:flex; gap:6px;">
+      ${
+        p.userId === state.userId
+        ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
+        : ""
+      }
 
-        ${
-          p.userId === state.userId
-          ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
-          : ""
-        }
+      <button onclick="removeFromTeam('${p.id}')" style="
+        background:#ef4444;
+        font-size:12px;
+        padding:4px 8px;
+      ">
+        ❌
+      </button>
 
-        <button onclick="removeFromTeam('${p.id}')" style="
-          background:#ef4444;
-          font-size:12px;
-          padding:4px 8px;
-        ">
-          ❌
-        </button>
-
-        <button onclick="deletePlayer('${p.id}')">🗑️</button>
-
-      </div>
+      <button onclick="deletePlayer('${p.id}')">🗑️</button>
 
     </div>
 
   </div>
-`).join("")};      
- 
+`).join("")}
 
   // 🟢 SOLO SPILLERE
   solo.forEach(p=>{
