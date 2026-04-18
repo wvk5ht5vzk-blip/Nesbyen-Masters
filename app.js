@@ -1660,72 +1660,87 @@ let sorted = [...teamList, ...soloList]
 html += sorted.map((item,i)=>{
 
   // 🟢 TEAM
-  if(item.isTeam){
-    return `
-    <div class="card" style="position:relative; ${i===0?'border:2px solid gold':''}">
+ if(item.isTeam){
 
-      <div style="display:flex; justify-content:space-between;">
-        <b>${i+1}. 🏷️ ${item.name} (HCP ${item.hcp})</b>
-        <span>👥 ${item.players.length}</span>
-      </div>
-
-      <div style="font-size:22px; font-weight:bold; margin-top:5px;">
-        ${item.score}
-      </div>
-
-    ${item.players.map(p=>{
-
-  const totalPar = course.pars.reduce((a,b)=>a+b,0);
-  const diff = netScore(p) - totalPar;
-  const sign = diff>0?"+":"";
-  const gross = p.scores.reduce((sum,s)=>sum+s,0);
+  const teamId = item.id || item.teamId;
+  const isOpen = state.openTeams?.[teamId] !== false;
 
   return `
-  <div class="card" style="
-    margin-top:10px;
-    background:rgba(255,255,255,0.03);
-  ">
+  <div class="card" style="position:relative; ${i===0?'border:2px solid gold':''}">
 
-    <div style="display:flex; justify-content:space-between;">
-      <b>${p.name} (HCP ${p.hcp})</b>
-      <span>⛳ ${gross}</span>
+    <!-- HEADER -->
+    <div onclick="toggleTeam('${teamId}')" style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      cursor:pointer;
+    ">
+      <b>
+        ${isOpen ? "▼" : "▶️"} ${i+1}. 🏷️ ${item.name} (HCP ${item.hcp})
+      </b>
+      <span>⛳ ${item.score}</span>
     </div>
 
-    <div style="font-size:18px; font-weight:bold;">
-      ${sign}${diff}
-    </div>
+    ${
+      isOpen
+      ? `
+      <!-- 🔽 ALT UNDER HER ER DIN ORIGINAL KODE -->
 
-    <div style="margin-top:5px;">
-      <img src="${p.image||''}" 
-        class="avatar"
-        style="cursor:pointer;"
-        onclick="openProfile('${p.id}')">
-    </div>
+      ${item.players.map(p=>{
 
-    <br>🏌️ ${p.longest}m | 🎯 ${p.closest}cm
+        const totalPar = course.pars.reduce((a,b)=>a+b,0);
+        const diff = netScore(p) - totalPar;
+        const sign = diff>0?"+":"";
+        const gross = p.scores.reduce((sum,s)=>sum+s,0);
 
-    <button style="
-      background:#dc2626;
-      margin-top:8px;
-    " onclick="reverseMulligan('${p.id}')">
-      💀
-    </button>
+        return `
+        <div class="card" style="
+          margin-top:10px;
+          background:rgba(255,255,255,0.03);
+        ">
 
-    <div style="display:flex; gap:10px; margin-top:8px;">
-      <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
-      <button onclick="updateExtra('${p.id}','closest')">🎯</button>
-      <button onclick="chulligan()">🍺</button>
-      <button onclick="spinWheel()">🎰</button>
-    </div>
+          <div style="display:flex; justify-content:space-between;">
+            <b>${p.name} (HCP ${p.hcp})</b>
+            <span>⛳ ${gross}</span>
+          </div>
+
+          <div style="font-size:18px; font-weight:bold;">
+            ${sign}${diff}
+          </div>
+
+          <div style="margin-top:5px;">
+            <img src="${p.image||''}" 
+              class="avatar"
+              style="cursor:pointer;"
+              onclick="openProfile('${p.id}')">
+          </div>
+
+          <br>🏌️ ${p.longest}m | 🎯 ${p.closest}cm
+
+          <button style="
+            background:#dc2626;
+            margin-top:8px;
+          " onclick="reverseMulligan('${p.id}')">
+            💀
+          </button>
+
+          <div style="display:flex; gap:10px; margin-top:8px;">
+            <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
+            <button onclick="updateExtra('${p.id}','closest')">🎯</button>
+            <button onclick="chulligan()">🍺</button>
+            <button onclick="spinWheel()">🎰</button>
+          </div>
+
+        </div>
+        `;
+      }).join("")}
+      `
+      : ""
+    }
 
   </div>
   `;
-}).join("")}  
-
-    </div>
-    `;
-  }
-
+}
   // 🔵 SOLO (FULL original UI)
   const p = item.player;
 
@@ -2163,7 +2178,7 @@ window.deleteCourse = deleteCourse;
 window.lockHole = lockHole;
 window.updateTeamScore = updateTeamScore;
 window.lockTeamHole = lockTeamHole;
-
+window.toggleTeam = toggleTeam;
 function notify(title, body){
   if(Notification.permission === "granted"){
     new Notification(title, { body });
