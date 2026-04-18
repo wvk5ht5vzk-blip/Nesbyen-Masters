@@ -2074,10 +2074,14 @@ ${team.players.map(p=>`
 
       <button onclick="deletePlayer('${p.id}')">🗑️</button>
 
-    </div>
+</div>
 
-  </div>
-`).join("")}
+        </div>
+      `).join("")}
+
+    </div>
+  `;
+});
 
   // 🟢 SOLO SPILLERE
   solo.forEach(p=>{
