@@ -1669,7 +1669,7 @@ html += sorted.map((item,i)=>{
   <div class="card" style="position:relative; ${i===0?'border:2px solid gold':''}">
 
     <!-- HEADER -->
-    <div onclick="toggleTeam('${teamId}')" style="
+   onclick="toggleTeamCollapse('${teamId}')"
       display:flex;
       justify-content:space-between;
       align-items:center;
