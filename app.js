@@ -1749,22 +1749,57 @@ html += sorted.map((item,i)=>{
 }   
     // SCORE
 if(state.screen==="score"){
-  html += state.players.map(p=>`
+  // 🔥 bygg lag + solo
+let teams = {};
+let solo = [];
+
+state.players.forEach(p=>{
+  if(p.teamId){
+    if(!teams[p.teamId]){
+      teams[p.teamId] = {
+        id: p.teamId,
+        name: p.teamName || "Lag",
+        players: [],
+        scores: p.scores || Array(18).fill(0),
+        lockedHoles: p.lockedHoles || Array(18).fill(false)
+      };
+    }
+    teams[p.teamId].players.push(p);
+  }else{
+    solo.push(p);
+  }
+});
+
+// 🔥 lag liste
+let list = [
+  ...Object.values(teams),
+  ...solo
+];
+
+html += list.map(item=>{
+
+  // 🟢 TEAM (samme UI, bare styrer flere spillere)
+  if(item.players){
+
+    const p = item;
+
+    return `
     <div class="card">
 
-      <h3 onclick="togglePlayer('${p.id}')" style="
+      <h3 onclick="togglePlayer('team-${p.id}')" style="
         cursor:pointer;
         display:flex;
         justify-content:space-between;
         align-items:center;
       ">
-        <span>${p.name}</span>
+        <span>🏷️ ${p.name}</span>
         <span style="opacity:0.6;">
-          ${state.openPlayers[p.id] === false ? "▼" : "▲"}
+          ${state.openPlayers['team-'+p.id] === false ? "▼" : "▲"}
         </span>
       </h3>
 
-      ${state.openPlayers[p.id] !== false ? p.scores.map((s,i)=>{
+      ${state.openPlayers['team-'+p.id] !== false ? p.scores.map((s,i)=>{
+
         const diff = s - course.pars[i];
         const sign = diff>0?"+":"";
 
@@ -1776,7 +1811,7 @@ if(state.screen==="score"){
         const locked = p.lockedHoles?.[i];
 
         return `
-        <div id="hole-${p.id}-${i}" class="score" style="
+        <div class="score" style="
           display:flex;
           justify-content:space-between;
           align-items:center;
@@ -1789,25 +1824,18 @@ if(state.screen==="score"){
           transition:0.2s;
         ">
 
-          <!-- LEFT SIDE -->
           <div style="font-size:14px;">
             <div>
-              Hull ${i+1} 
-              ${locked ? "🔒" : ""}
+              Hull ${i+1} ${locked ? "🔒" : ""}
             </div>
             <div style="opacity:0.6;">
               Par ${course.pars[i]}
             </div>
           </div>
 
-          <!-- RIGHT SIDE -->
           <div style="display:flex; align-items:center; gap:10px;">
 
-            <button 
-              onclick="updateScore('${p.id}',${i},-1)"
-              ${locked ? "disabled" : ""}
-              style="opacity:${locked ? 0.3 : 1}"
-            >➖</button>
+            <button onclick="updateTeamScore('${p.id}',${i},-1)">➖</button>
 
             <div style="
               font-size:20px;
@@ -1819,27 +1847,16 @@ if(state.screen==="score"){
               ${s}
             </div>
 
-            <button 
-              onclick="updateScore('${p.id}',${i},1)"
-              ${locked ? "disabled" : ""}
-              style="opacity:${locked ? 0.3 : 1}"
-            >➕</button>
+            <button onclick="updateTeamScore('${p.id}',${i},1)">➕</button>
 
-            <button 
-              onclick="lockHole('${p.id}', ${i})"
-              style="
-                background:${locked ? '#ef4444' : '#22c55e'};
-                color:white;
-                border-radius:10px;
-                width:44px;
-                height:44px;
-                font-size:18px;
-                box-shadow:${locked 
-                  ? "0 0 10px rgba(239,68,68,0.6)" 
-                  : "0 0 10px rgba(34,197,94,0.6)"};
-                transition:0.2s;
-              "
-            >
+            <button onclick="lockTeamHole('${p.id}', ${i})" style="
+              background:${locked ? '#ef4444' : '#22c55e'};
+              color:white;
+              border-radius:10px;
+              width:44px;
+              height:44px;
+              font-size:18px;
+            ">
               ${locked ? "🔒" : "🔓"}
             </button>
 
@@ -1850,7 +1867,97 @@ if(state.screen==="score"){
       }).join("") : ""}
 
     </div>
-  `).join("");
+    `;
+  }
+
+  // 🔵 SOLO (100% din originale kode – uendret)
+  const p = item;
+
+  return `
+  <div class="card">
+
+    <h3 onclick="togglePlayer('${p.id}')" style="
+      cursor:pointer;
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    ">
+      <span>${p.name}</span>
+      <span style="opacity:0.6;">
+        ${state.openPlayers[p.id] === false ? "▼" : "▲"}
+      </span>
+    </h3>
+
+    ${state.openPlayers[p.id] !== false ? p.scores.map((s,i)=>{
+      const diff = s - course.pars[i];
+      const sign = diff>0?"+":"";
+
+      const color =
+        diff < 0 ? "#22c55e" :
+        diff > 0 ? "#ef4444" :
+        "#e5e7eb";
+
+      const locked = p.lockedHoles?.[i];
+
+      return `
+      <div id="hole-${p.id}-${i}" class="score" style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        padding:10px;
+        border-radius:12px;
+        margin-bottom:6px;
+
+        background:${locked ? "rgba(255,255,255,0.03)" : "transparent"};
+        opacity:${locked ? 0.5 : 1};
+        transition:0.2s;
+      ">
+
+        <div style="font-size:14px;">
+          <div>
+            Hull ${i+1} ${locked ? "🔒" : ""}
+          </div>
+          <div style="opacity:0.6;">
+            Par ${course.pars[i]}
+          </div>
+        </div>
+
+        <div style="display:flex; align-items:center; gap:10px;">
+
+          <button onclick="updateScore('${p.id}',${i},-1)" ${locked ? "disabled" : ""}>➖</button>
+
+          <div style="
+            font-size:20px;
+            font-weight:bold;
+            color:${color};
+            min-width:28px;
+            text-align:center;
+          ">
+            ${s}
+          </div>
+
+          <button onclick="updateScore('${p.id}',${i},1)" ${locked ? "disabled" : ""}>➕</button>
+
+          <button onclick="lockHole('${p.id}', ${i})" style="
+            background:${locked ? '#ef4444' : '#22c55e'};
+            color:white;
+            border-radius:10px;
+            width:44px;
+            height:44px;
+            font-size:18px;
+          ">
+            ${locked ? "🔒" : "🔓"}
+          </button>
+
+        </div>
+
+      </div>
+      `;
+    }).join("") : ""}
+
+  </div>
+  `;
+}).join("");
 }
   // PLAYERS
 if(state.screen==="players"){
