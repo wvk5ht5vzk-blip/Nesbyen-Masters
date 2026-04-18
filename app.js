@@ -1628,6 +1628,26 @@ if(state.screen==="score"){
 }
   // PLAYERS
 if(state.screen==="players"){
+ let teams = {};
+let solo = [];
+
+state.players.forEach(p=>{
+  if(p.teamId){
+
+    if(!teams[p.teamId]){
+      teams[p.teamId] = {
+        name: p.teamName || "Lag",
+        hcp: p.teamHcp || 0,
+        players: []
+      };
+    }
+
+    teams[p.teamId].players.push(p);
+
+  }else{
+    solo.push(p);
+  }
+}); 
   html = `
     <button onclick="joinRound()">🙋‍♂️ Bli med</button>
    <button onclick="openTeams()">👥 Lagspill</button>
