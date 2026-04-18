@@ -1680,7 +1680,9 @@ if(state.screen==="players"){
     html += `
       <div class="card">
 
-        <b>🏷️ ${team.name} (HCP ${team.hcp})</b>
+       <b onclick="editTeam('${team.players[0].teamId}')" style="cursor:pointer;">
+  🏷️ ${team.name} (HCP ${team.hcp})
+</b>
 
         ${team.players.map(p=>`
   <div style="
