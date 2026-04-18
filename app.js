@@ -2046,7 +2046,7 @@ if(state.screen==="players"){
   🏷️ ${team.name} (HCP ${team.hcp})
 </b>
 
-        ${team.players.map(p=>`
+${team.players.map(p=>`
   <div style="
     display:flex;
     justify-content:space-between;
@@ -2054,22 +2054,40 @@ if(state.screen==="players"){
     margin-top:6px;
   ">
 
-    <span>${p.name}</span>
-
-    <button onclick="removeFromTeam('${p.id}')" style="
-      background:#ef4444;
-      font-size:12px;
-      padding:4px 8px;
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+      width:100%;
     ">
-      ❌
-    </button>
 
- </div>
-      `).join("")}
+      <span>${p.name}</span>
+
+      <div style="display:flex; gap:6px;">
+
+        ${
+          p.userId === state.userId
+          ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
+          : ""
+        }
+
+        <button onclick="removeFromTeam('${p.id}')" style="
+          background:#ef4444;
+          font-size:12px;
+          padding:4px 8px;
+        ">
+          ❌
+        </button>
+
+        <button onclick="deletePlayer('${p.id}')">🗑️</button>
+
+      </div>
 
     </div>
-  `;
-});
+
+  </div>
+`).join("")}        
+ 
 
   // 🟢 SOLO SPILLERE
   solo.forEach(p=>{
