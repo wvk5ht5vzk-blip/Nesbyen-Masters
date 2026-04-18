@@ -1669,7 +1669,7 @@ Object.values(teams).forEach(team=>{
         <b>🏷️ ${team.name} (HCP ${team.hcp})</b>
       </div>
 
-      ${team.players.map(p=>`
+      ${(team.players || []).map(p=>`
         <div style="
           display:flex;
           justify-content:space-between;
