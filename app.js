@@ -1701,7 +1701,10 @@ html += sorted.map((item,i)=>{
 </div>
 `;
 }).join("");
-// SCORE
+
+ app.innerHTML = html;
+}   
+    // SCORE
 if(state.screen==="score"){
   html += state.players.map(p=>`
     <div class="card">
