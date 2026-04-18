@@ -1648,42 +1648,86 @@ state.players.forEach(p=>{
     solo.push(p);
   }
 }); 
-  html = `
-    <button onclick="joinRound()">🙋‍♂️ Bli med</button>
-   <button onclick="openTeams()">👥 Lagspill</button>
-    ${state.players.map(p=>`
-      <div class="card" style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-      ">
+html = `
+  <button onclick="joinRound()">🙋‍♂️ Bli med</button>
+  <button onclick="openTeams()">👥 Lagspill</button>
+`;
 
-        <div>
-          ${p.name}
-          <div style="opacity:0.6; font-size:12px;">
-            HCP ${p.hcp}
+// 🟢 TEAM (lag)
+Object.values(teams).forEach(team=>{
+  html += `
+    <div class="card">
+
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <b>🏷️ ${team.name} (HCP ${team.hcp})</b>
+      </div>
+
+      ${team.players.map(p=>`
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          margin-top:6px;
+          padding-left:10px;
+        ">
+
+          <div style="opacity:0.9;">
+            ${p.name}
           </div>
+
+          <div style="display:flex; gap:8px;">
+
+            ${
+              p.userId === userId
+              ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
+              : ""
+            }
+
+            <button onclick="deletePlayer('${p.id}')">🗑️</button>
+
+          </div>
+
         </div>
+      `).join("")}
 
-        <div style="display:flex; gap:10px;">
+    </div>
+  `;
+});
 
-          ${
-            p.userId === userId
-            ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
-            : ""
-          }
 
-          <button onclick="deletePlayer('${p.id}')">🗑️</button>
+// 🟢 SOLO spillere
+solo.forEach(p=>{
+  html += `
+    <div class="card" style="
+      display:flex;
+      justify-content:space-between;
+      align-items:center;
+    ">
 
+      <div>
+        ${p.name}
+        <div style="opacity:0.6; font-size:12px;">
+          HCP ${p.hcp}
         </div>
+      </div>
+
+      <div style="display:flex; gap:10px;">
+
+        ${
+          p.userId === userId
+          ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
+          : ""
+        }
+
+        <button onclick="deletePlayer('${p.id}')">🗑️</button>
 
       </div>
-    `).join("")}
+
+    </div>
   `;
-}
-
+});
+ 
   app.innerHTML = html;
-
 
 }
 
