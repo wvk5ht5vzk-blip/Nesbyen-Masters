@@ -976,6 +976,28 @@ function updateTeamScore(teamId, hole, val){
   });
 }
 
+function netScoreTeam(team){
+
+  const p = team.players[0]; // bruker score fra én spiller
+
+  const hcp = team.hcp || 0;
+
+  const base = Math.floor(hcp / 18);
+  const extra = hcp % 18;
+
+  let h = Array(18).fill(base);
+  for(let i=0;i<extra;i++) h[i]++;
+
+  let total = 0;
+
+  for(let i=0;i<18;i++){
+    const score = (p.scores[i] || 0) - h[i];
+    total += score;
+  }
+
+  return total;
+}
+
 function lockTeamHole(teamId, hole){
   const players = state.players.filter(p => p.teamId === teamId);
 
