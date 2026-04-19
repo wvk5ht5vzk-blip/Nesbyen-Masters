@@ -812,38 +812,41 @@ function addEvent(text){
 
 function setTeamScore(teamId, hole, score){
 
-  score = Number(score); // 🔥 viktig
-
   const teamPlayers = state.players.filter(p => p.teamId === teamId);
 
+  // 🔒 STOP hvis allerede låst
+  if(teamPlayers[0]?.lockedHoles?.[hole]) return;
+
   teamPlayers.forEach(p=>{
+
     let scores = p.scores || Array(18).fill(0);
-    scores[hole] = score;
+    let locked = p.lockedHoles || Array(18).fill(false);
+
+    scores[hole] = Number(score);
+    locked[hole] = true;
 
     db.collection("tournaments").doc(state.tid)
       .collection("rounds").doc(state.roundId)
       .collection("players").doc(p.id)
-      .update({scores});
+      .update({
+        scores,
+        lockedHoles: locked
+      });
   });
 
   const par = course.pars[hole];
   const diff = score - par;
 
-  console.log("TEAM DIFF:", diff);
-
   if(diff === -1){
     sendPush("🏷️ Lag", `Hull ${hole+1} → 🎉 Birdie!`);
-    addEvent(`Lag – Hull ${hole+1} → 🎉 Birdie!`);
   }
 
   if(diff <= -2){
     sendPush("🏷️ Lag", `Hull ${hole+1} → 🔥 Eagle!`);
-    addEvent(`Lag – Hull ${hole+1} → 🔥 Eagle!`);
   }
 
   if(diff >= 3){
     sendPush("🏷️ Lag", `Hull ${hole+1} → 💀 TRIPLE!`);
-    addEvent(`Lag – Hull ${hole+1} → 💀 TRIPLE!`);
 
     setTimeout(()=>{
       spinWheel();
@@ -2004,7 +2007,7 @@ html += list.map(item=>{
 
             <button onclick="updateTeamScore('${p.id}',${i},1)">➕</button>
 
-            <button onclick="lockTeamHole('${p.id}', ${i})" style="
+            onclick="toggleTeamHole('${teamId}', ${i})"
               background:${locked ? '#ef4444' : '#22c55e'};
               color:white;
               border-radius:10px;
