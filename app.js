@@ -2287,7 +2287,7 @@ window.toggleTeam = toggleTeam;
 window.toggleTeamCollapse = toggleTeamCollapse;
 window.setTeamScore = setTeamScore;
 window.toggleTeamHole = toggleTeamHole;
-
+window.setScreen = setScreen;
 
 function notify(title, body){
   if(Notification.permission === "granted"){
