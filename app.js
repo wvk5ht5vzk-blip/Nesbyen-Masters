@@ -1668,7 +1668,8 @@ window.createCourse = createCourse;
 window.selectCourse = selectCourse;
 window.deleteCourse = deleteCourse;
 window.lockHole = lockHole;
-
+window.choosePlayer = choosePlayer;
+window.selectPlayerAction = selectPlayerAction;
 
 function notify(title, body){
   if(Notification.permission === "granted"){
