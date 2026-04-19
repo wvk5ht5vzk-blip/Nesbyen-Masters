@@ -604,7 +604,16 @@ function selectPlayerAction(playerId, action){
   if(!p) return;
 
   if(action === "drink"){
-    sendPush("😈 DU MÅ DRIKKE", p.name + " valgt av " + state.user);
+
+  const amount = count === 2 ? "2 slurker 🍺🍺" : "1 slurk 🍺";
+
+  sendPush(
+    "😈 STRAFF",
+    p.name + " må ta " + amount + " (valgt av " + state.user + ")"
+  );
+
+}
+    
     showToast("😈 " + p.name + " må drikke!");
   }
 
