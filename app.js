@@ -335,20 +335,14 @@ function listenPlayers(){
 
  state.players.push({
   id: d.id,
-  userId: p.userId || null,
-
+  userId: p.userId || null, // 🔥 LEGG TIL DENNE
   name: p.name || "Spiller",
   hcp: p.hcp || 0,
   scores: p.scores || Array(18).fill(0),
 
-  // 🔥 LEGG TIL DISSE
-  teamId: p.teamId || null,
-  teamName: p.teamName || null,
-  teamHcp: p.teamHcp || 0,
-
   image: p.image || existing?.image || "",
   lockedHoles: p.lockedHoles || existing?.lockedHoles || Array(18).fill(false),
-
+  
   longest: p.longest || 0,
   closest: p.closest || 0
 }); 
@@ -621,164 +615,6 @@ function openEditPlayer(playerId){
   modal.style.display = "flex";
 }
 
-function openTeams(){
-
-  const modal = document.getElementById("profileModal");
-
-  modal.innerHTML = `
-    <div class="card" style="width:85%; max-height:80%; overflow:auto;">
-
-      <h2>👥 Velg lag</h2>
-
- ${state.players.map(p=>{
-
-  const selected = state.selectedTeam?.includes(p.id);
-
-  return `
-    <div style="
-      display:flex;
-      justify-content:space-between;
-      padding:10px;
-      border-bottom:1px solid #333;
-    ">
-
-      <span>${p.name}</span>
-
-      <button onclick="toggleTeam('${p.id}')"
-        style="
-          background:${selected ? '#22c55e' : '#16a34a'};
-        "
-      >
-        ${selected ? "✅ Lagt til" : "Velg"}
-      </button>
-
-    </div>
-  `;
-}).join("")}
-
-      <br>
-
-      <button onclick="saveTeam()">💾 Lag lag</button>
-      <button onclick="closeProfile()">❌ Lukk</button>
-
-    </div>
-  `;
-
-  modal.style.display = "flex";
-
-  if(!state.selectedTeam){
-  state.selectedTeam = [];
-}
-}
-
-function editTeam(teamId){
-
-  const teamPlayers = state.players.filter(p => p.teamId === teamId);
-
-  if(!teamPlayers.length) return;
-
-  const currentName = teamPlayers[0].teamName || "";
-  const currentHcp = teamPlayers[0].teamHcp || 0;
-
-  const modal = document.getElementById("profileModal");
-
-  modal.innerHTML = `
-    <div class="card" style="width:80%; text-align:center;">
-
-      <h2>🏷️ Rediger lag</h2>
-
-      <input 
-        id="teamNameInput"
-        value="${currentName}"
-        placeholder="Lag navn"
-        style="padding:10px; border-radius:10px; border:none; width:80%; margin-bottom:10px;"
-      >
-
-      <input 
-        id="teamHcpInput"
-        type="number"
-        value="${currentHcp}"
-        placeholder="Lag HCP"
-        style="padding:10px; border-radius:10px; border:none; width:80%;"
-      >
-
-      <br><br>
-
-      <button onclick="saveTeamEdit('${teamId}')">
-        💾 Lagre
-      </button>
-
-      <br><br>
-
-      <button onclick="closeProfile()">❌ Lukk</button>
-
-    </div>
-  `;
-
-  modal.style.display = "flex";
-}
-
-function saveTeam(){
-
-  if(!state.selectedTeam || state.selectedTeam.length < 2){
-    alert("Velg minst 2 spillere");
-    return;
-  }
-
-  const teamId = Date.now().toString();
-
-  // 🔥 1. fjern ALLE gamle lag først
-  state.players.forEach(p=>{
-    if(p.teamId){
-      db.collection("tournaments").doc(state.tid)
-        .collection("rounds").doc(state.roundId)
-        .collection("players").doc(p.id)
-        .update({
-          teamId: null,
-          teamName: null,
-          teamHcp: 0
-        });
-    }
-  });
-
-  // 🔥 2. legg til nye lag
-  state.selectedTeam.forEach(id=>{
-    db.collection("tournaments").doc(state.tid)
-      .collection("rounds").doc(state.roundId)
-      .collection("players").doc(id)
-      .update({
-        teamId: teamId,
-        teamName: "DITT NAVN HER",
-        teamHcp: 0
-      });
-  });
-
-  showToast("👥 Lag opprettet!");
-  closeProfile();
-}
-
-function saveTeamEdit(teamId){
-
-  const newName = document.getElementById("teamNameInput").value.trim();
-  const newHcp = parseInt(document.getElementById("teamHcpInput").value) || 0;
-
-  const teamPlayers = state.players.filter(p => p.teamId === teamId);
-
-  teamPlayers.forEach(p=>{
-    db.collection("tournaments").doc(state.tid)
-      .collection("rounds").doc(state.roundId)
-      .collection("players").doc(p.id)
-      .update({
-        teamName: newName,
-        teamHcp: newHcp
-      });
-  });
-
-  showToast("💾 Lag oppdatert!");
-  closeProfile();
-}
-
-
 function savePlayerEdit(playerId){
 
   const newName = document.getElementById("editName").value.trim();
@@ -808,99 +644,6 @@ function addEvent(text){
       time: Date.now(),
       user: state.user
     });
-}
-
-function setTeamScore(teamId, hole, score){
-
-  const teamPlayers = state.players.filter(p => p.teamId === teamId);
-
-  // 🔒 STOP hvis allerede låst
-  if(teamPlayers[0]?.lockedHoles?.[hole]) return;
-
-  teamPlayers.forEach(p=>{
-
-    let scores = p.scores || Array(18).fill(0);
-    let locked = p.lockedHoles || Array(18).fill(false);
-
-    scores[hole] = Number(score);
-    locked[hole] = true;
-
-    db.collection("tournaments").doc(state.tid)
-      .collection("rounds").doc(state.roundId)
-      .collection("players").doc(p.id)
-      .update({
-        scores,
-        lockedHoles: locked
-      });
-  });
-
-  const par = course.pars[hole];
-  const diff = score - par;
-
-  if(diff === -1){
-    sendPush("🏷️ Lag", `Hull ${hole+1} → 🎉 Birdie!`);
-  }
-
-  if(diff <= -2){
-    sendPush("🏷️ Lag", `Hull ${hole+1} → 🔥 Eagle!`);
-  }
-
-  if(diff >= 3){
-    sendPush("🏷️ Lag", `Hull ${hole+1} → 💀 TRIPLE!`);
-
-    setTimeout(()=>{
-      spinWheel();
-    }, 1000);
-  }
-}
-
-function toggleTeamHole(teamId, hole){
-
-  const players = state.players.filter(p => p.teamId === teamId);
-
-  players.forEach(p=>{
-
-    let locked = p.lockedHoles || Array(18).fill(false);
-
-    // 🔄 toggle
-    locked[hole] = !locked[hole];
-
-    db.collection("tournaments").doc(state.tid)
-      .collection("rounds").doc(state.roundId)
-      .collection("players").doc(p.id)
-      .update({
-        lockedHoles: locked
-      });
-  });
-
-  // 👉 hvis vi unlocker → stopp her
-  if(!players[0].lockedHoles?.[hole]) return;
-
-  // 🔥 hvis vi låser → kjør event
-  const p = players[0];
-  const score = p.scores[hole];
-  const par = course.pars[hole];
-  const diff = score - par;
-
-  let text = "";
-
-  if(diff === -1) text = "🎉 Birdie!";
-  else if(diff <= -2) text = "🔥 Eagle!";
-  else if(diff >= 3) text = "💀 TRIPLE!";
-
-  if(diff === -1 || diff <= -2 || diff >= 3){
-
-    sendPush("🏷️ Lag", `Hull ${hole+1} → ${text}`);
-    addEvent(`Lag – Hull ${hole+1} → ${text}`);
-
-    if(diff >= 3){
-      setTimeout(()=>{
-        spinWheel();
-      }, 1200);
-    }
-  }
-
-  render();
 }
 
 function listenEvents(){
@@ -1051,60 +794,6 @@ setTimeout(() => {
     addEvent(state.user + " spant hjulet → " + result);
     sendPush("🎰 HJUL", state.user + " fikk: " + result);
   }, 5600);
-}
-
-function updateTeamScore(teamId, hole, val){
-  const players = state.players.filter(p => p.teamId === teamId);
-
-  players.forEach(p=>{
-    let scores = p.scores || Array(18).fill(0);
-
-    scores[hole] += val;
-    if(scores[hole] < 0) scores[hole] = 0;
-
-    db.collection("tournaments").doc(state.tid)
-      .collection("rounds").doc(state.roundId)
-      .collection("players").doc(p.id)
-      .update({scores});
-  });
-}
-
-function netScoreTeam(team){
-
-  const p = team.players[0];
-
-  const hcp = team.hcp || 0;
-
-  const base = Math.floor(hcp / 18);
-  const extra = hcp % 18;
-
-  let h = Array(18).fill(base);
-  for(let i=0;i<extra;i++) h[i]++;
-
-  let total = 0;
-
-  for(let i=0;i<18;i++){
-    const score = (p.scores[i] || 0) - h[i];
-    total += score;
-  }
-
-  const totalPar = course.pars.reduce((a,b)=>a+b,0);
-
-  return total - totalPar; // 🔥 DETTE VAR DET SOM MANGLA
-}
-
-function lockTeamHole(teamId, hole){
-  const players = state.players.filter(p => p.teamId === teamId);
-
-  players.forEach(p=>{
-    let locked = p.lockedHoles || Array(18).fill(false);
-    locked[hole] = !locked[hole];
-
-    db.collection("tournaments").doc(state.tid)
-      .collection("rounds").doc(state.roundId)
-      .collection("players").doc(p.id)
-      .update({lockedHoles: locked});
-  });
 }
 
 function closeWheel(){
@@ -1635,7 +1324,6 @@ function deleteRound(id){
 // ----------------------
 
 function setScreen(s){
-  console.log("SCREEN:", s);
   state.screen = s;
   render();
 }
@@ -1650,12 +1338,6 @@ function togglePlayer(id){
 
 function render(){
 
-state.players = state.players.map(p => ({
-  ...p,
-  scores: p.scores || Array(18).fill(0),
-  hcp: p.hcp || 0
-}));
-  
   let html = "";
 
   // LEADERBOARD
@@ -1672,301 +1354,116 @@ state.players = state.players.map(p => ({
 </h3>
 
 <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
-
-  <button onclick="setScreen('leaderboard')">🏆</button>
-  <button onclick="setScreen('score')">📊</button>
-  <button onclick="setScreen('players')">👥</button>
-
-  <button onclick="chooseCourse()">
-    🏌️ ${course.name || "Velg bane"} ▾
-  </button>
-
-  <button onclick="chooseRound()">
-    📜 ${state.currentRoundNumber ? "Runde " + state.currentRoundNumber : "Velg runde"}
-  </button>
-
-  <button onclick="shareGame()">🔗</button>
-  <button onclick="setupPush()">🔔</button>
-
-</div>
+<button onclick="chooseCourse()">
+  🏌️ ${course.name || "Velg bane"} ▾
+</button>
+<button onclick="chooseRound()">
+  📜 ${state.currentRoundNumber ? "Runde " + state.currentRoundNumber : "Velg runde"}
+</button>
+<button onclick="shareGame()">🔗 Inviter</button>
+<button onclick="setupPush()">🔔 Aktiver varsler</button>
+  </div>
 
 </div>
 `;
 
-// 🔥 1. bygg lag
-let teams = {};
-let solo = [];
+    let sorted = [...state.players].sort((a,b)=>netScore(a)-netScore(b));
 
-state.players.forEach(p=>{
-  if(p.teamId){
-    if(!teams[p.teamId]){
-     teams[p.teamId] = {
-  id: p.teamId, // 🔥 DENNE ER VIKTIG
-  name: p.teamName || "Lag",
-  hcp: p.teamHcp || 0,
-  players: []
-}; 
-    }
-    teams[p.teamId].players.push(p);
-  }else{
-    solo.push(p);
-  }
-});
+    html += sorted.map((p,i)=>{
 
-let teamList = Object.values(teams).map(team=>{
-
-  // 🔥 bruk første spiller som "representant"
-  const p = team.players[0];
-
-  let score = 0;
-
-  try{
-    score = netScoreTeam(team);
-  }catch(e){
-    console.log("team netScore error", team);
-    score = 0;
-  }
-
-  return {
-    name: team.name || "Lag",
-    hcp: team.hcp || team.players[0]?.teamHcp || 0,
-    score: score,
-    players: team.players,
-    isTeam: true
-  };
-});
-
-// 🔥 3. solo spillere
-let soloList = solo.map(p=>{
-
-  let score = 0;
-
-  try{
-    score = netScore(p);
-  }catch(e){
-    console.log("netScore crash på:", p);
-    score = 0;
-  }
-
-  return {
-    player: p,
-    score: score,
-    isSolo: true
-  };
-});
-
-// 🔥 4. sorter
-let sorted = [...teamList, ...soloList]
-  .sort((a,b)=>a.score - b.score);
-
-// 🔥 5. render
-html += sorted.map((item,i)=>{
-
-  // 🟢 TEAM
- if(item.isTeam){
-
-  const teamId = item.id;
-  const isOpen = state.openTeams?.[teamId] !== false;
-
-  return `
-  <div class="card" style="position:relative; ${i===0?'border:2px solid gold':''}">
-
-    <!-- HEADER -->
-   <div onclick="toggleTeamCollapse('${teamId}')" style="
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      cursor:pointer;
-    ">
-      <b>
-        ${isOpen ? "▼" : "▶️"} ${i+1}. 🏷️ ${item.name} (HCP ${item.hcp})
-      </b>
-      <span>⛳ ${item.score}</span>
-    </div>
-
-    ${
-      isOpen
-      ? `
-      <!-- 🔽 ALT UNDER HER ER DIN ORIGINAL KODE -->
-
-      ${item.players.map(p=>{
-
-        const totalPar = course.pars.reduce((a,b)=>a+b,0);
-        const diff = netScore(p) - totalPar;
-        const sign = diff>0?"+":"";
-        const gross = p.scores.reduce((sum,s)=>sum+s,0);
-
-        return `
-        <div class="card" style="
-          margin-top:10px;
-          background:rgba(255,255,255,0.03);
-        ">
-
-          <div style="display:flex; justify-content:space-between;">
-            <b>${p.name} (HCP ${p.hcp})</b>
-            <span>⛳ ${gross}</span>
-          </div>
-
-          <div style="font-size:18px; font-weight:bold;">
-            ${sign}${diff}
-          </div>
-
-          <div style="margin-top:5px;">
-            <img src="${p.image||''}" 
-              class="avatar"
-              style="cursor:pointer;"
-              onclick="openProfile('${p.id}')">
-          </div>
-
-          <br>🏌️ ${p.longest}m | 🎯 ${p.closest}cm
-
-          <button style="
-            background:#dc2626;
-            margin-top:8px;
-          " onclick="reverseMulligan('${p.id}')">
-            💀
-          </button>
-
-          <div style="display:flex; gap:10px; margin-top:8px;">
-            <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
-            <button onclick="updateExtra('${p.id}','closest')">🎯</button>
-            <button onclick="chulligan()">🍺</button>
-            <button onclick="spinWheel()">🎰</button>
-          </div>
-
-        </div>
-        `;
-      }).join("")}
-      `
-      : ""
-    }
-
-  </div>
-  `;
-}
-  // 🔵 SOLO (FULL original UI)
-  const p = item.player;
-
-  const totalPar = course.pars.reduce((a,b)=>a+b,0);
-  const diff = netScore(p) - totalPar;
-  const sign = diff>0?"+":"";
-  const gross = p.scores.reduce((sum,s)=>sum+s,0);
-
-  return `
+      const totalPar = course.pars.reduce((a,b)=>a+b,0);
+      const diff = netScore(p) - totalPar;
+      const sign = diff>0?"+":"";
+      const gross = p.scores.reduce((sum,s)=>sum+s,0);
+      
+      return `
 <div class="card" style="position:relative; ${i===0?'border:2px solid gold':''}">
 
-  <div style="display:flex; justify-content:space-between; align-items:center;">
-    <b>${i+1}. ${p.name} (HCP ${p.hcp})</b>
-    <span>⛳ ${gross}</span>
-  </div>
+<div style="display:flex; justify-content:space-between; align-items:center;">
+  <b>${i+1}. ${p.name} (HCP ${p.hcp})</b>
+  <span>⛳ ${gross}</span>
+</div>
 
-  <div style="margin-top:10px;">
-    <img src="${p.image||''}" 
-      class="avatar"
-      style="cursor:pointer;"
-      onclick="openProfile('${p.id}')">
-  </div>
-
-  <div style="font-size:20px; font-weight:bold;">
-    ${sign}${diff}
-  </div>
+<div style="margin-top:10px; display:flex; align-items:center;">
+  <img src="${p.image||''}" 
+     class="avatar"
+     style="cursor:pointer;"
+     onclick="openProfile('${p.id}')">
+</div>
+<div style="font-size:20px; font-weight:bold;">
+  ${sign}${diff}
+</div>
 
   <br>🏌️ ${p.longest}m | 🎯 ${p.closest}cm
 
-  <button style="
-    position:absolute;
-    right:15px;
-    bottom:15px;
-    background:#dc2626;
-    z-index:2;
-  " onclick="reverseMulligan('${p.id}')">
-    💀
-  </button>
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
 
-  <div style="position:relative; margin-top:10px;">
 
-    <button onclick="spinWheel()" style="
-      position:absolute;
-      right:0px;
-      bottom:80px;
-      z-index:1;
-      width:60px;
-      height:60px;
-      font-size:22px;
-      background:linear-gradient(135deg,#0ea5e9,#22c55e);
-      box-shadow:0 0 15px rgba(34,197,94,0.6);
-      border-radius:16px;
-    ">
-      🎰
-    </button>
 
-    <div style="display:flex; gap:10px;">
-      <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
-      <button onclick="updateExtra('${p.id}','closest')">🎯</button>
-      <button onclick="chulligan()">🍺</button>
-    </div>
+    <button style="
+  position:absolute;
+  right:15px;
+  bottom:15px;
+  background:#dc2626;
+  z-index:2;
+" onclick="reverseMulligan('${p.id}')">
+  💀
+   </button>
 
   </div>
 
+ <div style="position:relative; margin-top:10px;">
+
+  <!-- 🎰 SPIN (flytende over skull) -->
+  <button onclick="spinWheel()" style="
+    position:absolute;
+    right:0px;
+    bottom:80px;
+    z-index:1;
+
+    width:60px;
+    height:60px;
+    font-size:22px;
+
+    background:linear-gradient(135deg,#0ea5e9,#22c55e);
+    box-shadow:0 0 15px rgba(34,197,94,0.6);
+    border-radius:16px;
+  ">
+    🎰
+  </button>
+
+  <!-- 🔘 VANLIGE KNAPPER -->
+  <div style="display:flex; gap:10px;">
+    <button onclick="updateExtra('${p.id}','longest')">🏌️</button>
+    <button onclick="updateExtra('${p.id}','closest')">🎯</button>
+    <button onclick="chulligan()">🍺</button>
+  </div>
+
+</div>
+
 </div>
 `;
-}).join("");
-
- app.innerHTML = html;
-}   
-    // SCORE
-if(state.screen==="score"){
-  // 🔥 bygg lag + solo
-let teams = {};
-let solo = [];
-
-state.players.forEach(p=>{
-  if(p.teamId){
-    if(!teams[p.teamId]){
-      teams[p.teamId] = {
-        id: p.teamId,
-        name: p.teamName || "Lag",
-        players: [],
-        scores: p.scores || Array(18).fill(0),
-        lockedHoles: p.lockedHoles || Array(18).fill(false)
-      };
-    }
-    teams[p.teamId].players.push(p);
-  }else{
-    solo.push(p);
+    }).join("");
   }
-});
 
-// 🔥 lag liste
-let list = [
-  ...Object.values(teams),
-  ...solo
-];
-
-html += list.map(item=>{
-
-  // 🟢 TEAM (samme UI, bare styrer flere spillere)
-  if(item.players){
-
-    const p = item;
-
-    return `
+// SCORE
+if(state.screen==="score"){
+  html += state.players.map(p=>`
     <div class="card">
 
-      <h3 onclick="togglePlayer('team-${p.id}')" style="
+      <h3 onclick="togglePlayer('${p.id}')" style="
         cursor:pointer;
         display:flex;
         justify-content:space-between;
         align-items:center;
       ">
-        <span>🏷️ ${p.name}</span>
+        <span>${p.name}</span>
         <span style="opacity:0.6;">
-          ${state.openPlayers['team-'+p.id] === false ? "▼" : "▲"}
+          ${state.openPlayers[p.id] === false ? "▼" : "▲"}
         </span>
       </h3>
 
-      ${state.openPlayers['team-'+p.id] !== false ? p.scores.map((s,i)=>{
-
+      ${state.openPlayers[p.id] !== false ? p.scores.map((s,i)=>{
         const diff = s - course.pars[i];
         const sign = diff>0?"+":"";
 
@@ -1978,7 +1475,7 @@ html += list.map(item=>{
         const locked = p.lockedHoles?.[i];
 
         return `
-        <div class="score" style="
+        <div id="hole-${p.id}-${i}" class="score" style="
           display:flex;
           justify-content:space-between;
           align-items:center;
@@ -1991,18 +1488,25 @@ html += list.map(item=>{
           transition:0.2s;
         ">
 
+          <!-- LEFT SIDE -->
           <div style="font-size:14px;">
             <div>
-              Hull ${i+1} ${locked ? "🔒" : ""}
+              Hull ${i+1} 
+              ${locked ? "🔒" : ""}
             </div>
             <div style="opacity:0.6;">
               Par ${course.pars[i]}
             </div>
           </div>
 
+          <!-- RIGHT SIDE -->
           <div style="display:flex; align-items:center; gap:10px;">
 
-            <button onclick="updateTeamScore('${p.id}',${i},-1)">➖</button>
+            <button 
+              onclick="updateScore('${p.id}',${i},-1)"
+              ${locked ? "disabled" : ""}
+              style="opacity:${locked ? 0.3 : 1}"
+            >➖</button>
 
             <div style="
               font-size:20px;
@@ -2014,21 +1518,29 @@ html += list.map(item=>{
               ${s}
             </div>
 
-            <button onclick="updateTeamScore('${p.id}',${i},1)">➕</button>
+            <button 
+              onclick="updateScore('${p.id}',${i},1)"
+              ${locked ? "disabled" : ""}
+              style="opacity:${locked ? 0.3 : 1}"
+            >➕</button>
 
-           <button 
-  onclick="lockTeamHole('${p.id}', ${i})"
-  style="
-    background:${locked ? '#ef4444' : '#22c55e'};
-    color:white;
-    border-radius:10px;
-    width:44px;
-    height:44px;
-    font-size:18px;
-  "
->
-  ${locked ? "🔒" : "🔓"}
-</button>
+            <button 
+              onclick="lockHole('${p.id}', ${i})"
+              style="
+                background:${locked ? '#ef4444' : '#22c55e'};
+                color:white;
+                border-radius:10px;
+                width:44px;
+                height:44px;
+                font-size:18px;
+                box-shadow:${locked 
+                  ? "0 0 10px rgba(239,68,68,0.6)" 
+                  : "0 0 10px rgba(34,197,94,0.6)"};
+                transition:0.2s;
+              "
+            >
+              ${locked ? "🔒" : "🔓"}
+            </button>
 
           </div>
 
@@ -2037,234 +1549,48 @@ html += list.map(item=>{
       }).join("") : ""}
 
     </div>
-    `;
-  }
-
-  // 🔵 SOLO (100% din originale kode – uendret)
-  const p = item;
-
-  return `
-  <div class="card">
-
-    <h3 onclick="togglePlayer('${p.id}')" style="
-      cursor:pointer;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-    ">
-      <span>${p.name}</span>
-      <span style="opacity:0.6;">
-        ${state.openPlayers[p.id] === false ? "▼" : "▲"}
-      </span>
-    </h3>
-
-    ${state.openPlayers[p.id] !== false ? p.scores.map((s,i)=>{
-      const diff = s - course.pars[i];
-      const sign = diff>0?"+":"";
-
-      const color =
-        diff < 0 ? "#22c55e" :
-        diff > 0 ? "#ef4444" :
-        "#e5e7eb";
-
-      const locked = p.lockedHoles?.[i];
-
-      return `
-      <div id="hole-${p.id}-${i}" class="score" style="
-        display:flex;
-        justify-content:space-between;
-        align-items:center;
-        padding:10px;
-        border-radius:12px;
-        margin-bottom:6px;
-
-        background:${locked ? "rgba(255,255,255,0.03)" : "transparent"};
-        opacity:${locked ? 0.5 : 1};
-        transition:0.2s;
-      ">
-
-        <div style="font-size:14px;">
-          <div>
-            Hull ${i+1} ${locked ? "🔒" : ""}
-          </div>
-          <div style="opacity:0.6;">
-            Par ${course.pars[i]}
-          </div>
-        </div>
-
-        <div style="display:flex; align-items:center; gap:10px;">
-
-          <button onclick="updateScore('${p.id}',${i},-1)" ${locked ? "disabled" : ""}>➖</button>
-
-          <div style="
-            font-size:20px;
-            font-weight:bold;
-            color:${color};
-            min-width:28px;
-            text-align:center;
-          ">
-            ${s}
-          </div>
-
-          <button onclick="updateScore('${p.id}',${i},1)" ${locked ? "disabled" : ""}>➕</button>
-
-          <button onclick="lockHole('${p.id}', ${i})" style="
-            background:${locked ? '#ef4444' : '#22c55e'};
-            color:white;
-            border-radius:10px;
-            width:44px;
-            height:44px;
-            font-size:18px;
-          ">
-            ${locked ? "🔒" : "🔓"}
-          </button>
-
-        </div>
-
-      </div>
-      `;
-    }).join("") : ""}
-
-  </div>
-  `;
-}).join("");
+  `).join("");
 }
   // PLAYERS
 if(state.screen==="players"){
-
-  let teams = {};
-  let solo = [];
-
-  state.players.forEach(p=>{
-    if(p.teamId){
-
-      if(!teams[p.teamId]){
-        teams[p.teamId] = {
-          name: p.teamName || "Lag",
-          hcp: p.teamHcp || 0,
-          players: []
-        };
-      }
-
-      teams[p.teamId].players.push(p);
-
-    } else {
-      solo.push(p);
-    }
-  });
-
   html = `
     <button onclick="joinRound()">🙋‍♂️ Bli med</button>
-    <button onclick="openTeams()">👥 Lagspill</button>
-  `;
 
-  // 🟢 VIS LAG
-  Object.values(teams).forEach(team=>{
-    html += `
-      <div class="card">
-
-       <b onclick="editTeam('${team.players[0].teamId}')" style="cursor:pointer;">
-  🏷️ ${team.name} (HCP ${team.hcp})
-</b>
-
-${team.players.map(p=>`
-  <div style="
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-top:6px;
-  ">
-
-    <span>${p.name}</span>
-
-    <div style="display:flex; gap:6px;">
-
-      ${
-        p.userId === state.userId
-        ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
-        : ""
-      }
-
-      <button onclick="removeFromTeam('${p.id}')" style="
-        background:#ef4444;
-        font-size:12px;
-        padding:4px 8px;
+    ${state.players.map(p=>`
+      <div class="card" style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
       ">
-        ❌
-      </button>
 
-      <button onclick="deletePlayer('${p.id}')">🗑️</button>
+        <div>
+          ${p.name}
+          <div style="opacity:0.6; font-size:12px;">
+            HCP ${p.hcp}
+          </div>
+        </div>
 
-</div>
+        <div style="display:flex; gap:10px;">
+
+          ${
+            p.userId === userId
+            ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
+            : ""
+          }
+
+          <button onclick="deletePlayer('${p.id}')">🗑️</button>
 
         </div>
-      `).join("")}
-
-    </div>
-  `;
-});
-
-  // 🟢 SOLO SPILLERE
-solo.forEach(p=>{
-  html += `
-    <div class="card" style="
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-    ">
-
-      <div>
-        ${p.name}
-        <div style="opacity:0.6; font-size:12px;">
-          HCP ${p.hcp}
-        </div>
-      </div>
-
-      <div style="display:flex; gap:8px;">
-
-        ${
-          p.userId === state.userId
-          ? `<button onclick="openEditPlayer('${p.id}')">⚙️</button>`
-          : ""
-        }
-
-        <button onclick="deletePlayer('${p.id}')">🗑️</button>
 
       </div>
-
-    </div>
+    `).join("")}
   `;
-});
 }
 
   app.innerHTML = html;
 
 
 }
-
-function toggleTeam(id){
-
-  if(!state.selectedTeam) state.selectedTeam = [];
-
-  if(state.selectedTeam.includes(id)){
-    state.selectedTeam = state.selectedTeam.filter(x => x !== id);
-  }else{
-    state.selectedTeam.push(id);
-  }
-
-  openTeams(); // 🔥 redraw modal
-}
-
-function toggleTeamCollapse(teamId){
-
-  if(!state.openTeams) state.openTeams = {};
-
-  state.openTeams[teamId] = !state.openTeams[teamId];
-
-  render();
-}
-
-
 
 // ----------------------
 // INIT
@@ -2293,13 +1619,7 @@ window.createCourse = createCourse;
 window.selectCourse = selectCourse;
 window.deleteCourse = deleteCourse;
 window.lockHole = lockHole;
-window.updateTeamScore = updateTeamScore;
-window.lockTeamHole = lockTeamHole;
-window.toggleTeam = toggleTeam;
-window.toggleTeamCollapse = toggleTeamCollapse;
-window.setTeamScore = setTeamScore;
-window.toggleTeamHole = toggleTeamHole;
-window.setScreen = setScreen;
+
 
 function notify(title, body){
   if(Notification.permission === "granted"){
@@ -2365,19 +1685,4 @@ async function sendPush(title, body){
     console.error("Push error:", err);
   }
 
-}
-
-function removeFromTeam(playerId){
-
-  db.collection("tournaments").doc(state.tid)
-    .collection("rounds").doc(state.roundId)
-    .collection("players").doc(playerId)
-    .update({
-      teamId: null,
-      teamName: null,
-      teamHcp: 0,
-      teamScores: Array(18).fill(0)
-    });
-
-  showToast("❌ Fjernet fra lag");
 }
