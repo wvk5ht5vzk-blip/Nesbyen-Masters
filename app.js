@@ -1635,6 +1635,7 @@ function deleteRound(id){
 // ----------------------
 
 function setScreen(s){
+  console.log("SCREEN:", s);
   state.screen = s;
   render();
 }
