@@ -812,11 +812,11 @@ function addEvent(text){
 
 function setTeamScore(teamId, hole, score){
 
+  score = Number(score); // 🔥 viktig
+
   const teamPlayers = state.players.filter(p => p.teamId === teamId);
 
-  // 🔄 1. Oppdater alle i laget
   teamPlayers.forEach(p=>{
-
     let scores = p.scores || Array(18).fill(0);
     scores[hole] = score;
 
@@ -826,37 +826,28 @@ function setTeamScore(teamId, hole, score){
       .update({scores});
   });
 
-  // 🧠 2. Regn ut diff
   const par = course.pars[hole];
   const diff = score - par;
 
-  let text = "";
+  console.log("TEAM DIFF:", diff);
 
-const isBirdie = diff === -1;
-const isEagle = diff <= -2;
-const isTriple = diff >= 3;
+  if(diff === -1){
+    sendPush("🏷️ Lag", `Hull ${hole+1} → 🎉 Birdie!`);
+    addEvent(`Lag – Hull ${hole+1} → 🎉 Birdie!`);
+  }
 
-if(isBirdie) text = "🎉 Birdie!";
-else if(isEagle) text = "🔥 Eagle!";
-else if(isTriple) text = "💀 TRIPLE! SPIN THE WHEEL!";
-else return;
+  if(diff <= -2){
+    sendPush("🏷️ Lag", `Hull ${hole+1} → 🔥 Eagle!`);
+    addEvent(`Lag – Hull ${hole+1} → 🔥 Eagle!`);
+  }
 
-  const teamName = teamPlayers[0]?.teamName || "Lag";
-
-  // 🔥 3. SEND PUSH (til alle foreløpig)
-  sendPush(
-    "🏷️ " + teamName,
-    `Hull ${hole+1} → ${text}`
-  );
-
-  // 📝 4. EVENT
-  addEvent(`${teamName} – Hull ${hole+1} → ${text}`);
-
-  // 🎰 5. SPIN hvis triple
   if(diff >= 3){
+    sendPush("🏷️ Lag", `Hull ${hole+1} → 💀 TRIPLE!`);
+    addEvent(`Lag – Hull ${hole+1} → 💀 TRIPLE!`);
+
     setTimeout(()=>{
       spinWheel();
-    }, 1200);
+    }, 1000);
   }
 }
 
