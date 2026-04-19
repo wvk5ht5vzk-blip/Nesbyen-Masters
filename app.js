@@ -557,6 +557,51 @@ sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
 // ----------------------
 // EXTRA FEATURES
 // ----------------------
+function choosePlayer(action){
+
+  const modal = document.getElementById("roundModal"); // gjenbruker modal
+
+  const players = state.players.filter(p => p.userId !== userId); // ❌ ikke deg selv
+
+  modal.innerHTML = `
+    <div class="card" style="width:85%; max-height:80%; overflow:auto;">
+      <h3>😈 Velg spiller</h3>
+
+      ${players.map(p=>`
+        <div style="
+          padding:12px;
+          border-bottom:1px solid #333;
+          cursor:pointer;
+        " onclick="selectPlayerAction('${p.id}','${action}')">
+          ${p.name}
+        </div>
+      `).join("")}
+
+      <button onclick="closeRoundModal()">Lukk</button>
+    </div>
+  `;
+
+  modal.style.display = "flex";
+}
+
+function selectPlayerAction(playerId, action){
+
+  const p = state.players.find(x => x.id === playerId);
+
+  if(!p) return;
+
+  if(action === "drink"){
+    sendPush("😈 DU MÅ DRIKKE", p.name + " valgt av " + state.user);
+    showToast("😈 " + p.name + " må drikke!");
+  }
+
+  if(action === "reverse"){
+    sendPush("💀 REVERSE", p.name + " fikk reverse!");
+    showToast("💀 " + p.name + " fikk reverse!");
+  }
+
+  closeRoundModal();
+}
 
 function openEditPlayer(playerId){
 
@@ -785,7 +830,11 @@ setTimeout(() => {
   setTimeout(() => {
 
     let text = "🎰 " + result;
-
+    if(result.includes("VELG EN")){
+  choosePlayer("drink");
+  return;
+}
+    
     if(result.includes("MULLIGAN") || result.includes("-1")){
       text = "🔥🔥 " + result + " 🔥🔥";
     }
