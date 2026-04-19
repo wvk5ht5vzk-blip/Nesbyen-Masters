@@ -2283,6 +2283,8 @@ window.lockTeamHole = lockTeamHole;
 window.toggleTeam = toggleTeam;
 window.toggleTeamCollapse = toggleTeamCollapse;
 window.setTeamScore = setTeamScore;
+window.toggleTeamHole = toggleTeamHole;
+
 
 function notify(title, body){
   if(Notification.permission === "granted"){
