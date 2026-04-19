@@ -832,12 +832,14 @@ function setTeamScore(teamId, hole, score){
 
   let text = "";
 
-  if(diff === -1) text = "🎉 Birdie!";
-  else if(diff <= -2) text = "🔥 Eagle!";
-  else if(diff >= 3) text = "💀 TRIPLE! SPIN THE WHEEL!";
+const isBirdie = diff === -1;
+const isEagle = diff <= -2;
+const isTriple = diff >= 3;
 
-  // ❌ ikke send noe hvis ikke relevant
-  if(diff !== -1 && diff > -2 && diff < 3) return;
+if(isBirdie) text = "🎉 Birdie!";
+else if(isEagle) text = "🔥 Eagle!";
+else if(isTriple) text = "💀 TRIPLE! SPIN THE WHEEL!";
+else return;
 
   const teamName = teamPlayers[0]?.teamName || "Lag";
 
