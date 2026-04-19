@@ -1672,15 +1672,23 @@ state.players = state.players.map(p => ({
 </h3>
 
 <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:center; margin-top:10px;">
-<button onclick="chooseCourse()">
-  🏌️ ${course.name || "Velg bane"} ▾
-</button>
-<button onclick="chooseRound()">
-  📜 ${state.currentRoundNumber ? "Runde " + state.currentRoundNumber : "Velg runde"}
-</button>
-<button onclick="shareGame()">🔗 Inviter</button>
-<button onclick="setupPush()">🔔 Aktiver varsler</button>
-  </div>
+
+  <button onclick="setScreen('leaderboard')">🏆</button>
+  <button onclick="setScreen('score')">📊</button>
+  <button onclick="setScreen('players')">👥</button>
+
+  <button onclick="chooseCourse()">
+    🏌️ ${course.name || "Velg bane"} ▾
+  </button>
+
+  <button onclick="chooseRound()">
+    📜 ${state.currentRoundNumber ? "Runde " + state.currentRoundNumber : "Velg runde"}
+  </button>
+
+  <button onclick="shareGame()">🔗</button>
+  <button onclick="setupPush()">🔔</button>
+
+</div>
 
 </div>
 `;
