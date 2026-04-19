@@ -851,6 +851,55 @@ function setTeamScore(teamId, hole, score){
   }
 }
 
+function toggleTeamHole(teamId, hole){
+
+  const players = state.players.filter(p => p.teamId === teamId);
+
+  players.forEach(p=>{
+
+    let locked = p.lockedHoles || Array(18).fill(false);
+
+    // 🔄 toggle
+    locked[hole] = !locked[hole];
+
+    db.collection("tournaments").doc(state.tid)
+      .collection("rounds").doc(state.roundId)
+      .collection("players").doc(p.id)
+      .update({
+        lockedHoles: locked
+      });
+  });
+
+  // 👉 hvis vi unlocker → stopp her
+  if(!players[0].lockedHoles?.[hole]) return;
+
+  // 🔥 hvis vi låser → kjør event
+  const p = players[0];
+  const score = p.scores[hole];
+  const par = course.pars[hole];
+  const diff = score - par;
+
+  let text = "";
+
+  if(diff === -1) text = "🎉 Birdie!";
+  else if(diff <= -2) text = "🔥 Eagle!";
+  else if(diff >= 3) text = "💀 TRIPLE!";
+
+  if(diff === -1 || diff <= -2 || diff >= 3){
+
+    sendPush("🏷️ Lag", `Hull ${hole+1} → ${text}`);
+    addEvent(`Lag – Hull ${hole+1} → ${text}`);
+
+    if(diff >= 3){
+      setTimeout(()=>{
+        spinWheel();
+      }, 1200);
+    }
+  }
+
+  render();
+}
+
 function listenEvents(){
 
   let initialized = false;
