@@ -485,6 +485,19 @@ function lockHole(playerId, hole){
     else if(diff <= -2) text = "🔥 Eagle! Del ut 2 slurker";
     else text = "😎 Par";
 
+    // 🟢 BIRDIE → velg 1 spiller
+if(diff === -1){
+  setTimeout(()=>{
+    choosePlayer("drink", 1);
+  }, 600);
+}
+
+// 🔥 EAGLE → velg 2 spillere
+if(diff <= -2){
+  setTimeout(()=>{
+    choosePlayer("drink", 2);
+  }, 600);
+}
     
    if(diff >= 3 || diff <= -1){
   let title = "🏌️ Score";
