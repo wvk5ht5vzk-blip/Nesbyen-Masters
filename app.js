@@ -2016,16 +2016,19 @@ html += list.map(item=>{
 
             <button onclick="updateTeamScore('${p.id}',${i},1)">➕</button>
 
-            onclick="toggleTeamHole('${teamId}', ${i})"
-              background:${locked ? '#ef4444' : '#22c55e'};
-              color:white;
-              border-radius:10px;
-              width:44px;
-              height:44px;
-              font-size:18px;
-            ">
-              ${locked ? "🔒" : "🔓"}
-            </button>
+           <button 
+  onclick="lockTeamHole('${p.id}', ${i})"
+  style="
+    background:${locked ? '#ef4444' : '#22c55e'};
+    color:white;
+    border-radius:10px;
+    width:44px;
+    height:44px;
+    font-size:18px;
+  "
+>
+  ${locked ? "🔒" : "🔓"}
+</button>
 
           </div>
 
