@@ -570,14 +570,16 @@ sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
 // ----------------------
 // EXTRA FEATURES
 // ----------------------
-function choosePlayer(action){
+function choosePlayer(action, count = 1){
 
-  const modal = document.getElementById("roundModal"); // gjenbruker modal
+  const modal = document.getElementById("roundModal");
 
-  const players = state.players.filter(p => p.userId !== userId); // ❌ ikke deg selv
+  // ❌ fjern deg selv fra lista
+  const players = state.players.filter(p => p.userId !== userId);
 
   modal.innerHTML = `
     <div class="card" style="width:85%; max-height:80%; overflow:auto;">
+      
       <h3>😈 Velg spiller</h3>
 
       ${players.map(p=>`
@@ -585,12 +587,14 @@ function choosePlayer(action){
           padding:12px;
           border-bottom:1px solid #333;
           cursor:pointer;
-        " onclick="selectPlayerAction('${p.id}','${action}')">
+        " 
+        onclick="selectPlayerAction('${p.id}','${action}', ${count})">
           ${p.name}
         </div>
       `).join("")}
 
       <button onclick="closeRoundModal()">Lukk</button>
+
     </div>
   `;
 
