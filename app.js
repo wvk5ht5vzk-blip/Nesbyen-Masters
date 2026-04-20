@@ -623,7 +623,7 @@ function selectPlayerAction(playerId, action){
   }
 
   closeRoundModal();
-}
+
 
 function openEditPlayer(playerId){
 
