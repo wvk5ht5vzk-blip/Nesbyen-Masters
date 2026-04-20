@@ -597,33 +597,32 @@ function choosePlayer(action){
   modal.style.display = "flex";
 }
 
-function selectPlayerAction(playerId, action){
+function selectPlayerAction(playerId, action, count = 1){
 
   const p = state.players.find(x => x.id === playerId);
-
   if(!p) return;
 
+  // 😈 DRINK
   if(action === "drink"){
 
-  const amount = count === 2 ? "2 slurker 🍺🍺" : "1 slurk 🍺";
+    const amount = count === 2 ? "2 slurker 🍺🍺" : "1 slurk 🍺";
 
-  sendPush(
-    "😈 STRAFF",
-    p.name + " må ta " + amount + " (valgt av " + state.user + ")"
-  );
+    sendPush(
+      "😈 STRAFF",
+      p.name + " må ta " + amount + " (valgt av " + state.user + ")"
+    );
 
-}
-    
     showToast("😈 " + p.name + " må drikke!");
   }
 
-  if(action === "reverse"){
+  // 💀 REVERSE
+  else if(action === "reverse"){
     sendPush("💀 REVERSE", p.name + " fikk reverse!");
     showToast("💀 " + p.name + " fikk reverse!");
   }
 
   closeRoundModal();
-
+}
 
 function openEditPlayer(playerId){
 
