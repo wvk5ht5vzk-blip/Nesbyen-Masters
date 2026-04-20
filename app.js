@@ -880,36 +880,42 @@ function closeWheel(){
 function showToast(text){
 
   const el = document.getElementById("toast");
-  const txt = document.getElementById("toastText");
 
-el.innerHTML = `
-  <span id="toastText">${text}</span>
-  <button onclick="closeToast()" style="
-    margin-left:10px;
-    background:none;
-    border:none;
-    color:white;
-    font-size:18px;
-  ">❌</button>
-`;
+  el.innerHTML = `
+    <span id="toastText">${text}</span>
+    <button onclick="closeToast()" style="
+      margin-left:10px;
+      background:none;
+      border:none;
+      color:white;
+      font-size:18px;
+    ">❌</button>
+  `;
 
   // 🔥 fjern gamle klasser
   el.className = "";
 
-// 🟢 CHULLIGAN = grønn
-if(text.includes("CHULLIGAN")){
-  el.style.background = "#22c55e";
-}
-// 🔴 Reverse = rød
-else if(text.includes("💀")){
-  el.style.background = "#ef4444";
-}
-// fallback
-else{
-  el.style.background = "#334155";
-}
+  // 🟢 CHULLIGAN = grønn
+  if(text.includes("CHULLIGAN")){
+    el.style.background = "#22c55e";
+  }
+  // 🔴 Reverse = rød
+  else if(text.includes("💀")){
+    el.style.background = "#ef4444";
+  }
+  // fallback
+  else{
+    el.style.background = "#334155";
+  }
 
   el.style.display = "block";
+
+  // 🔥 AUTO CLOSE (NY DEL)
+  clearTimeout(window.toastTimer);
+
+  window.toastTimer = setTimeout(() => {
+    closeToast();
+  }, 5000);
 }
 
 function closeToast(){
