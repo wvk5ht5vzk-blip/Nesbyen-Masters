@@ -1715,20 +1715,29 @@ if(state.screen==="chat"){
     ">
 
       <div class="card" style="
-        width:85%;
-        padding:16px;
-        border-radius:24px;
+  width:85%;
+  padding:16px;
+  border-radius:24px;
 
-        background:rgba(15,23,42,0.75);
-        backdrop-filter:blur(10px);
+  background:rgba(15,23,42,0.75);
+  backdrop-filter:blur(10px);
 
-        border:1px solid rgba(255,255,255,0.06);
+  ${m.system ? `
+    border:1px solid rgba(34,197,94,0.35);
 
-        box-shadow:
-          0 0 20px rgba(0,0,0,0.35),
-          0 0 20px rgba(34,197,94,0.05);
+    box-shadow:
+      0 0 20px rgba(34,197,94,0.15);
 
-      ">
+  ` : `
+
+    border:1px solid rgba(255,255,255,0.06);
+
+    box-shadow:
+      0 0 20px rgba(0,0,0,0.35),
+      0 0 20px rgba(34,197,94,0.05);
+
+  `}
+">
 
         <div style="
           display:flex;
