@@ -1893,17 +1893,20 @@ if(chatBottom){
 
     <!-- CHAT INPUT -->
     <div style="
-      position:fixed;
-      bottom:90px;
-      left:0;
-      width:100%;
-      display:flex;
-      gap:10px;
-      padding:12px;
-      box-sizing:border-box;
-      background:rgba(0,0,0,0.4);
-      backdrop-filter:blur(10px);
-    ">
+  position:sticky;
+  bottom:0;
+  left:0;
+  width:100%;
+  z-index:10;
+
+  display:flex;
+  gap:10px;
+  padding:12px;
+  box-sizing:border-box;
+
+  background:rgba(0,0,0,0.4);
+  backdrop-filter:blur(10px);
+">
 
       <input
         id="chatInput"
