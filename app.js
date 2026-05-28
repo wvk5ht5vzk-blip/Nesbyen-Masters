@@ -1636,15 +1636,58 @@ if(state.screen==="score"){
 if(state.screen==="chat"){
 
   html += `
-    <div style="padding:20px;">
+    <div style="
+      padding:20px;
+      padding-bottom:140px;
+    ">
 
-      <h2 style="text-align:center;">
+      <h2 style="
+        text-align:center;
+        margin-bottom:20px;
+      ">
         💬 Live Feed
       </h2>
 
       <div class="card">
         Ingen meldinger enda 😄
       </div>
+
+    </div>
+
+    <!-- CHAT INPUT -->
+    <div style="
+      position:fixed;
+      bottom:90px;
+      left:0;
+      width:100%;
+      display:flex;
+      gap:10px;
+      padding:12px;
+      box-sizing:border-box;
+      background:rgba(0,0,0,0.4);
+      backdrop-filter:blur(10px);
+    ">
+
+      <input
+        id="chatInput"
+        placeholder="Skriv en melding..."
+        style="
+          flex:1;
+          padding:14px;
+          border-radius:16px;
+          border:none;
+          background:#0f172a;
+          color:white;
+          font-size:16px;
+        "
+      >
+
+      <button style="
+        width:60px;
+        border-radius:16px;
+      ">
+        📤
+      </button>
 
     </div>
   `;
