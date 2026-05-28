@@ -641,6 +641,8 @@ function selectPlayerAction(playerId, action, count = 1){
 addFeedMessage(
   "🍺 " + state.user + " ga " + p.name + " " + amount
 );
+
+  }
     
   // 💀 REVERSE
   else if(action === "reverse"){
