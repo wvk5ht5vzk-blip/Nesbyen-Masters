@@ -2408,22 +2408,21 @@ function notify(title, body){
 
 function reactToMessage(id, emoji){
 
-  state.messages = state.messages.map(m => {
+  db.collection("tournaments")
+    .doc(state.tid)
+    .collection("chat")
+    .doc(id)
+    .update({
+      reaction: emoji
+    });
 
-    if(m.id === id){
+  // lukk popup etter valg
+  const popup =
+    document.getElementById(`react-${id}`);
 
-      return {
-        ...m,
-        reaction: emoji
-      };
-
-    }
-
-    return m;
-
-  });
-
-  render();
+  if(popup){
+    popup.style.display = "none";
+  }
 
 }
 
