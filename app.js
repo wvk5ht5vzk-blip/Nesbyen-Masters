@@ -895,9 +895,16 @@ function chulligan(){
 
   showToast("🍺🔥 " + state.user + " tok en CHULLIGAN!");
 
+  addFeedMessage(
+    "🍺🔥 " + state.user + " tok en CHULLIGAN!"
+  );
+
   addEvent(state.user + " tok en CHULLIGAN 🍺🔥");
 
-  sendPush("🍺 CHULLIGAN", state.user + " tok en chulligan!");
+  sendPush(
+    "🍺 CHULLIGAN",
+    state.user + " tok en chulligan!"
+  );
 }
 
 
