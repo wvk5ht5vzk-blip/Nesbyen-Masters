@@ -360,6 +360,25 @@ if(!state.eventsStarted){
     });
 }
 
+function listenChat(){
+
+  if(!state.tid) return;
+
+  db.collection("tournaments").doc(state.tid)
+    .collection("chat")
+    .orderBy("time")
+    .onSnapshot(snap=>{
+
+      state.messages = [];
+
+      snap.forEach(d=>{
+        state.messages.push(d.data());
+      });
+
+      render();
+    });
+}
+
 function addPlayer(){
  console.log("ADD PLAYER CLICK");
 console.log("TID:", state.tid);
