@@ -1946,6 +1946,64 @@ if(state.screen === "chat"){
                 ${m.text}
               </div>
 
+             ${!m.system ? `
+
+  <div style="
+    display:flex;
+    gap:8px;
+
+    margin-top:12px;
+  ">
+
+    <button onclick="reactToMessage('${m.id}','🍺')" style="
+      border:none;
+      border-radius:999px;
+
+      padding:6px 10px;
+
+      background:rgba(255,255,255,0.06);
+
+      color:white;
+
+      font-size:14px;
+    ">
+      🍺
+    </button>
+
+    <button onclick="reactToMessage('${m.id}','😂')" style="
+      border:none;
+      border-radius:999px;
+
+      padding:6px 10px;
+
+      background:rgba(255,255,255,0.06);
+
+      color:white;
+
+      font-size:14px;
+    ">
+      😂
+    </button>
+
+    <button onclick="reactToMessage('${m.id}','🔥')" style="
+      border:none;
+      border-radius:999px;
+
+      padding:6px 10px;
+
+      background:rgba(255,255,255,0.06);
+
+      color:white;
+
+      font-size:14px;
+    ">
+      🔥
+    </button>
+
+  </div>
+
+` : ""}
+
             </div>
 
           </div>
@@ -2157,6 +2215,12 @@ function notify(title, body){
   if(Notification.permission === "granted"){
     new Notification(title, { body });
   }
+}
+
+function reactToMessage(id, emoji){
+
+  console.log("REACTION:", id, emoji);
+
 }
 
 async function setupPush(){
