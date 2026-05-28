@@ -376,6 +376,20 @@ function listenChat(){
         state.messages.push(d.data());
       });
 
+     // 🔥 uleste meldinger
+if(state.screen !== "chat"){
+
+  const latest = state.messages[state.messages.length - 1];
+
+  if(latest && latest.user !== state.user){
+    state.unreadMessages++;
+  }
+
+}
+else{
+  state.unreadMessages = 0;
+}
+      
       render();
     });
 }
