@@ -2008,6 +2008,8 @@ if(state.screen === "chat"){
 
           </div>
 
+         </div>
+         
         `).join("")
 
         : `
