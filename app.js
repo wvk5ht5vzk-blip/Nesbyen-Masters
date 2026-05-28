@@ -1790,20 +1790,20 @@ if(state.screen==="chat"){
   const chatBottom = document.getElementById("chatBottom");
 
 if(chatBottom){
-  chatBottom.scrollIntoView();
+  
 }  
 
   }, 50);
 
   html += `
     <div id="chatMessages" style="
-      padding:20px;
-      padding-bottom:130px;
-      height:calc(100vh - 180px);
-      overflow-y:auto;
-      -webkit-overflow-scrolling:touch;
-      
-    ">
+  padding:20px;
+  padding-bottom:110px;
+  height:calc(100vh - 230px);
+  overflow-y:auto;
+  overflow-x:hidden;
+  -webkit-overflow-scrolling:touch;
+">
 
       <h2 style="
         text-align:center;
@@ -1893,7 +1893,7 @@ if(chatBottom){
 
     <!-- CHAT INPUT -->
     <div style="
-      position:sticky;
+      position:fixed;
       bottom:90px;
       left:0;
       width:100%;
