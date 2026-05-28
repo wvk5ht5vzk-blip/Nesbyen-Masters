@@ -1783,27 +1783,43 @@ if(state.screen==="score"){
 }
   
   // CHAT
-if(state.screen==="chat"){
+if(state.screen === "chat"){
 
-  setTimeout(()=>{
+  setTimeout(() => {
 
-  const chatBottom = document.getElementById("chatBottom");
+    const chatMessages = document.getElementById("chatMessages");
 
-if(chatBottom){
-  
-}  
+    if(chatMessages){
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
 
   }, 50);
 
   html += `
-    <div id="chatMessages" style="
-  padding:20px;
-  padding-bottom:260px;
-  height:calc(100dvh - 320px);
-  overflow-y:auto;
-  overflow-x:hidden;
-  -webkit-overflow-scrolling:touch;
-">
+
+  <div style="
+    display:flex;
+    flex-direction:column;
+    height:100dvh;
+    overflow:hidden;
+  ">
+
+    <!-- CHAT AREA -->
+    <div 
+      id="chatMessages"
+      style="
+        flex:1;
+        overflow-y:auto;
+        overflow-x:hidden;
+
+        padding:20px;
+        padding-bottom:140px;
+
+        box-sizing:border-box;
+
+        -webkit-overflow-scrolling:touch;
+      "
+    >
 
       <h2 style="
         text-align:center;
@@ -1812,125 +1828,169 @@ if(chatBottom){
         💬 Live Feed
       </h2>
 
-    ${state.messages.length
-  ? state.messages.map(m=>`
+      ${
+        state.messages.length
 
+        ? state.messages.map(m => `
+
+          <div style="
+            display:flex;
+            justify-content:${m.user === state.user ? "flex-end" : "flex-start"};
+            margin-bottom:14px;
+          ">
+
+            <div class="card" style="
+              width:85%;
+              padding:16px;
+              border-radius:24px;
+
+              background:rgba(15,23,42,0.75);
+              backdrop-filter:blur(10px);
+
+              ${m.system ? `
+
+                border:1px solid rgba(34,197,94,0.35);
+
+                box-shadow:
+                  0 0 20px rgba(34,197,94,0.15);
+
+              ` : `
+
+                border:1px solid rgba(255,255,255,0.06);
+
+                box-shadow:
+                  0 0 20px rgba(0,0,0,0.35),
+                  0 0 20px rgba(34,197,94,0.05);
+
+              `}
+            ">
+
+              <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:8px;
+              ">
+
+                <b style="
+                  color:${m.user === state.user ? "#22c55e" : "#fff"};
+                ">
+                  ${m.user}
+                </b>
+
+                <span style="
+                  opacity:0.5;
+                  font-size:12px;
+                ">
+                  ${new Date(m.time).toLocaleTimeString([], {
+                    hour:'2-digit',
+                    minute:'2-digit'
+                  })}
+                </span>
+
+              </div>
+
+              <div style="
+                font-size:18px;
+                line-height:1.4;
+                word-break:break-word;
+              ">
+                ${m.text}
+              </div>
+
+            </div>
+
+          </div>
+
+        `).join("")
+
+        : `
+
+          <div class="card">
+            Ingen meldinger enda 😄
+          </div>
+
+        `
+      }
+
+      <div id="chatBottom"></div>
+
+    </div>
+
+    <!-- INPUT BAR -->
     <div style="
+      position:fixed;
+
+      left:0;
+      bottom:90px;
+
+      width:100%;
+
+      z-index:100;
+
       display:flex;
-      justify-content:${m.user === state.user ? "flex-end" : "flex-start"};
-      margin-bottom:14px;
+      gap:10px;
+
+      padding:12px;
+      padding-bottom:calc(env(safe-area-inset-bottom) + 12px);
+
+      box-sizing:border-box;
+
+      background:rgba(0,0,0,0.45);
+      backdrop-filter:blur(12px);
+
+      border-top:1px solid rgba(255,255,255,0.06);
     ">
-
-      <div class="card" style="
-        width:85%;
-        padding:16px;
-        border-radius:24px;
-
-        background:rgba(15,23,42,0.75);
-        backdrop-filter:blur(10px);
-
-        ${m.system ? `
-          border:1px solid rgba(34,197,94,0.35);
-
-          box-shadow:
-            0 0 20px rgba(34,197,94,0.15);
-
-        ` : `
-
-          border:1px solid rgba(255,255,255,0.06);
-
-          box-shadow:
-            0 0 20px rgba(0,0,0,0.35),
-            0 0 20px rgba(34,197,94,0.05);
-
-        `}
-      ">
-
-        <div style="
-          display:flex;
-          justify-content:space-between;
-          align-items:center;
-          margin-bottom:8px;
-        ">
-
-          <b style="
-            color:${m.user === state.user ? "#22c55e" : "#fff"};
-          ">
-            ${m.user}
-          </b>
-
-          <span style="
-            opacity:0.5;
-            font-size:12px;
-          ">
-            ${new Date(m.time).toLocaleTimeString([], {
-              hour:'2-digit',
-              minute:'2-digit'
-            })}
-          </span>
-
-        </div>
-
-        <div style="
-          font-size:18px;
-          line-height:1.4;
-        ">
-          ${m.text}
-        </div>
-
-      </div>
-
-    </div>
-
-  `).join("")
-  : `
-    <div class="card">
-      Ingen meldinger enda 😄
-    </div>
-`}
-
-    <div id="chatBottom"></div>
-
-    <!-- CHAT INPUT -->
-    <div style="
-  position:fixed;
-  bottom:90;
-  left:0;
-  width:100%;
-  z-index:10;
-
-  display:flex;
-  gap:10px;
-  padding:12px;
-  box-sizing:border-box;
-
-  background:rgba(0,0,0,0.4);
-  backdrop-filter:blur(10px);
-">
 
       <input
         id="chatInput"
         placeholder="Skriv en melding..."
+        autocomplete="off"
+
         style="
           flex:1;
+
           padding:14px;
+
           border-radius:16px;
           border:none;
+          outline:none;
+
           background:#0f172a;
           color:white;
+
           font-size:16px;
+        "
+
+        onkeydown="
+          if(event.key === 'Enter'){
+            sendMessage();
+          }
         "
       >
 
-     <button onclick="sendMessage()" style="
-  width:60px;
-  border-radius:16px;
-  font-size:24px;
-">
-  ⬆️
-</button> 
+      <button 
+        onclick="sendMessage()"
+
+        style="
+          width:60px;
+
+          border:none;
+          border-radius:16px;
+
+          font-size:24px;
+
+          background:#22c55e;
+          color:white;
+        "
+      >
+        ⬆️
+      </button>
 
     </div>
+
+  </div>
+
   `;
 }
   // PLAYERS
