@@ -2033,7 +2033,7 @@ if(state.screen === "chat"){
                     <!-- REACT BUTTON -->
                     <button
                       onclick="
-                        toggleReactionPopup('${m.id}')
+                        toggleReactionPopup('${m.id || ""}')
                       "
 
                       style="
@@ -2110,7 +2110,7 @@ if(state.screen === "chat"){
                           <button
                             onclick="
                               reactToMessage(
-                                '${m.id}',
+                               '${m.id || ""}',
                                 '${e}'
                               )
                             "
