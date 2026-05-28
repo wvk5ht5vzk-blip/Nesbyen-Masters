@@ -1802,7 +1802,7 @@ if(chatBottom){
       height:calc(100vh - 180px);
       overflow-y:auto;
       -webkit-overflow-scrolling:touch;
-      overscroll-behavior:contain;
+      
     ">
 
       <h2 style="
