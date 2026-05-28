@@ -1895,11 +1895,25 @@ if(state.screen === "chat"){
                 margin-bottom:8px;
               ">
 
-                <b style="
-                  color:${m.user === state.user ? "#22c55e" : "#fff"};
-                ">
-                  ${m.user}
-                </b>
+               ${!m.system ? `
+
+  <b style="
+    color:${m.user === state.user ? "#22c55e" : "#fff"};
+  ">
+    ${m.user}
+  </b>
+
+` : `
+
+  <div style="
+    font-size:15px;
+    font-weight:600;
+    color:#e5e7eb;
+  ">
+    Live Event
+  </div>
+
+`}
 
                 <span style="
                   opacity:0.5;
