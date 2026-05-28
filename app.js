@@ -2094,7 +2094,7 @@ if(state.screen === "chat"){
 
   }, 50);
 }
-
+}
 
 
 
