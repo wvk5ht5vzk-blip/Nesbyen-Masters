@@ -1875,7 +1875,7 @@ if(state.screen==="chat"){
     </div>
 `}
 
-    
+    <div id="chatBottom"></div>
 
     <!-- CHAT INPUT -->
     <div style="
@@ -1958,10 +1958,13 @@ if(state.screen === "chat"){
 
   setTimeout(()=>{
 
-    window.scrollTo({
-      top: document.body.scrollHeight,
-      behavior: "smooth"
-    });
+   const chatBottom = document.getElementById("chatBottom");
+
+if(chatBottom){
+  chatBottom.scrollIntoView({
+    behavior: "smooth"
+  });
+} 
 
   }, 50);
 }
