@@ -1954,8 +1954,18 @@ if(state.screen==="players"){
 
   app.innerHTML = html;
 
+if(state.screen === "chat"){
 
+  setTimeout(()=>{
+
+    window.scrollTo({
+      top: document.body.scrollHeight,
+      behavior: "smooth"
+    });
+
+  }, 50);
 }
+
 
 // ----------------------
 // INIT
