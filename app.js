@@ -2036,7 +2036,7 @@ if(state.screen==="players"){
     <button onclick="joinRound()">🙋‍♂️ Bli med</button>
 
     ${state.players.map(p=>`
-      <div class="card" style="
+       <div class="${m.system ? 'event-card' : 'card'}" style="
         display:flex;
         justify-content:space-between;
         align-items:center;
