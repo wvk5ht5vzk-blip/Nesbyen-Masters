@@ -1532,7 +1532,14 @@ function deleteRound(id){
 // ----------------------
 
 function setScreen(s){
+
   state.screen = s;
+
+  // 🔥 nullstill uleste
+  if(s === "chat"){
+    state.unreadMessages = 0;
+  }
+
   render();
 }
 
