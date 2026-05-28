@@ -1422,14 +1422,15 @@ function sendMessage(){
 
   if(!text) return;
 
-  state.messages.push({
-    user: state.user,
-    text: text
-  });
+  db.collection("tournaments").doc(state.tid)
+    .collection("chat")
+    .add({
+      user: state.user,
+      text: text,
+      time: Date.now()
+    });
 
   input.value = "";
-
-  render();
 }
 
 
