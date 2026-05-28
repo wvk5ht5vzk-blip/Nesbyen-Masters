@@ -1821,7 +1821,7 @@ if(state.screen === "chat"){
     const chatMessages = document.getElementById("chatMessages");
 
     if(chatMessages){
-      chatMessages.scrollTop = chatMessages.scrollHeight;
+      
     }
 
   }, 50);
