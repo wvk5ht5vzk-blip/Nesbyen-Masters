@@ -1669,11 +1669,22 @@ if(state.screen==="chat"){
         💬 Live Feed
       </h2>
 
-      <div class="card">
-        Ingen meldinger enda 😄
+      ${state.messages.length
+  ? state.messages.map(m=>`
+    <div class="card" style="margin-bottom:10px;">
+      <b>${m.user}</b>
+      <div style="margin-top:6px;">
+        ${m.text}
       </div>
-
     </div>
+  `).join("")
+  : `
+    <div class="card">
+      Ingen meldinger enda 😄
+    </div>
+`}
+
+    
 
     <!-- CHAT INPUT -->
     <div style="
