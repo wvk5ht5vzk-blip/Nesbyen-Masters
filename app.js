@@ -1045,6 +1045,10 @@ function reverseMulligan(id){
 
   showToast("💀 " + p.name + " fikk en REVERSE MULLIGAN!");
 
+  addFeedMessage(
+  "💀 " + state.user + " ga REVERSE til " + p.name
+);
+  
   addEvent(state.user + " ga " + p.name + " reverse mulligan 🍺");
 
   sendPush("💀 REVERSE", p.name + " fikk reverse mulligan!");
