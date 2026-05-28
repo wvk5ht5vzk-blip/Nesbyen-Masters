@@ -1862,11 +1862,13 @@ if(state.screen === "chat"){
             margin-bottom:14px;
           ">
 
-            <div class="card" style="
-              width:85%;
-              padding:16px;
-              border-radius:24px;
+            <div class="${m.system ? 'event-card' : 'card'}" style="
+              width:${m.system ? "92%" : "85%"};
 
+              padding:${m.system ? "12px 18px" : "16px"};
+
+              border-radius:${m.system ? "18px" : "24px"};
+              
               background:rgba(15,23,42,0.75);
               backdrop-filter:blur(10px);
 
@@ -1892,7 +1894,7 @@ if(state.screen === "chat"){
                 display:flex;
                 justify-content:space-between;
                 align-items:center;
-                margin-bottom:8px;
+                margin-bottom:${m.system ? "0px" : "8px"};
               ">
 
                ${!m.system ? `
@@ -1900,7 +1902,7 @@ if(state.screen === "chat"){
   <b style="
     color:${m.user === state.user ? "#22c55e" : "#fff"};
   ">
-    ${m.user}
+   ${m.system ? "" : m.user} 
   </b>
 
 ` : `
@@ -2036,7 +2038,7 @@ if(state.screen==="players"){
     <button onclick="joinRound()">🙋‍♂️ Bli med</button>
 
     ${state.players.map(p=>`
-       <div class="${m.system ? 'event-card' : 'card'}" style="
+       <div class="card" style="
         display:flex;
         justify-content:space-between;
         align-items:center;
