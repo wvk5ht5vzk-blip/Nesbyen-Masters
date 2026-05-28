@@ -373,8 +373,10 @@ function listenChat(){
       state.messages = [];
 
       snap.forEach(d=>{
-        state.messages.push(d.data());
-      });
+       state.messages.push({
+  id: d.id,
+  ...d.data()
+});
 
      // 🔥 uleste meldinger
 if(state.screen !== "chat"){
