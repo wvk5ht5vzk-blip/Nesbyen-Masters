@@ -2408,6 +2408,8 @@ function notify(title, body){
 
 function reactToMessage(id, emoji){
 
+if(!id) return;
+  
   db.collection("tournaments")
     .doc(state.tid)
     .collection("chat")
