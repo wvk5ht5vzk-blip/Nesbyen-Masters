@@ -966,6 +966,7 @@ setTimeout(() => {
     }
 
     showToast(text);
+    addFeedMessage("🎰 " + state.user + " fikk: " + result);
     addEvent(state.user + " spant hjulet → " + result);
     sendPush("🎰 HJUL", state.user + " fikk: " + result);
   }, 5600);
