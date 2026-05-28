@@ -1631,6 +1631,24 @@ if(state.screen==="score"){
     </div>
   `).join("");
 }
+  
+  // CHAT
+if(state.screen==="chat"){
+
+  html += `
+    <div style="padding:20px;">
+
+      <h2 style="text-align:center;">
+        💬 Live Feed
+      </h2>
+
+      <div class="card">
+        Ingen meldinger enda 😄
+      </div>
+
+    </div>
+  `;
+}
   // PLAYERS
 if(state.screen==="players"){
   html = `
