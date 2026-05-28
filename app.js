@@ -1694,12 +1694,13 @@ if(state.screen==="chat"){
         "
       >
 
-      <button style="
-        width:60px;
-        border-radius:16px;
-      ">
-        📤
-      </button>
+     <button onclick="sendMessage()" style="
+  width:60px;
+  border-radius:16px;
+  font-size:24px;
+">
+  ⬆️
+</button> 
 
     </div>
   `;
