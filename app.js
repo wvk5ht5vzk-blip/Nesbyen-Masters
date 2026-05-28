@@ -1894,7 +1894,7 @@ if(chatBottom){
     <!-- CHAT INPUT -->
     <div style="
   position:fixed;
-  bottom:0;
+  bottom:90;
   left:0;
   width:100%;
   z-index:10;
