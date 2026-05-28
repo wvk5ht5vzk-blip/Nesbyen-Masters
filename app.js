@@ -475,7 +475,6 @@ function netScore(p){
   return p.scores.reduce((sum,s,i)=>sum+(s-h[i]),0);
 }
 
-
 function lockHole(playerId, hole){
 
   const p = state.players.find(x=>x.id===playerId);
@@ -496,87 +495,164 @@ function lockHole(playerId, hole){
 
     let text = "";
 
-    if(diff === 1) text = "🍺 Bogey!";
-    else if(diff === 2) text = "🍺🍺 Double bogey!";
+    if(diff === 1){
+      text = "🍺 Bogey!";
+
+      addFeedMessage(
+        "🍺 " + p.name + " fikk BOGEY på hull " + (hole+1)
+      );
+    }
+
+    else if(diff === 2){
+      text = "🍺🍺 Double bogey!";
+
+      addFeedMessage(
+        "🍺🍺 " + p.name + " fikk DOUBLE BOGEY på hull " + (hole+1)
+      );
+    }
+
     else if(diff >= 3){
-    text = "💀 TRIPLE! SPIN THE WHEEL!";
-}
-    else if(diff === -1) text = "🎉 Birdie! Gi bort en slurk";
-    else if(diff <= -2) text = "🔥 Eagle! Del ut 2 slurker";
-    else text = "😎 Par";
+
+      text = "💀 TRIPLE! SPIN THE WHEEL!";
+
+      addFeedMessage(
+        "💀 " + p.name + " fikk TRIPLE på hull " + (hole+1)
+      );
+    }
+
+    else if(diff === -1){
+
+      text = "🎉 Birdie! Gi bort en slurk";
+
+      addFeedMessage(
+        "🎯 " + p.name + " fikk BIRDIE på hull " + (hole+1)
+      );
+    }
+
+    else if(diff <= -2){
+
+      text = "🔥 Eagle! Del ut 2 slurker";
+
+      addFeedMessage(
+        "🦅 " + p.name + " fikk EAGLE på hull " + (hole+1)
+      );
+    }
+
+    else{
+
+      text = "😎 Par";
+
+      addFeedMessage(
+        "😎 " + p.name + " reddet PAR på hull " + (hole+1)
+      );
+    }
 
     // 🟢 BIRDIE → velg 1 spiller
-if(diff === -1){
-  setTimeout(()=>{
-    choosePlayer("drink", 1);
-  }, 600);
-}
+    if(diff === -1){
+      setTimeout(()=>{
+        choosePlayer("drink", 1);
+      }, 600);
+    }
 
-// 🔥 EAGLE → velg 2 spillere
-if(diff <= -2){
-  setTimeout(()=>{
-    choosePlayer("drink", 2);
-  }, 600);
-}
-    
-   if(diff >= 3 || diff <= -1){
-  let title = "🏌️ Score";
+    // 🔥 EAGLE → velg 2 spillere
+    if(diff <= -2){
+      setTimeout(()=>{
+        choosePlayer("drink", 2);
+      }, 600);
+    }
 
-if(diff >= 3) title = "💀 TRIPLE!";
-else if(diff <= -2) title = "🔥 EAGLE!";
-else if(diff === -1) title = "🎉 BIRDIE!";
+    if(diff >= 3 || diff <= -1){
 
-sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
-}
+      let title = "🏌️ Score";
+
+      if(diff >= 3) title = "💀 TRIPLE!";
+      else if(diff <= -2) title = "🔥 EAGLE!";
+      else if(diff === -1) title = "🎉 BIRDIE!";
+
+      sendPush(title, p.name + " – Hull " + (hole+1) + " → " + text);
+    }
+
     if(diff >= 3){
-  setTimeout(()=>{
-    spinWheel();
-  }, 1200);
-}
+
+      setTimeout(()=>{
+        spinWheel();
+      }, 1200);
+    }
+
     const holeNumber = hole + 1;
+
     addEvent(`${p.name} – Hull ${holeNumber} → ${text}`);
 
     // 🔥 scroll kun når vi låser
     setTimeout(()=>{
+
       const next = document.getElementById(`hole-${playerId}-${hole+1}`);
+
       if(next){
-        next.scrollIntoView({ behavior: "smooth", block: "center" });
+        next.scrollIntoView({
+          behavior: "smooth",
+          block: "center"
+        });
       }
+
     }, 300);
 
+    // 🏁 FERDIG RUNDE
     if(hole === 17){
-  sendPush("🏁 Ferdig runde!", p.name + " er ferdig!");
-}
 
-    if(hole === 8){
+      sendPush(
+        "🏁 Ferdig runde!",
+        p.name + " er ferdig!"
+      );
 
-  setTimeout(()=>{
-
-    const allLocked = state.players.every(pl => pl.lockedHoles?.[8]);
-
-    if(allLocked){
-
-      if(state.hole9Done) return;
-      state.hole9Done = true;
-
-      // 🔥 sorter spillere etter score (høyest = dårligst)
-      let sorted = [...state.players].sort((a,b)=>{
-        const totalA = a.scores.reduce((sum,s)=>sum+s,0);
-        const totalB = b.scores.reduce((sum,s)=>sum+s,0);
-        return totalB - totalA;
-      });
-
-      const loser = sorted[0];
-      const text = "🍺 Sisteplass: " + loser.name + " → SHOT!";
-
-      addEvent(text);
-      sendPush("🍺 LAST PLACE", text);
+      addFeedMessage(
+        "🏁 " + p.name + " fullførte runden!"
+      );
     }
 
-  }, 300);
+    // 🍺 SISTEPLASS ETTER 9
+    if(hole === 8){
+
+      setTimeout(()=>{
+
+        const allLocked = state.players.every(
+          pl => pl.lockedHoles?.[8]
+        );
+
+        if(allLocked){
+
+          if(state.hole9Done) return;
+
+          state.hole9Done = true;
+
+          // 🔥 sorter spillere etter score
+          let sorted = [...state.players].sort((a,b)=>{
+
+            const totalA = a.scores.reduce((sum,s)=>sum+s,0);
+            const totalB = b.scores.reduce((sum,s)=>sum+s,0);
+
+            return totalB - totalA;
+          });
+
+          const loser = sorted[0];
+
+          const text =
+            "🍺 Sisteplass: " +
+            loser.name +
+            " → SHOT!";
+
+          addEvent(text);
+
+          addFeedMessage(text);
+
+          sendPush("🍺 LAST PLACE", text);
+        }
+
+      }, 300);
+    }
+
   }
-  
-  }
+
   // 🔥 lagre uansett (både lock og unlock)
   db.collection("tournaments").doc(state.tid)
     .collection("rounds").doc(state.roundId)
