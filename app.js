@@ -1968,6 +1968,12 @@ if(state.screen==="players"){
   app.innerHTML = html;
 
 if(state.screen === "chat"){
+  document.body.style.overflow = "hidden";
+}else{
+  document.body.style.overflow = "auto";
+}
+  
+if(state.screen === "chat"){
 
   setTimeout(()=>{
 
