@@ -1829,11 +1829,14 @@ if(state.screen === "chat"){
   html += `
 
   <div style="
-    display:flex;
-    flex-direction:column;
-    height:100dvh;
-    overflow:hidden;
-  ">
+  display:flex;
+  flex-direction:column;
+
+  height:100dvh;
+  min-height:0;
+
+  overflow:hidden;
+">
 
     <!-- CHAT AREA -->
     <div 
@@ -1948,59 +1951,38 @@ if(state.screen === "chat"){
 
              ${!m.system ? `
 
-  <div style="
-    display:flex;
-    gap:8px;
+ <div style="
+  display:flex;
+  gap:6px;
 
-    margin-top:12px;
-  ">
+  margin-top:10px;
+">
 
-    <button onclick="reactToMessage('${m.id}','🍺')" style="
-      border:none;
-      border-radius:999px;
+  ${["🍺","😂","🔥"].map(e => `
 
-      padding:6px 10px;
+    <button
+      onclick="reactToMessage('${m.id}','${e}')"
 
-      background:rgba(255,255,255,0.06);
+      style="
+        width:34px;
+        height:34px;
 
-      color:white;
+        border:none;
+        border-radius:999px;
 
-      font-size:14px;
-    ">
-      🍺
+        background:rgba(255,255,255,0.06);
+
+        color:white;
+
+        font-size:16px;
+      "
+    >
+      ${e}
     </button>
 
-    <button onclick="reactToMessage('${m.id}','😂')" style="
-      border:none;
-      border-radius:999px;
+  `).join("")}
 
-      padding:6px 10px;
-
-      background:rgba(255,255,255,0.06);
-
-      color:white;
-
-      font-size:14px;
-    ">
-      😂
-    </button>
-
-    <button onclick="reactToMessage('${m.id}','🔥')" style="
-      border:none;
-      border-radius:999px;
-
-      padding:6px 10px;
-
-      background:rgba(255,255,255,0.06);
-
-      color:white;
-
-      font-size:14px;
-    ">
-      🔥
-    </button>
-
-  </div>
+</div>
 
 ` : ""}
 
