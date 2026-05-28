@@ -1893,7 +1893,7 @@ if(chatBottom){
 
     <!-- CHAT INPUT -->
     <div style="
-  position:sticky;
+  position:fixed;
   bottom:0;
   left:0;
   width:100%;
