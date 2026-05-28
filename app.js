@@ -1785,10 +1785,22 @@ if(state.screen==="score"){
   // CHAT
 if(state.screen==="chat"){
 
+  setTimeout(()=>{
+
+    const chat = document.getElementById("chatMessages");
+
+    if(chat){
+      chat.scrollTop = chat.scrollHeight;
+    }
+
+  }, 50);
+
   html += `
-    <div style="
+    <div id="chatMessages" style="
       padding:20px;
       padding-bottom:140px;
+      height:calc(100vh - 180px);
+      overflow-y:auto;
     ">
 
       <h2 style="
@@ -1808,29 +1820,29 @@ if(state.screen==="chat"){
     ">
 
       <div class="card" style="
-  width:85%;
-  padding:16px;
-  border-radius:24px;
+        width:85%;
+        padding:16px;
+        border-radius:24px;
 
-  background:rgba(15,23,42,0.75);
-  backdrop-filter:blur(10px);
+        background:rgba(15,23,42,0.75);
+        backdrop-filter:blur(10px);
 
-  ${m.system ? `
-    border:1px solid rgba(34,197,94,0.35);
+        ${m.system ? `
+          border:1px solid rgba(34,197,94,0.35);
 
-    box-shadow:
-      0 0 20px rgba(34,197,94,0.15);
+          box-shadow:
+            0 0 20px rgba(34,197,94,0.15);
 
-  ` : `
+        ` : `
 
-    border:1px solid rgba(255,255,255,0.06);
+          border:1px solid rgba(255,255,255,0.06);
 
-    box-shadow:
-      0 0 20px rgba(0,0,0,0.35),
-      0 0 20px rgba(34,197,94,0.05);
+          box-shadow:
+            0 0 20px rgba(0,0,0,0.35),
+            0 0 20px rgba(34,197,94,0.05);
 
-  `}
-">
+        `}
+      ">
 
         <div style="
           display:flex;
