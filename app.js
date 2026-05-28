@@ -1534,13 +1534,18 @@ function sendMessage(){
 
   if(!text) return;
 
-  db.collection("tournaments").doc(state.tid)
-    .collection("chat")
-    .add({
-      user: state.user,
-      text: text,
-      time: Date.now()
-    });
+ db.collection("tournaments").doc(state.tid)
+  .collection("chat")
+  .add({
+    user: state.user,
+    text: text,
+    time: Date.now()
+  });
+
+sendPush(
+  "💬 " + state.user,
+  text
+);
 
   input.value = "";
 }
