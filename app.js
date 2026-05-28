@@ -1543,33 +1543,42 @@ function setScreen(s){
   render();
 }
 
-function togglePlayer(id){
-  state.openPlayers[id] = !state.openPlayers[id];
-  render();
-}
-
 function sendMessage(){
 
-  const input = document.getElementById("chatInput");
+  const input =
+    document.getElementById("chatInput");
 
   const text = input.value.trim();
 
   if(!text) return;
 
- db.collection("tournaments").doc(state.tid)
-  .collection("chat")
-  .add({
-    user: state.user,
-    text: text,
-    time: Date.now()
-  });
+  const messageId = crypto.randomUUID();
 
-sendPush(
-  "💬 " + state.user,
-  text
-);
+  db.collection("tournaments")
+    .doc(state.tid)
+    .collection("chat")
+    .doc(messageId)
+    .set({
+
+      id: messageId,
+
+      user: state.user,
+
+      text: text,
+
+      time: Date.now(),
+
+      reaction: null
+
+    });
+
+  sendPush(
+    "💬 " + state.user,
+    text
+  );
 
   input.value = "";
+
 }
 
 function addFeedMessage(text){
