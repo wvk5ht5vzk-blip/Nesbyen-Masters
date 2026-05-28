@@ -373,9 +373,11 @@ function listenChat(){
       state.messages = [];
 
       snap.forEach(d=>{
-       state.messages.push({
-  id: d.id,
-  ...d.data()
+       const data = d.data();
+
+state.messages.push({
+  id: d.id || crypto.randomUUID(),
+  ...data
 });
 
      // 🔥 uleste meldinger
