@@ -12,6 +12,7 @@ let state = {
   roundId: null,
   courseId: null,
   players: [],
+  messages: [],
   screen: "leaderboard",
   selectedPlayer: null,
   openPlayers: {},
