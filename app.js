@@ -1787,11 +1787,11 @@ if(state.screen==="chat"){
 
   setTimeout(()=>{
 
-    const chat = document.getElementById("chatMessages");
+  const chatBottom = document.getElementById("chatBottom");
 
-    if(chat){
-      chat.scrollTop = chat.scrollHeight;
-    }
+if(chatBottom){
+  chatBottom.scrollIntoView();
+}  
 
   }, 50);
 
@@ -1799,8 +1799,9 @@ if(state.screen==="chat"){
     <div id="chatMessages" style="
       padding:20px;
       padding-bottom:140px;
-      height:calc(100vh - 180px);
+      max-height:calc(100vh - 180px);
       overflow-y:auto;
+      -webkit-overflow-scrolling:touch;
     ">
 
       <h2 style="
