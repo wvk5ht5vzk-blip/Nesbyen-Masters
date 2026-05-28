@@ -1689,14 +1689,67 @@ if(state.screen==="chat"){
         💬 Live Feed
       </h2>
 
-      ${state.messages.length
+    ${state.messages.length
   ? state.messages.map(m=>`
-    <div class="card" style="margin-bottom:10px;">
-      <b>${m.user}</b>
-      <div style="margin-top:6px;">
-        ${m.text}
+
+    <div style="
+      display:flex;
+      justify-content:${m.user === state.user ? "flex-end" : "flex-start"};
+      margin-bottom:14px;
+    ">
+
+      <div class="card" style="
+        width:85%;
+        padding:16px;
+        border-radius:24px;
+
+        background:rgba(15,23,42,0.75);
+        backdrop-filter:blur(10px);
+
+        border:1px solid rgba(255,255,255,0.06);
+
+        box-shadow:
+          0 0 20px rgba(0,0,0,0.35),
+          0 0 20px rgba(34,197,94,0.05);
+
+      ">
+
+        <div style="
+          display:flex;
+          justify-content:space-between;
+          align-items:center;
+          margin-bottom:8px;
+        ">
+
+          <b style="
+            color:${m.user === state.user ? "#22c55e" : "#fff"};
+          ">
+            ${m.user}
+          </b>
+
+          <span style="
+            opacity:0.5;
+            font-size:12px;
+          ">
+            ${new Date(m.time).toLocaleTimeString([], {
+              hour:'2-digit',
+              minute:'2-digit'
+            })}
+          </span>
+
+        </div>
+
+        <div style="
+          font-size:18px;
+          line-height:1.4;
+        ">
+          ${m.text}
+        </div>
+
       </div>
+
     </div>
+
   `).join("")
   : `
     <div class="card">
