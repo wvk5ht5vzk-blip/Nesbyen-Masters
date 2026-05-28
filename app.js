@@ -18,6 +18,7 @@ let state = {
   openPlayers: {},
   tournamentName: "",
   currentRoundNumber: null,
+  unreadMessages: 0,
 };
 
 state.userId = userId;
