@@ -637,8 +637,7 @@ function selectPlayerAction(playerId, action, count = 1){
     );
 
     showToast("😈 " + p.name + " må drikke!");
-  }
-
+  
 addFeedMessage(
   "🍺 " + state.user + " ga " + p.name + " " + amount
 );
