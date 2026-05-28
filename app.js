@@ -1818,10 +1818,12 @@ if(state.screen === "chat"){
 
   setTimeout(() => {
 
-    const chatMessages = document.getElementById("chatMessages");
+    const chatMessages =
+      document.getElementById("chatMessages");
 
     if(chatMessages){
-      
+      chatMessages.scrollTop =
+        chatMessages.scrollHeight;
     }
 
   }, 50);
@@ -1829,30 +1831,32 @@ if(state.screen === "chat"){
   html += `
 
   <div style="
-  display:flex;
-  flex-direction:column;
+    position:fixed;
+    inset:0;
 
-  height:100dvh;
-  min-height:0;
+    display:flex;
+    flex-direction:column;
 
-  overflow:hidden;
-">
+    overflow:hidden;
+  ">
 
     <!-- CHAT AREA -->
-    <div 
+    <div
       id="chatMessages"
+
       style="
         flex:1;
-        min-height:0;
         overflow-y:auto;
         overflow-x:hidden;
 
         padding:20px;
-        padding-bottom:140px;
+        padding-bottom:220px;
 
         box-sizing:border-box;
 
         -webkit-overflow-scrolling:touch;
+
+        overscroll-behavior:contain;
       "
     >
 
@@ -1870,128 +1874,305 @@ if(state.screen === "chat"){
 
           <div style="
             display:flex;
-            justify-content:${m.user === state.user ? "flex-end" : "flex-start"};
-            margin-bottom:14px;
+            justify-content:${
+              m.user === state.user
+                ? "flex-end"
+                : "flex-start"
+            };
+
+            margin-bottom:18px;
           ">
 
-            <div class="${m.system ? 'event-card' : 'card'}" style="
-              width:${m.system ? "92%" : "85%"};
-
-              padding:${m.system ? "12px 18px" : "16px"};
-
-              border-radius:${m.system ? "18px" : "24px"};
-              
-              background:rgba(15,23,42,0.75);
-              backdrop-filter:blur(10px);
-
-              ${m.system ? `
-
-                border:1px solid rgba(34,197,94,0.35);
-
-                box-shadow:
-                  0 0 20px rgba(34,197,94,0.15);
-
-              ` : `
-
-                border:1px solid rgba(255,255,255,0.06);
-
-                box-shadow:
-                  0 0 20px rgba(0,0,0,0.35),
-                  0 0 20px rgba(34,197,94,0.05);
-
-              `}
+            <div style="
+              position:relative;
+              width:${
+                m.system
+                  ? "92%"
+                  : "85%"
+              };
             ">
 
-              <div style="
-                display:flex;
-                justify-content:space-between;
-                align-items:center;
-                margin-bottom:${m.system ? "0px" : "8px"};
-              ">
+              <!-- MESSAGE -->
+              <div
+                class="${
+                  m.system
+                    ? 'event-card'
+                    : 'card'
+                }"
 
-               ${!m.system ? `
+                style="
+                  position:relative;
 
-  <b style="
-    color:${m.user === state.user ? "#22c55e" : "#fff"};
-  ">
-   ${m.system ? "" : m.user} 
-  </b>
+                  padding:${
+                    m.system
+                      ? "12px 18px"
+                      : "16px"
+                  };
 
-` : `
+                  border-radius:${
+                    m.system
+                      ? "18px"
+                      : "24px"
+                  };
 
-  <div style="
-    font-size:15px;
-    font-weight:600;
-    color:#e5e7eb;
-  ">
-    Live Event
-  </div>
+                  background:
+                    rgba(15,23,42,0.75);
 
-`}
+                  backdrop-filter:blur(10px);
 
-                <span style="
-                  opacity:0.5;
-                  font-size:12px;
+                  ${
+                    m.system ? `
+
+                      border:
+                        1px solid
+                        rgba(34,197,94,0.35);
+
+                      box-shadow:
+                        0 0 20px
+                        rgba(34,197,94,0.15);
+
+                    ` : `
+
+                      border:
+                        1px solid
+                        rgba(255,255,255,0.06);
+
+                      box-shadow:
+                        0 0 20px rgba(0,0,0,0.35),
+                        0 0 20px rgba(34,197,94,0.05);
+
+                    `
+                  }
+                "
+              >
+
+                <!-- TOP -->
+                <div style="
+                  display:flex;
+                  justify-content:space-between;
+                  align-items:center;
+
+                  margin-bottom:${
+                    m.system
+                      ? "0px"
+                      : "8px"
+                  };
                 ">
-                  ${new Date(m.time).toLocaleTimeString([], {
-                    hour:'2-digit',
-                    minute:'2-digit'
-                  })}
-                </span>
+
+                  ${
+                    !m.system
+
+                    ? `
+
+                      <b style="
+                        color:${
+                          m.user === state.user
+                            ? "#22c55e"
+                            : "#fff"
+                        };
+                      ">
+                        ${m.user}
+                      </b>
+
+                    `
+
+                    : `
+
+                      <div style="
+                        font-size:15px;
+                        font-weight:600;
+                        color:#e5e7eb;
+                      ">
+                        Live Event
+                      </div>
+
+                    `
+                  }
+
+                  <span style="
+                    opacity:0.5;
+                    font-size:12px;
+                  ">
+                    ${new Date(m.time)
+                      .toLocaleTimeString([], {
+                        hour:'2-digit',
+                        minute:'2-digit'
+                      })}
+                  </span>
+
+                </div>
+
+                <!-- TEXT -->
+                <div style="
+                  font-size:18px;
+                  line-height:1.45;
+
+                  word-break:break-word;
+                ">
+                  ${m.text}
+                </div>
+
+                ${
+                  !m.system
+
+                  ? `
+
+                    <!-- REACT BUTTON -->
+                    <button
+                      onclick="
+                        toggleReactionPopup('${m.id}')
+                      "
+
+                      style="
+                        position:absolute;
+
+                        bottom:-12px;
+
+                        ${
+                          m.user === state.user
+                            ? "left:16px;"
+                            : "right:16px;"
+                        }
+
+                        width:28px;
+                        height:28px;
+
+                        border:none;
+                        border-radius:999px;
+
+                        background:#1e293b;
+
+                        color:white;
+
+                        font-size:14px;
+
+                        box-shadow:
+                          0 4px 12px rgba(0,0,0,0.35);
+                      "
+                    >
+                      ❤️
+                    </button>
+
+                    <!-- POPUP -->
+                    <div
+                      id="react-${m.id}"
+
+                      style="
+                        display:none;
+
+                        position:absolute;
+
+                        bottom:-56px;
+
+                        ${
+                          m.user === state.user
+                            ? "left:10px;"
+                            : "right:10px;"
+                        }
+
+                        z-index:50;
+
+                        background:
+                          rgba(15,23,42,0.98);
+
+                        border:
+                          1px solid
+                          rgba(255,255,255,0.08);
+
+                        border-radius:999px;
+
+                        padding:6px;
+
+                        gap:6px;
+
+                        box-shadow:
+                          0 8px 30px rgba(0,0,0,0.45);
+                      "
+                    >
+
+                      ${
+                        ["❤️","😂","🔥","🍺","😮"]
+                        .map(e => `
+
+                          <button
+                            onclick="
+                              reactToMessage(
+                                '${m.id}',
+                                '${e}'
+                              )
+                            "
+
+                            style="
+                              width:34px;
+                              height:34px;
+
+                              border:none;
+                              border-radius:999px;
+
+                              background:transparent;
+
+                              color:white;
+
+                              font-size:18px;
+                            "
+                          >
+                            ${e}
+                          </button>
+
+                        `).join("")
+                      }
+
+                    </div>
+
+                  `
+                  : ""
+                }
 
               </div>
 
-              <div style="
-                font-size:18px;
-                line-height:1.4;
-                word-break:break-word;
-              ">
-                ${m.text}
-              </div>
+              ${
+                m.reaction
 
-             ${!m.system ? `
+                ? `
 
- <div style="
-  display:flex;
-  gap:6px;
+                  <!-- ACTIVE REACTION -->
+                  <div style="
+                    position:absolute;
 
-  margin-top:10px;
-">
+                    bottom:-18px;
 
-  ${["🍺","😂","🔥"].map(e => `
+                    ${
+                      m.user === state.user
+                        ? "right:10px;"
+                        : "left:10px;"
+                    }
 
-    <button
-      onclick="reactToMessage('${m.id}','${e}')"
+                    background:#0f172a;
 
-      style="
-        width:34px;
-        height:34px;
+                    border:
+                      1px solid
+                      rgba(255,255,255,0.08);
 
-        border:none;
-        border-radius:999px;
+                    border-radius:999px;
 
-        background:rgba(255,255,255,0.06);
+                    padding:4px 8px;
 
-        color:white;
+                    font-size:15px;
 
-        font-size:16px;
-      "
-    >
-      ${e}
-    </button>
+                    box-shadow:
+                      0 4px 12px rgba(0,0,0,0.35);
+                  ">
+                    ${m.reaction}
+                  </div>
 
-  `).join("")}
-
-</div>
-
-` : ""}
+                `
+                : ""
+              }
 
             </div>
 
           </div>
 
-         </div>
-         
         `).join("")
 
         : `
@@ -2007,7 +2188,7 @@ if(state.screen === "chat"){
 
     </div>
 
-    <!-- INPUT BAR -->
+    <!-- INPUT -->
     <div style="
       position:fixed;
 
@@ -2022,19 +2203,30 @@ if(state.screen === "chat"){
       gap:10px;
 
       padding:12px;
-      padding-bottom:calc(env(safe-area-inset-bottom) + 12px);
+
+      padding-bottom:
+        calc(
+          env(safe-area-inset-bottom)
+          + 12px
+        );
 
       box-sizing:border-box;
 
-      background:rgba(0,0,0,0.45);
+      background:
+        rgba(0,0,0,0.45);
+
       backdrop-filter:blur(12px);
 
-      border-top:1px solid rgba(255,255,255,0.06);
+      border-top:
+        1px solid
+        rgba(255,255,255,0.06);
     ">
 
       <input
         id="chatInput"
+
         placeholder="Skriv en melding..."
+
         autocomplete="off"
 
         style="
@@ -2043,10 +2235,12 @@ if(state.screen === "chat"){
           padding:14px;
 
           border-radius:16px;
+
           border:none;
           outline:none;
 
           background:#0f172a;
+
           color:white;
 
           font-size:16px;
@@ -2059,7 +2253,7 @@ if(state.screen === "chat"){
         "
       >
 
-      <button 
+      <button
         onclick="sendMessage()"
 
         style="
@@ -2203,7 +2397,45 @@ function notify(title, body){
 
 function reactToMessage(id, emoji){
 
-  console.log("REACTION:", id, emoji);
+  state.messages = state.messages.map(m => {
+
+    if(m.id === id){
+
+      return {
+        ...m,
+        reaction: emoji
+      };
+
+    }
+
+    return m;
+
+  });
+
+  render();
+
+}
+
+function toggleReactionPopup(id){
+
+  document
+    .querySelectorAll('[id^="react-"]')
+    .forEach(el => {
+
+      if(el.id === `react-${id}`){
+
+        el.style.display =
+          el.style.display === "flex"
+            ? "none"
+            : "flex";
+
+      } else {
+
+        el.style.display = "none";
+
+      }
+
+    });
 
 }
 
