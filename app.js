@@ -1971,13 +1971,17 @@ if(state.screen === "chat"){
 
   setTimeout(()=>{
 
-   const chatBottom = document.getElementById("chatBottom");
+    const chatBottom = document.getElementById("chatBottom");
 
-if(chatBottom){
-  chatBottom.scrollIntoView(false);
-}
+    if(chatBottom){
+      chatBottom.scrollIntoView({
+        behavior: "smooth"
+      });
+    }
 
   }, 50);
+}
+
 }
 
 
