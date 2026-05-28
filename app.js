@@ -1974,9 +1974,7 @@ if(state.screen === "chat"){
     const chatBottom = document.getElementById("chatBottom");
 
     if(chatBottom){
-      chatBottom.scrollIntoView({
-        behavior: "smooth"
-      });
+      chatBottom.scrollIntoView(false);
     }
 
   }, 50);
