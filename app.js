@@ -1418,12 +1418,20 @@ function sendMessage(){
 
   const input = document.getElementById("chatInput");
 
-  if(!input.value.trim()) return;
+  const text = input.value.trim();
 
-  alert("Melding sendt 😄\n\n" + input.value);
+  if(!text) return;
+
+  state.messages.push({
+    user: state.user,
+    text: text
+  });
 
   input.value = "";
+
+  render();
 }
+
 
 // ----------------------
 // RENDER
