@@ -2054,6 +2054,26 @@ if(state.screen==="players"){
 
   app.innerHTML = html;
 
+const badge = document.getElementById("chatBadge");
+
+if(badge){
+
+  if(state.unreadMessages > 0){
+
+    badge.style.display = "flex";
+
+    badge.innerText =
+      state.unreadMessages > 10
+      ? "10+"
+      : state.unreadMessages;
+
+  }else{
+
+    badge.style.display = "none";
+  }
+
+}
+  
 if(state.screen === "chat"){
   document.body.style.overflow = "hidden";
 }else{
@@ -2075,7 +2095,7 @@ if(state.screen === "chat"){
   }, 50);
 }
 
-}
+
 
 
 // ----------------------
