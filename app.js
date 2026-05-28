@@ -1412,6 +1412,18 @@ function togglePlayer(id){
   state.openPlayers[id] = !state.openPlayers[id];
   render();
 }
+
+function sendMessage(){
+
+  const input = document.getElementById("chatInput");
+
+  if(!input.value.trim()) return;
+
+  alert("Melding sendt 😄\n\n" + input.value);
+
+  input.value = "";
+}
+
 // ----------------------
 // RENDER
 // ----------------------
