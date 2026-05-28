@@ -1576,12 +1576,21 @@ function addFeedMessage(text){
 
   db.collection("tournaments").doc(state.tid)
     .collection("chat")
-    .add({
-      user: "SYSTEM",
-      text: text,
-      time: Date.now(),
-      system: true
-    });
+    const messageId = crypto.randomUUID();
+
+db.collection("tournaments").doc(state.tid)
+  .collection("chat")
+  .doc(messageId)
+  .set({
+    id: messageId,
+
+    user: state.user,
+    text: text,
+
+    time: Date.now(),
+
+    reactions:{}
+  });
 }
 
 // ----------------------
