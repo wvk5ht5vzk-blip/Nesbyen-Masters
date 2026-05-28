@@ -1798,7 +1798,7 @@ if(chatBottom){
   html += `
     <div id="chatMessages" style="
       padding:20px;
-      padding-bottom:120px;
+      padding-bottom:130px;
       height:calc(100vh - 180px);
       overflow-y:auto;
       -webkit-overflow-scrolling:touch;
@@ -1893,7 +1893,7 @@ if(chatBottom){
 
     <!-- CHAT INPUT -->
     <div style="
-      position:fixed;
+      position:sticky;
       bottom:90px;
       left:0;
       width:100%;
