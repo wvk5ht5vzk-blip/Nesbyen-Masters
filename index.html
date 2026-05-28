@@ -33,7 +33,39 @@
 <nav>
   <button onclick="setScreen('leaderboard')">🏆</button>
   <button onclick="setScreen('score')">📊</button>
-  <button onclick="setScreen('chat')">💬</button>
+  <div style="position:relative;">
+
+  <button onclick="setScreen('chat')">
+    💬
+  </button>
+
+  <span id="chatBadge" style="
+    position:absolute;
+    top:-6px;
+    right:-6px;
+
+    min-width:20px;
+    height:20px;
+
+    padding:0 6px;
+
+    border-radius:999px;
+
+    background:#ef4444;
+    color:white;
+
+    font-size:12px;
+    font-weight:bold;
+
+    display:none;
+
+    align-items:center;
+    justify-content:center;
+  ">
+    0
+  </span>
+
+</div>
   <button onclick="setScreen('players')">👥</button>
 
 </nav>
