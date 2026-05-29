@@ -2150,9 +2150,26 @@ if(state.screen === "chat"){
 
               </div>
 
-              <div style="
+             ${
+  m.reactions &&
+  Object.keys(m.reactions).length
+
+  ? `
+
+<div style="
   position:absolute;
   bottom:-18px;
+
+  ...
+">
+
+  ...
+
+</div>
+
+  `
+  : ""
+}
 
   ${
     m.user === state.user
