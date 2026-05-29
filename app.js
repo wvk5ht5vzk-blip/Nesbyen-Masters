@@ -2077,6 +2077,14 @@ if(state.screen === "chat"){
 
                     ? `
 
+                    <div style="
+                    font-size:11px;
+                    opacity:0.5;
+                    margin-bottom:6px;
+                    ">
+                    ${formatDate(m.time)}
+                    </div>
+
                       <b style="
                         color:${
                           m.user === state.user
@@ -2102,16 +2110,7 @@ if(state.screen === "chat"){
                     `
                   }
 
-                  <span style="
-                    opacity:0.5;
-                    font-size:12px;
-                  ">
-                    ${new Date(m.time)
-                      .toLocaleTimeString([], {
-                        hour:'2-digit',
-                        minute:'2-digit'
-                      })}
-                  </span>
+                  
 
                 </div>
 
