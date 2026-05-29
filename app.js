@@ -1579,7 +1579,7 @@ function sendMessage(){
 
       time: Date.now(),
 
-      reaction: null
+      reaction: {}
 
     });
 
