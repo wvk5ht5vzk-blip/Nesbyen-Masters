@@ -2084,56 +2084,50 @@ if(state.screen === "chat"){
                 "
               >
 
-                <!-- TOP -->
-                <div style="
-                  display:flex;
-                  justify-content:space-between;
-                  align-items:center;
+              ${
+  !m.system
 
-                  margin-bottom:${
-                    m.system
-                      ? "0px"
-                      : "8px"
-                  };
-                ">
+  ? `
 
-                  ${
-                    !m.system
+    <div style="
+      font-size:11px;
+      opacity:0.5;
+      margin-bottom:6px;
+    ">
+      ${formatDate(m.time)}
+    </div>
 
-                    ? `
+    <!-- TOP -->
+    <div style="
+      margin-bottom:8px;
+    ">
 
-                    <div style="
-                    font-size:11px;
-                    opacity:0.5;
-                    margin-bottom:6px;
-                    ">
-                    ${formatDate(m.time)}
-                    </div>
+      <b style="
+        color:${
+          m.user === state.user
+            ? "#22c55e"
+            : "#fff"
+        };
+      ">
+        ${m.user}
+      </b>
 
-                      <b style="
-                        color:${
-                          m.user === state.user
-                            ? "#22c55e"
-                            : "#fff"
-                        };
-                      ">
-                        ${m.user}
-                      </b>
+    </div>
 
-                    `
+  `
 
-                    : `
+  : `
 
-                      <div style="
-                        font-size:15px;
-                        font-weight:600;
-                        color:#e5e7eb;
-                      ">
-                        Live Event
-                      </div>
+    <div style="
+      font-size:15px;
+      font-weight:600;
+      color:#e5e7eb;
+    ">
+      Live Event
+    </div>
 
-                    `
-                  }
+  `
+}
 
                   
 
