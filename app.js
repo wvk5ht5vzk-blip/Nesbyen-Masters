@@ -2150,12 +2150,7 @@ if(state.screen === "chat"){
 
               </div>
 
-             ${
-  m.reactions &&
-  Object.keys(m.reactions).length
-
-  ? `
-
+            
 ${
   !m.system &&
   m.reactions &&
