@@ -332,6 +332,8 @@ function listenPlayers(){
      snap.forEach(d=>{
   let p = d.data();
 
+console.log("IMAGE FROM FIREBASE:", p.image);
+       
   // 🔥 finn eksisterende spiller (fra før render)
   const existing = state.players.find(x => x.id === d.id);
 
