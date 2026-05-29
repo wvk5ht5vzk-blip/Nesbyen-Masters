@@ -1087,29 +1087,80 @@ function reverseMulligan(id){
 // ----------------------
 
 fileInput.addEventListener("change", e=>{
+
   const file = e.target.files[0];
+
   if(!file || !state.selectedPlayer) return;
 
   const reader = new FileReader();
 
-  reader.onload = ()=>{
-  const img = reader.result;
+  reader.onload = event => {
 
-  // 🔥 vis bildet med en gang (lokalt)
-  const player = state.players.find(p => p.id === state.selectedPlayer);
-  if(player){
-    player.image = img;
-    render();
-  }
+    const image = new Image();
 
-  // 🔥 lagre i Firestore
-  db.collection("tournaments").doc(state.tid)
-    .collection("rounds").doc(state.roundId)
-    .collection("players").doc(state.selectedPlayer)
-    .update({image: img});
-};
+    image.onload = () => {
+
+      const canvas =
+        document.createElement("canvas");
+
+      const size = 300;
+
+      canvas.width = size;
+      canvas.height = size;
+
+      const ctx = canvas.getContext("2d");
+
+      ctx.drawImage(
+        image,
+        0,
+        0,
+        size,
+        size
+      );
+
+      const compressedImage =
+        canvas.toDataURL(
+          "image/jpeg",
+          0.7
+        );
+
+      const player =
+        state.players.find(
+          p => p.id === state.selectedPlayer
+        );
+
+      if(player){
+        player.image = compressedImage;
+        render();
+      }
+
+      db.collection("tournaments")
+        .doc(state.tid)
+        .collection("rounds")
+        .doc(state.roundId)
+        .collection("players")
+        .doc(state.selectedPlayer)
+        .update({
+          image: compressedImage
+        })
+        .then(()=>{
+          console.log("✅ IMAGE SAVED");
+        })
+        .catch(err=>{
+          console.error(
+            "❌ IMAGE ERROR:",
+            err
+          );
+        });
+
+    };
+
+    image.src = event.target.result;
+
+  };
 
   reader.readAsDataURL(file);
+
 });
 
 function uploadImage(id){
