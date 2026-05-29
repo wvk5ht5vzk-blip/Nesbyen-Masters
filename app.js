@@ -2156,20 +2156,17 @@ if(state.screen === "chat"){
 
   ? `
 
+${
+  !m.system &&
+  m.reactions &&
+  Object.keys(m.reactions).length
+
+  ? `
+
 <div style="
   position:absolute;
+
   bottom:-18px;
-
-  ...
-">
-
-  ...
-
-</div>
-
-  `
-  : ""
-}
 
   ${
     m.user === state.user
@@ -2193,42 +2190,48 @@ if(state.screen === "chat"){
 ">
 
   ${
-  Object.entries(
+    Object.entries(
 
-    Object.values(m.reactions || {})
-      .reduce((acc, emoji) => {
+      Object.values(m.reactions || {})
+        .reduce((acc, emoji) => {
 
-        acc[emoji] =
-          (acc[emoji] || 0) + 1;
+          acc[emoji] =
+            (acc[emoji] || 0) + 1;
 
-        return acc;
+          return acc;
 
-      }, {})
+        }, {})
 
-  )
+    )
 
-  .map(([emoji, count]) => `
+    .map(([emoji, count]) => `
 
-    <span style="
-      display:flex;
-      align-items:center;
-      gap:2px;
-    ">
-      ${emoji}
       <span style="
-        font-size:12px;
-        opacity:0.8;
+        display:flex;
+        align-items:center;
+        gap:2px;
       ">
-        ${count}
+        ${emoji}
+
+        <span style="
+          font-size:12px;
+          opacity:0.8;
+        ">
+          ${count}
+        </span>
+
       </span>
-    </span>
 
-  `)
+    `)
 
-  .join("")
-}
+    .join("")
+  }
 
 </div>
+
+  `
+  : ""
+}
 
             </div>
 
