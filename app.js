@@ -1982,9 +1982,10 @@ if(state.screen === "chat"){
   >
 
   <div style="
-    position:relative;
-    width:85%;
-  ">
+  position:relative;
+  flex:1;
+  min-width:0;
+">
 
 ` : `
 
@@ -2315,6 +2316,7 @@ ${
 
           </div>
 
+        </div>
         
         `).join("")
 
