@@ -373,29 +373,36 @@ function listenChat(){
       state.messages = [];
 
       snap.forEach(d=>{
-       const data = d.data();
 
-state.messages.push({
-  id: d.id || crypto.randomUUID(),
-  ...data
-});
+        const data = d.data();
 
-     // 🔥 uleste meldinger
-if(state.screen !== "chat"){
+        state.messages.push({
+          id: d.id || crypto.randomUUID(),
+          ...data
+        });
 
-  const latest = state.messages[state.messages.length - 1];
+      });
 
-  if(latest && latest.user !== state.user){
-    state.unreadMessages++;
-  }
+      // 🔥 uleste meldinger
+      if(state.screen !== "chat"){
 
-}
-else{
-  state.unreadMessages = 0;
-}
-      
+        const latest =
+          state.messages[state.messages.length - 1];
+
+        if(latest && latest.user !== state.user){
+          state.unreadMessages++;
+        }
+
+      } else {
+
+        state.unreadMessages = 0;
+
+      }
+
       render();
+
     });
+
 }
 
 function addPlayer(){
