@@ -2084,7 +2084,7 @@ if(state.screen === "chat"){
                 "
               >
 
-              ${
+              
   ${!m.system
 
 ? `
