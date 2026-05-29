@@ -1652,23 +1652,27 @@ function sendMessage(){
 
 function addFeedMessage(text){
 
-  db.collection("tournaments").doc(state.tid)
+  const messageId = crypto.randomUUID();
+
+  db.collection("tournaments")
+    .doc(state.tid)
     .collection("chat")
-    const messageId = crypto.randomUUID();
+    .doc(messageId)
+    .set({
 
-db.collection("tournaments").doc(state.tid)
-  .collection("chat")
-  .doc(messageId)
-  .set({
-    id: messageId,
+      id: messageId,
 
-    user: state.user,
-    text: text,
+      user: "Live Event",
 
-    time: Date.now(),
+      system: true,
 
-    reactions:{}
-  });
+      text: text,
+
+      time: Date.now(),
+
+      reactions: {}
+
+    });
 }
 
 // ----------------------
