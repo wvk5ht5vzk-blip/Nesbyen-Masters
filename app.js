@@ -1956,14 +1956,44 @@ if(state.screen === "chat"){
             margin-bottom:18px;
           ">
 
-            <div style="
-              position:relative;
-              width:${
-                m.system
-                  ? "92%"
-                  : "85%"
-              };
-            ">
+            ${!m.system ? `
+
+<div style="
+  display:flex;
+  align-items:flex-start;
+  gap:10px;
+">
+
+  <img
+    src="${
+      state.players.find(
+        p => p.name === m.user
+      )?.image || ""
+    }"
+
+    style="
+      width:48px;
+      height:48px;
+      border-radius:50%;
+      object-fit:cover;
+      flex-shrink:0;
+      border:2px solid rgba(255,255,255,0.15);
+    "
+  >
+
+  <div style="
+    position:relative;
+    width:85%;
+  ">
+
+` : `
+
+<div style="
+  position:relative;
+  width:92%;
+">
+
+`}
 
               <!-- MESSAGE -->
               <div
