@@ -2150,44 +2150,38 @@ if(state.screen === "chat"){
 
               </div>
 
-              ${
-                m.reaction
+              <div style="
+  position:absolute;
+  bottom:-18px;
 
-                ? `
+  ${
+    m.user === state.user
+      ? "right:10px;"
+      : "left:10px;"
+  }
 
-                  <!-- ACTIVE REACTION -->
-                  <div style="
-                    position:absolute;
+  display:flex;
+  gap:4px;
 
-                    bottom:-18px;
+  background:#0f172a;
 
-                    ${
-                      m.user === state.user
-                        ? "right:10px;"
-                        : "left:10px;"
-                    }
+  border:1px solid rgba(255,255,255,0.08);
 
-                    background:#0f172a;
+  border-radius:999px;
 
-                    border:
-                      1px solid
-                      rgba(255,255,255,0.08);
+  padding:4px 8px;
 
-                    border-radius:999px;
+  box-shadow:
+    0 4px 12px rgba(0,0,0,0.35);
+">
 
-                    padding:4px 8px;
+  ${
+    [...new Set(Object.values(m.reactions || {}))]
+      .map(r => `<span>${r}</span>`)
+      .join("")
+  }
 
-                    font-size:15px;
-
-                    box-shadow:
-                      0 4px 12px rgba(0,0,0,0.35);
-                  ">
-                    ${m.reaction}
-                  </div>
-
-                `
-                : ""
-              }
+</div>
 
             </div>
 
