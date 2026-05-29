@@ -2176,10 +2176,40 @@ if(state.screen === "chat"){
 ">
 
   ${
-    [...new Set(Object.values(m.reactions || {}))]
-      .map(r => `<span>${r}</span>`)
-      .join("")
-  }
+  Object.entries(
+
+    Object.values(m.reactions || {})
+      .reduce((acc, emoji) => {
+
+        acc[emoji] =
+          (acc[emoji] || 0) + 1;
+
+        return acc;
+
+      }, {})
+
+  )
+
+  .map(([emoji, count]) => `
+
+    <span style="
+      display:flex;
+      align-items:center;
+      gap:2px;
+    ">
+      ${emoji}
+      <span style="
+        font-size:12px;
+        opacity:0.8;
+      ">
+        ${count}
+      </span>
+    </span>
+
+  `)
+
+  .join("")
+}
 
 </div>
 
