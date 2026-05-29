@@ -2415,34 +2415,35 @@ function notify(title, body){
   }
 }
 
-function reactToMessage(id, emoji){
+async function reactToMessage(id, emoji){
 
-  const msg = state.messages.find(m => m.id === id);
+  if(!id) return;
+
+  const msg =
+    state.messages.find(m => m.id === id);
 
   if(!msg) return;
 
-  // samme emoji = fjern
-  if(msg.reaction === emoji){
+  let reactions = msg.reactions || {};
 
-    db.collection("tournaments")
-      .doc(state.tid)
-      .collection("chat")
-      .doc(id)
-      .update({
-        reaction: null
-      });
+  // Samme emoji trykket igjen → fjern reaction
+  if(reactions[state.userId] === emoji){
+
+    delete reactions[state.userId];
 
   }else{
 
-    db.collection("tournaments")
-      .doc(state.tid)
-      .collection("chat")
-      .doc(id)
-      .update({
-        reaction: emoji
-      });
+    reactions[state.userId] = emoji;
 
   }
+
+  await db.collection("tournaments")
+    .doc(state.tid)
+    .collection("chat")
+    .doc(id)
+    .update({
+      reactions
+    });
 
   const popup =
     document.getElementById(`react-${id}`);
