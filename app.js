@@ -2132,7 +2132,7 @@ if(state.screen === "chat"){
 
                   
 
-                </div>
+                
 
                 <!-- TEXT -->
                 <div style="
