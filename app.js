@@ -2417,17 +2417,33 @@ function notify(title, body){
 
 function reactToMessage(id, emoji){
 
-if(!id) return;
-  
-  db.collection("tournaments")
-    .doc(state.tid)
-    .collection("chat")
-    .doc(id)
-    .update({
-      reaction: emoji
-    });
+  const msg = state.messages.find(m => m.id === id);
 
-  // lukk popup etter valg
+  if(!msg) return;
+
+  // samme emoji = fjern
+  if(msg.reaction === emoji){
+
+    db.collection("tournaments")
+      .doc(state.tid)
+      .collection("chat")
+      .doc(id)
+      .update({
+        reaction: null
+      });
+
+  }else{
+
+    db.collection("tournaments")
+      .doc(state.tid)
+      .collection("chat")
+      .doc(id)
+      .update({
+        reaction: emoji
+      });
+
+  }
+
   const popup =
     document.getElementById(`react-${id}`);
 
