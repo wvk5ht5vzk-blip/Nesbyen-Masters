@@ -1607,6 +1607,11 @@ function setScreen(s){
   render();
 }
 
+function togglePlayer(id){
+  state.openPlayers[id] = !state.openPlayers[id];
+  render();
+}
+
 function sendMessage(){
 
   const input =
