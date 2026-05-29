@@ -1656,14 +1656,15 @@ function sendMessage(){
 
       id: messageId,
 
+      userId: state.userId, // 👈 LEGG TIL
+
       user: state.user,
 
       text: text,
 
       time: Date.now(),
 
-      reaction: {}
-
+      reactions:{} // 👈 du har forresten "reaction" her
     });
 
   sendPush(
