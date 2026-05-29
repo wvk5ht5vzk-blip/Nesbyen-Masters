@@ -1595,6 +1595,31 @@ function deleteRound(id){
 // NAV
 // ----------------------
 
+function formatDate(time){
+
+  const d = new Date(time);
+  const now = new Date();
+
+  const sameDay =
+    d.toDateString() === now.toDateString();
+
+  if(sameDay){
+    return d.toLocaleTimeString([],{
+      hour:"2-digit",
+      minute:"2-digit"
+    });
+  }
+
+  return d.toLocaleDateString("no-NO",{
+    day:"2-digit",
+    month:"2-digit"
+  }) + " " +
+  d.toLocaleTimeString([],{
+    hour:"2-digit",
+    minute:"2-digit"
+  });
+}
+
 function setScreen(s){
 
   state.screen = s;
